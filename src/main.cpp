@@ -1,5 +1,6 @@
 #include <falcon/core/FalconDevice.h>
 #include <falcon/firmware/FalconFirmwareNovintSDK.h>
+#include <falcon/grip/FalconGripFourButton.h>
 #include <falcon/kinematic/FalconKinematicStamper.h>
 #include <falcon/util/FalconFirmwareBinaryNvent.h>
 
@@ -26,6 +27,9 @@ int main(int argc, char* argv[]) {
     double min_x, min_y, min_z;
 
     int i = 0;
+    bool button1Down = false, button2Down = false, button3Down = false, button4Down = false;
+    int button1 = 0, button2 = 0, button3 = 0, button4 = 0;
+
     while (1) {
         // Ask libnifalcon to update the encoder positions and apply any forces waiting:
         falcon.runIOLoop();
@@ -83,7 +87,55 @@ int main(int argc, char* argv[]) {
         double y = (y_temp - min_y) / (max_y - min_y);
         double z = (z_temp - min_z) / (max_z - min_z);
 
-        printf("X: %.2lf | Y:%.2lf | Z: %.2lf\n", x, y, z);
+        // Cheap debounce
+        if (falcon.getFalconGrip()->getDigitalInputs() & libnifalcon::FalconGripFourButton::BUTTON_1) {
+            button1Down = true;
+        } else if (button1Down) {
+            if (button1 == 0) {
+                button1 = 1;
+            } else {
+                button1 = 0;
+            }
+            button1Down = false;
+        }
+
+        // Cheap debounce
+        if (falcon.getFalconGrip()->getDigitalInputs() & libnifalcon::FalconGripFourButton::BUTTON_2) {
+            button2Down = true;
+        } else if (button2Down) {
+            if (button2 == 0) {
+                button2 = 1;
+            } else {
+                button2 = 0;
+            }
+            button2Down = false;
+        }
+
+        // Cheap debounce
+        if (falcon.getFalconGrip()->getDigitalInputs() & libnifalcon::FalconGripFourButton::BUTTON_3) {
+            button3Down = true;
+        } else if (button3Down) {
+            if (button3 == 0) {
+                button3 = 1;
+            } else {
+                button3 = 0;
+            }
+            button3Down = false;
+        }
+
+        // Cheap debounce
+        if (falcon.getFalconGrip()->getDigitalInputs() & libnifalcon::FalconGripFourButton::BUTTON_4) {
+            button4Down = true;
+        } else if (button4Down) {
+            if (button4 == 0) {
+                button4 = 1;
+            } else {
+                button4 = 0;
+            }
+            button4Down = false;
+        }
+
+        printf("X: %.2lf | Y:%.2lf | Z: %.2lf | b1: %d | b2: %d | b3: %d | b4: %d\n", x, y, z, button1, button2, button3, button4);
     }
 
     return 0;
@@ -161,8 +213,9 @@ bool initialise() {
     // Seems to be important to run the io loop once to be sure of sensible values next time:
     falcon.runIOLoop();
 
-    falcon.getFalconFirmware()->setHomingMode(true);
-    // falcon.setFalconKinematic<libnifalcon::FalconKinematicStamper>();
+    // falcon.getFalconFirmware()->setHomingMode(true);
+    falcon.setFalconKinematic<libnifalcon::FalconKinematicStamper>();
+    falcon.setFalconGrip<libnifalcon::FalconGripFourButton>();
 
     return true;
 }
