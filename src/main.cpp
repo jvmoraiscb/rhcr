@@ -12,152 +12,22 @@ using namespace libnifalcon;
 using namespace std;
 using namespace StamperKinematicImpl;
 
-FalconDevice falcon;
-
-bool initialise();
-void IK(Angle& angles, const gmtl::Vec3d& worldPosition);
-void FK(const gmtl::Vec3d& theta0, gmtl::Vec3d& pos);
-gmtl::Matrix33d jacobian(const Angle& angles);
-
-int main(int argc, char* argv[]) {
-    if (!initialise())
-        return 0;
-
-    double max_x, max_y, max_z;
-    double min_x, min_y, min_z;
-
-    int i = 0;
-    bool button1Down = false, button2Down = false, button3Down = false, button4Down = false;
-    int button1 = 0, button2 = 0, button3 = 0, button4 = 0;
-
-    while (1) {
-        // Ask libnifalcon to update the encoder positions and apply any forces waiting:
-        falcon.runIOLoop();
-
-        // Request the current encoder positions:
-        std::array<int, 3> encoderPos;
-        encoderPos = falcon.getFalconFirmware()->getEncoderValues();
-        gmtl::Vec3d encoderAngles;
-        encoderAngles[0] = falcon.getFalconKinematic()->getTheta(encoderPos[0]);
-        encoderAngles[1] = falcon.getFalconKinematic()->getTheta(encoderPos[1]);
-        encoderAngles[2] = falcon.getFalconKinematic()->getTheta(encoderPos[2]);
-        encoderAngles *= 0.0174532925;  // Convert to radians
-
-        gmtl::Vec3d pos(0.0, 0.0, 0.11);  // Lets assume the device starts off roughly in the centre of the workspace
-
-        // Forward Kinematics
-        FK(encoderAngles, pos);
-
-        double x_temp = pos[0];
-        double y_temp = pos[1];
-        double z_temp = pos[2];
-
-        // initialize with first values
-        if (i == 0) {
-            max_x = x_temp;
-            min_x = x_temp;
-            max_y = y_temp;
-            min_y = y_temp;
-            max_z = z_temp;
-            min_z = z_temp;
-
-            i++;
-        }
-
-        if (x_temp > max_x) {
-            max_x = x_temp;
-        }
-        if (y_temp > max_y) {
-            max_y = y_temp;
-        }
-        if (z_temp > max_z) {
-            max_z = z_temp;
-        }
-        if (x_temp < min_x) {
-            min_x = x_temp;
-        }
-        if (y_temp < min_y) {
-            min_y = y_temp;
-        }
-        if (z_temp < min_z) {
-            min_z = z_temp;
-        }
-
-        double x = (x_temp - min_x) / (max_x - min_x);
-        double y = (y_temp - min_y) / (max_y - min_y);
-        double z = (z_temp - min_z) / (max_z - min_z);
-
-        // Cheap debounce
-        if (falcon.getFalconGrip()->getDigitalInputs() & libnifalcon::FalconGripFourButton::BUTTON_1) {
-            button1Down = true;
-        } else if (button1Down) {
-            if (button1 == 0) {
-                button1 = 1;
-            } else {
-                button1 = 0;
-            }
-            button1Down = false;
-        }
-
-        // Cheap debounce
-        if (falcon.getFalconGrip()->getDigitalInputs() & libnifalcon::FalconGripFourButton::BUTTON_2) {
-            button2Down = true;
-        } else if (button2Down) {
-            if (button2 == 0) {
-                button2 = 1;
-            } else {
-                button2 = 0;
-            }
-            button2Down = false;
-        }
-
-        // Cheap debounce
-        if (falcon.getFalconGrip()->getDigitalInputs() & libnifalcon::FalconGripFourButton::BUTTON_3) {
-            button3Down = true;
-        } else if (button3Down) {
-            if (button3 == 0) {
-                button3 = 1;
-            } else {
-                button3 = 0;
-            }
-            button3Down = false;
-        }
-
-        // Cheap debounce
-        if (falcon.getFalconGrip()->getDigitalInputs() & libnifalcon::FalconGripFourButton::BUTTON_4) {
-            button4Down = true;
-        } else if (button4Down) {
-            if (button4 == 0) {
-                button4 = 1;
-            } else {
-                button4 = 0;
-            }
-            button4Down = false;
-        }
-
-        printf("X: %.2lf | Y:%.2lf | Z: %.2lf | b1: %d | b2: %d | b3: %d | b4: %d\n", x, y, z, button1, button2, button3, button4);
-    }
-
-    return 0;
-}
-
-//////////////////////////////////////////////////////////
 /// Ask libnifalcon to get the Falcon ready for action
 /// nothing clever here, straight from the examples
-bool initialise() {
-    falcon.setFalconFirmware<FalconFirmwareNovintSDK>();
+bool initialise(FalconDevice* falcon) {
+    falcon->setFalconFirmware<FalconFirmwareNovintSDK>();
 
     cout << "Setting up comm interface for Falcon comms" << endl;
 
     unsigned int count;
-    falcon.getDeviceCount(count);
+    falcon->getDeviceCount(count);
     cout << "Connected Device Count: " << count << endl;
 
     // Open the device number:
     int deviceNum = 0;
     cout << "Attempting to open Falcon device:  " << deviceNum << endl;
-    if (!falcon.open(deviceNum)) {
-        cout << "Cannot open falcon device index " << deviceNum << " - Lib Error Code: " << falcon.getErrorCode() << " Device Error Code: " << falcon.getFalconComm()->getDeviceErrorCode() << endl;
+    if (!falcon->open(deviceNum)) {
+        cout << "Cannot open falcon device index " << deviceNum << " - Lib Error Code: " << falcon->getErrorCode() << " Device Error Code: " << falcon->getFalconComm()->getDeviceErrorCode() << endl;
         return false;
     } else {
         cout << "Connected to Falcon device " << deviceNum << endl;
@@ -165,13 +35,13 @@ bool initialise() {
 
     // Load the device firmware:
     // There's only one kind of firmware right now, so automatically set that.
-    falcon.setFalconFirmware<FalconFirmwareNovintSDK>();
+    falcon->setFalconFirmware<FalconFirmwareNovintSDK>();
     // Next load the firmware to the device
 
     bool skip_checksum = false;
     // See if we have firmware
     bool firmware_loaded = false;
-    firmware_loaded = falcon.isFirmwareLoaded();
+    firmware_loaded = falcon->isFirmwareLoaded();
     if (!firmware_loaded) {
         std::cout << "Loading firmware" << std::endl;
         uint8_t* firmware_block;
@@ -181,7 +51,7 @@ bool initialise() {
             firmware_size = NOVINT_FALCON_NVENT_FIRMWARE_SIZE;
 
             for (int i = 0; i < 10; ++i) {
-                if (!falcon.getFalconFirmware()->loadFirmware(skip_checksum, NOVINT_FALCON_NVENT_FIRMWARE_SIZE, const_cast<uint8_t*>(NOVINT_FALCON_NVENT_FIRMWARE)))
+                if (!falcon->getFalconFirmware()->loadFirmware(skip_checksum, NOVINT_FALCON_NVENT_FIRMWARE_SIZE, const_cast<uint8_t*>(NOVINT_FALCON_NVENT_FIRMWARE)))
 
                 {
                     cout << "Firmware loading try failed";
@@ -204,23 +74,72 @@ bool initialise() {
     } else {
         // return true;
     }
-    if (!firmware_loaded || !falcon.isFirmwareLoaded()) {
+    if (!firmware_loaded || !falcon->isFirmwareLoaded()) {
         std::cout << "No firmware loaded to device, cannot continue" << std::endl;
         // return false;
     }
     std::cout << "Firmware loaded" << std::endl;
 
     // Seems to be important to run the io loop once to be sure of sensible values next time:
-    falcon.runIOLoop();
+    falcon->runIOLoop();
 
     // falcon.getFalconFirmware()->setHomingMode(true);
-    falcon.setFalconKinematic<libnifalcon::FalconKinematicStamper>();
-    falcon.setFalconGrip<libnifalcon::FalconGripFourButton>();
+    falcon->setFalconKinematic<libnifalcon::FalconKinematicStamper>();
+    falcon->setFalconGrip<libnifalcon::FalconGripFourButton>();
 
     return true;
 }
 
-//////////////////////////////////////////////////////////
+/// The velocity Jacobian where Vel=J*theta and Torque=J'*Force
+/// Derivation in a slightly different style to Stamper
+/// and may result in a couple of sign changes due to the configuration
+/// of the Falcon
+gmtl::Matrix33d jacobian(const Angle& angles) {
+    // Naming scheme:
+    // Jx1 = rotational velocity of joint 1 due to linear velocity in x
+
+    gmtl::Matrix33d J;
+
+    // Arm1:
+    double den = -libnifalcon::a * sin(angles.theta3[0]) * (sin(angles.theta1[0]) * cos(angles.theta2[0]) - sin(angles.theta2[0]) * cos(angles.theta1[0]));
+
+    double Jx0 = cos(phy[0]) * cos(angles.theta2[0]) * sin(angles.theta3[0]) / den - sin(phy[0]) * cos(angles.theta3[0]) / den;
+    double Jy0 = sin(phy[0]) * cos(angles.theta2[0]) * sin(angles.theta3[0]) / den + cos(phy[0]) * cos(angles.theta3[0]) / den;
+    double Jz0 = (sin(angles.theta2[0]) * sin(angles.theta2[0])) / (den);
+
+    // Arm2:
+    den = -libnifalcon::a * sin(angles.theta3[1]) * (sin(angles.theta1[1]) * cos(angles.theta2[1]) - sin(angles.theta2[1]) * cos(angles.theta1[1]));
+
+    double Jx1 = cos(phy[1]) * cos(angles.theta2[1]) * sin(angles.theta3[1]) / den - sin(phy[1]) * cos(angles.theta3[1]) / den;
+    double Jy1 = sin(phy[1]) * cos(angles.theta2[1]) * sin(angles.theta3[1]) / den + cos(phy[1]) * cos(angles.theta3[1]) / den;
+    double Jz1 = (sin(angles.theta2[1]) * sin(angles.theta2[1])) / (den);
+
+    // Arm3:
+    den = -libnifalcon::a * sin(angles.theta3[2]) * (sin(angles.theta1[2]) * cos(angles.theta2[2]) - sin(angles.theta2[2]) * cos(angles.theta1[2]));
+
+    double Jx2 = cos(phy[2]) * cos(angles.theta2[2]) * sin(angles.theta3[2]) / den - sin(phy[2]) * cos(angles.theta3[2]) / den;
+    double Jy2 = sin(phy[2]) * cos(angles.theta2[2]) * sin(angles.theta3[2]) / den + cos(phy[2]) * cos(angles.theta3[2]) / den;
+    double Jz2 = (sin(angles.theta2[2]) * sin(angles.theta2[2])) / (den);
+
+    J(0, 0) = Jx0;
+    J(0, 1) = Jy0;
+    J(0, 2) = Jz0;
+    J(1, 0) = Jx1;
+    J(1, 1) = Jy1;
+    J(1, 2) = Jz1;
+    J(2, 0) = Jx2;
+    J(2, 1) = Jy2;
+    J(2, 2) = Jz2;
+
+    J.setState(J.FULL);
+    invert(J);
+
+    // ToDo: Check to see if Jacobian inverted properly.
+    // If not we need to take action.
+
+    return J;
+}
+
 // Inverse kinematics. All as in Stamper's PhD except for
 // the addition of a second offset direction 's' per arm
 void IK(Angle& angles, const gmtl::Vec3d& worldPosition) {
@@ -303,7 +222,6 @@ void IK(Angle& angles, const gmtl::Vec3d& worldPosition) {
     angles.theta2[2] = acos((-P3[0] + libnifalcon::a * cos(angles.theta1[2]) - libnifalcon::c) / (-libnifalcon::d - libnifalcon::e - libnifalcon::b * sin(angles.theta3[2])));
 }
 
-//////////////////////////////////////////////////////////
 /// Forward kinematics. Standard Newton-Raphson for linear
 /// systems using Jacobian to estimate slope. A small amount
 /// of adjustment in the step size is all that is requried
@@ -379,53 +297,178 @@ void FK(const gmtl::Vec3d& theta0, gmtl::Vec3d& pos) {
     cout << "Failed to find the tool position in the max tries" << endl;
 }
 
-////////////////////////////////////////////////////
-/// The velocity Jacobian where Vel=J*theta and Torque=J'*Force
-/// Derivation in a slightly different style to Stamper
-/// and may result in a couple of sign changes due to the configuration
-/// of the Falcon
-gmtl::Matrix33d jacobian(const Angle& angles) {
-    // Naming scheme:
-    // Jx1 = rotational velocity of joint 1 due to linear velocity in x
+class outputFalcon {
+   private:
+    double max_x, max_y, max_z;
+    double min_x, min_y, min_z;
+    double x, y, z;
 
-    gmtl::Matrix33d J;
+    bool button1Down, button2Down, button3Down, button4Down;
+    int button1, button2, button3, button4;
 
-    // Arm1:
-    double den = -libnifalcon::a * sin(angles.theta3[0]) * (sin(angles.theta1[0]) * cos(angles.theta2[0]) - sin(angles.theta2[0]) * cos(angles.theta1[0]));
+   public:
+    outputFalcon(FalconDevice* falcon) {
+        // Ask libnifalcon to update the encoder positions and apply any forces waiting:
+        falcon->runIOLoop();
 
-    double Jx0 = cos(phy[0]) * cos(angles.theta2[0]) * sin(angles.theta3[0]) / den - sin(phy[0]) * cos(angles.theta3[0]) / den;
-    double Jy0 = sin(phy[0]) * cos(angles.theta2[0]) * sin(angles.theta3[0]) / den + cos(phy[0]) * cos(angles.theta3[0]) / den;
-    double Jz0 = (sin(angles.theta2[0]) * sin(angles.theta2[0])) / (den);
+        // Request the current encoder positions:
+        std::array<int, 3> encoderPos;
+        encoderPos = falcon->getFalconFirmware()->getEncoderValues();
+        gmtl::Vec3d encoderAngles;
+        encoderAngles[0] = falcon->getFalconKinematic()->getTheta(encoderPos[0]);
+        encoderAngles[1] = falcon->getFalconKinematic()->getTheta(encoderPos[1]);
+        encoderAngles[2] = falcon->getFalconKinematic()->getTheta(encoderPos[2]);
+        encoderAngles *= 0.0174532925;  // Convert to radians
 
-    // Arm2:
-    den = -libnifalcon::a * sin(angles.theta3[1]) * (sin(angles.theta1[1]) * cos(angles.theta2[1]) - sin(angles.theta2[1]) * cos(angles.theta1[1]));
+        gmtl::Vec3d pos(0.0, 0.0, 0.11);  // Lets assume the device starts off roughly in the centre of the workspace
 
-    double Jx1 = cos(phy[1]) * cos(angles.theta2[1]) * sin(angles.theta3[1]) / den - sin(phy[1]) * cos(angles.theta3[1]) / den;
-    double Jy1 = sin(phy[1]) * cos(angles.theta2[1]) * sin(angles.theta3[1]) / den + cos(phy[1]) * cos(angles.theta3[1]) / den;
-    double Jz1 = (sin(angles.theta2[1]) * sin(angles.theta2[1])) / (den);
+        // Forward Kinematics
+        FK(encoderAngles, pos);
 
-    // Arm3:
-    den = -libnifalcon::a * sin(angles.theta3[2]) * (sin(angles.theta1[2]) * cos(angles.theta2[2]) - sin(angles.theta2[2]) * cos(angles.theta1[2]));
+        double x_temp = pos[0];
+        double y_temp = pos[1];
+        double z_temp = pos[2];
 
-    double Jx2 = cos(phy[2]) * cos(angles.theta2[2]) * sin(angles.theta3[2]) / den - sin(phy[2]) * cos(angles.theta3[2]) / den;
-    double Jy2 = sin(phy[2]) * cos(angles.theta2[2]) * sin(angles.theta3[2]) / den + cos(phy[2]) * cos(angles.theta3[2]) / den;
-    double Jz2 = (sin(angles.theta2[2]) * sin(angles.theta2[2])) / (den);
+        // default values
+        this->max_x = x_temp;
+        this->min_x = x_temp;
+        this->max_y = y_temp;
+        this->min_y = y_temp;
+        this->max_z = z_temp;
+        this->min_z = z_temp;
 
-    J(0, 0) = Jx0;
-    J(0, 1) = Jy0;
-    J(0, 2) = Jz0;
-    J(1, 0) = Jx1;
-    J(1, 1) = Jy1;
-    J(1, 2) = Jz1;
-    J(2, 0) = Jx2;
-    J(2, 1) = Jy2;
-    J(2, 2) = Jz2;
+        this->button1Down = false;
+        this->button2Down = false;
+        this->button3Down = false;
+        this->button4Down = false;
+        this->button1 = 0;
+        this->button2 = 0;
+        this->button3 = 0;
+        this->button4 = 0;
+    }
 
-    J.setState(J.FULL);
-    invert(J);
+    void update(FalconDevice* falcon) {
+        // Ask libnifalcon to update the encoder positions and apply any forces waiting:
+        falcon->runIOLoop();
 
-    // ToDo: Check to see if Jacobian inverted properly.
-    // If not we need to take action.
+        // Request the current encoder positions:
+        std::array<int, 3> encoderPos;
+        encoderPos = falcon->getFalconFirmware()->getEncoderValues();
+        gmtl::Vec3d encoderAngles;
+        encoderAngles[0] = falcon->getFalconKinematic()->getTheta(encoderPos[0]);
+        encoderAngles[1] = falcon->getFalconKinematic()->getTheta(encoderPos[1]);
+        encoderAngles[2] = falcon->getFalconKinematic()->getTheta(encoderPos[2]);
+        encoderAngles *= 0.0174532925;  // Convert to radians
 
-    return J;
+        gmtl::Vec3d pos(0.0, 0.0, 0.11);  // Lets assume the device starts off roughly in the centre of the workspace
+
+        // Forward Kinematics
+        FK(encoderAngles, pos);
+
+        double x_temp = pos[0];
+        double y_temp = pos[1];
+        double z_temp = pos[2];
+
+        if (x_temp > this->max_x) {
+            this->max_x = x_temp;
+        }
+        if (y_temp > this->max_y) {
+            this->max_y = y_temp;
+        }
+        if (z_temp > this->max_z) {
+            this->max_z = z_temp;
+        }
+        if (x_temp < this->min_x) {
+            this->min_x = x_temp;
+        }
+        if (y_temp < this->min_y) {
+            this->min_y = y_temp;
+        }
+        if (z_temp < this->min_z) {
+            this->min_z = z_temp;
+        }
+
+        this->x = (x_temp - this->min_x) / (this->max_x - this->min_x);
+        this->y = (y_temp - this->min_y) / (this->max_y - this->min_y);
+        this->z = (z_temp - this->min_z) / (this->max_z - this->min_z);
+
+        // Cheap debounce
+        if (falcon->getFalconGrip()->getDigitalInputs() & libnifalcon::FalconGripFourButton::BUTTON_1) {
+            this->button1Down = true;
+        } else if (button1Down) {
+            if (this->button1 == 0) {
+                this->button1 = 1;
+            } else {
+                this->button1 = 0;
+            }
+            this->button1Down = false;
+        }
+
+        // Cheap debounce
+        if (falcon->getFalconGrip()->getDigitalInputs() & libnifalcon::FalconGripFourButton::BUTTON_2) {
+            this->button2Down = true;
+        } else if (button2Down) {
+            if (this->button2 == 0) {
+                this->button2 = 1;
+            } else {
+                this->button2 = 0;
+            }
+            this->button2Down = false;
+        }
+
+        // Cheap debounce
+        if (falcon->getFalconGrip()->getDigitalInputs() & libnifalcon::FalconGripFourButton::BUTTON_3) {
+            this->button3Down = true;
+        } else if (this->button3Down) {
+            if (this->button3 == 0) {
+                this->button3 = 1;
+            } else {
+                this->button3 = 0;
+            }
+            this->button3Down = false;
+        }
+
+        // Cheap debounce
+        if (falcon->getFalconGrip()->getDigitalInputs() & libnifalcon::FalconGripFourButton::BUTTON_4) {
+            this->button4Down = true;
+        } else if (this->button4Down) {
+            if (button4 == 0) {
+                this->button4 = 1;
+            } else {
+                this->button4 = 0;
+            }
+            this->button4Down = false;
+        }
+    }
+
+    void get(double* x, double* y, double* z, int* button1, int* button2, int* button3, int* button4) {
+        *x = this->x;
+        *y = this->y;
+        *z = this->z;
+        *button1 = this->button1;
+        *button2 = this->button2;
+        *button3 = this->button3;
+        *button4 = this->button4;
+    }
+};
+
+int main(int argc, char* argv[]) {
+    FalconDevice falcon;
+
+    if (!initialise(&falcon))
+        return 0;
+
+    outputFalcon output = outputFalcon(&falcon);
+
+    while (true) {
+        double x, y, z;
+        int button1, button2, button3, button4;
+
+        output.update(&falcon);
+        output.get(&x, &y, &z, &button1, &button2, &button3, &button4);
+
+        printf("X: %.2lf | Y:%.2lf | Z: %.2lf | b1: %d | b2: %d | b3: %d | b4: %d\n", x, y, z, button1, button2, button3, button4);
+    }
+
+    return 0;
 }
