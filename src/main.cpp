@@ -456,7 +456,7 @@ int main(int argc, char* argv[]) {
     FalconDevice falcon;
 
     if (!initialise(&falcon))
-        return 0;
+        return 1;
 
     outputFalcon output = outputFalcon(&falcon);
 
