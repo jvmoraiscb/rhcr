@@ -1,5 +1,4 @@
-# sem-nome-ainda-project
+# haptic-robot
 
 ## dependencies
 - https://github.com/libnifalcon/libnifalcon
-- https://github.com/microsoft/cpprestsdk
