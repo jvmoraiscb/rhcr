@@ -337,6 +337,27 @@ myFalcon::myFalcon(FalconDevice* falcon) {
     this->button2 = 0;
     this->button3 = 0;
     this->button4 = 0;
+
+    this->x = 0.0;
+    this->y = 0.0;
+    this->z = 0.0;
+    this->lim_x_pos = 1.0;
+    this->lim_x_neg = -1.0;
+    this->lim_y_neg = 1.0;
+    this->lim_y_pos = -1.0;
+    this->lim_z_neg = 1.0;
+    this->lim_z_pos = -1.0;
+}
+
+void myFalcon::calibrate(FalconDevice* falcon) {
+    while (true) {
+        this->update(falcon);
+
+        if (this->button3 == 1) {
+            break;
+        }
+    }
+    this->button3 = 0;
 }
 
 void myFalcon::update(FalconDevice* falcon) {
@@ -380,9 +401,9 @@ void myFalcon::update(FalconDevice* falcon) {
         this->min_z = z_temp;
     }
 
-    this->x = (x_temp - this->min_x) / (this->max_x - this->min_x);
-    this->y = (y_temp - this->min_y) / (this->max_y - this->min_y);
-    this->z = (z_temp - this->min_z) / (this->max_z - this->min_z);
+    this->x = ((x_temp - this->min_x) / (this->max_x - this->min_x)) * 2 - 1;
+    this->y = ((y_temp - this->min_y) / (this->max_y - this->min_y)) * 2 - 1;
+    this->z = ((z_temp - this->min_z) / (this->max_z - this->min_z)) * 2 - 1;
 
     // Cheap debounce
     if (falcon->getFalconGrip()->getDigitalInputs() & libnifalcon::FalconGripFourButton::BUTTON_1) {
@@ -441,4 +462,29 @@ void myFalcon::get(double* x, double* y, double* z, int* button1, int* button2, 
     *button2 = this->button2;
     *button3 = this->button3;
     *button4 = this->button4;
+}
+
+void myFalcon::set(double lim_x_pos, double lim_x_neg, double lim_y_pos, double lim_y_neg, double lim_z_pos, double lim_z_neg) {
+    this->lim_x_pos = lim_x_pos;
+    this->lim_x_neg = lim_x_neg;
+    this->lim_y_neg = lim_y_pos;
+    this->lim_y_pos = lim_y_neg;
+    this->lim_z_neg = lim_z_pos;
+    this->lim_z_pos = lim_z_neg;
+}
+
+void myFalcon::start(libnifalcon::FalconDevice* falcon) {
+    std::array<double, 3> force;
+    force[0] = 0;
+    force[1] = 0;
+    force[2] = 0;
+    double force_max = 50;
+
+    if (this->x > 0 && this->x > this->lim_x_pos) {
+        force[0] = (-1) * force_max * (this->x - this->lim_x_pos);
+    }
+
+    falcon->setForce(force);
+
+    this->update(falcon);
 }

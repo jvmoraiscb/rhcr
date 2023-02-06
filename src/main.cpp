@@ -10,13 +10,14 @@ int main(int argc, char* argv[]) {
 
     myFalcon output = myFalcon(&falcon);
 
+    printf("Calibrating...\n");
+    output.calibrate(&falcon);
     while (true) {
         double x, y, z;
         int button1, button2, button3, button4;
-
-        output.update(&falcon);
+        output.set(0.1, -1, 1, -1, 1, -1);
+        output.start(&falcon);
         output.get(&x, &y, &z, &button1, &button2, &button3, &button4);
-
         printf("X: %.2lf | Y:%.2lf | Z: %.2lf | b1: %d | b2: %d | b3: %d | b4: %d\n", x, y, z, button1, button2, button3, button4);
     }
 
