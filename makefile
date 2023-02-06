@@ -1,12 +1,18 @@
-all: compiler linker
-	@rm main.o
-	@sudo ./main.out
+all: compiler linker build
+
+run:
+	@sudo ./build/main.out
+
+build:
+	@mkdir build
+	@mv *.o build
+	@mv main.out build
 
 compiler:
-	@g++ -I/usr/local/include -c src/main.cpp
+	@g++ -I/usr/local/include -c src/*.cpp
 
 linker:
-	@g++ -L/usr/local/lib -o main.out main.o -lnifalcon -lnifalcon_cli_base -lnifalcon_device_thread
+	@g++ -L/usr/local/lib -o main.out *.o -lnifalcon -lnifalcon_cli_base -lnifalcon_device_thread
 
 clean:
-	@rm main.out
+	@rm -r build
