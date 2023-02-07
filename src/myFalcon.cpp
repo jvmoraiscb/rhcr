@@ -467,10 +467,10 @@ void myFalcon::get(double* x, double* y, double* z, int* button1, int* button2, 
 void myFalcon::set(double lim_x_pos, double lim_x_neg, double lim_y_pos, double lim_y_neg, double lim_z_pos, double lim_z_neg) {
     this->lim_x_pos = lim_x_pos;
     this->lim_x_neg = lim_x_neg;
-    this->lim_y_neg = lim_y_pos;
-    this->lim_y_pos = lim_y_neg;
-    this->lim_z_neg = lim_z_pos;
-    this->lim_z_pos = lim_z_neg;
+    this->lim_y_pos = lim_y_pos;
+    this->lim_y_neg = lim_y_neg;
+    this->lim_z_pos = lim_z_pos;
+    this->lim_z_neg = lim_z_neg;
 }
 
 void myFalcon::start(libnifalcon::FalconDevice* falcon) {
@@ -482,6 +482,21 @@ void myFalcon::start(libnifalcon::FalconDevice* falcon) {
 
     if (this->x > 0 && this->x > this->lim_x_pos) {
         force[0] = (-1) * force_max * (this->x - this->lim_x_pos);
+    }
+    if (this->x < 0 && this->x < this->lim_x_neg) {
+        force[0] = (1) * force_max * (this->lim_x_neg - this->x);
+    }
+    if (this->y > 0 && this->y > this->lim_y_pos) {
+        force[1] = (-1) * force_max * (this->y - this->lim_y_pos);
+    }
+    if (this->y < 0 && this->y < this->lim_y_neg) {
+        force[1] = (1) * force_max * (this->lim_y_neg - this->y);
+    }
+    if (this->z > 0 && this->z > this->lim_z_pos) {
+        force[2] = (-1) * force_max * (this->z - this->lim_z_pos);
+    }
+    if (this->z < 0 && this->z < this->lim_z_neg) {
+        force[2] = (1) * force_max * (this->lim_z_neg - this->z);
     }
 
     falcon->setForce(force);
