@@ -8,8 +8,9 @@
 #include <iostream>
 #include <string>
 
-#include "rhcc/output.h"
+#include "geometry_msgs/Vector3.h"
 #include "ros/ros.h"
+#include "std_msgs/Int32.h"
 
 using namespace libnifalcon;
 using namespace std;
@@ -30,6 +31,7 @@ class Falcon {
 
  public:
   Falcon(libnifalcon::FalconDevice* falcon);
+  void calibrate(FalconDevice* falcon);
   void update(libnifalcon::FalconDevice* falcon);
   void get(double* x, double* y, double* z, int* button1, int* button2, int* button3, int* button4);
 };
@@ -41,14 +43,34 @@ int main(int argc, char** argv) {
     return 1;
   Falcon f = Falcon(&falcon);
 
+  // Wait for calibration
+  ROS_INFO("Please calibrate the controller: move it around and then press the center button.\n");
+  f.calibrate(&falcon);
+
   // ROS objects
   ros::init(argc, argv, "main");
   ros::NodeHandle n;
-  ros::Publisher pub = n.advertise<rhcc::output>("output", 1);
-  ros::Rate loop_rate(10);
+  ros::Publisher pub_pos = n.advertise<geometry_msgs::Vector3>("position", 1000);
+  ros::Publisher pub_b1 = n.advertise<std_msgs::Int32>("right_button", 1000);
+  ros::Publisher pub_b2 = n.advertise<std_msgs::Int32>("up_button", 1000);
+  ros::Publisher pub_b3 = n.advertise<std_msgs::Int32>("center_button", 1000);
+  ros::Publisher pub_b4 = n.advertise<std_msgs::Int32>("left_button", 1000);
+  ros::Rate loop_rate(100);
+
+  ROS_INFO("The following topics started:\n");
+  ROS_INFO("/position\n");
+  ROS_INFO("/right_button\n");
+  ROS_INFO("/up_button\n");
+  ROS_INFO("/center_button\n");
+  ROS_INFO("/left_button\n");
 
   // Variables
-  rhcc::output msg;
+  geometry_msgs::Vector3 pos;
+  std_msgs::Int32 b1;
+  std_msgs::Int32 b2;
+  std_msgs::Int32 b3;
+  std_msgs::Int32 b4;
+
   double x, y, z;
   int button1, button2, button3, button4;
 
@@ -56,17 +78,21 @@ int main(int argc, char** argv) {
     f.update(&falcon);
     f.get(&x, &y, &z, &button1, &button2, &button3, &button4);
 
-    msg.pos.x = (float)x;
-    msg.pos.y = (float)y;
-    msg.pos.z = (float)z;
-    msg.b1 = button1;
-    msg.b2 = button2;
-    msg.b3 = button3;
-    msg.b4 = button4;
+    pos.x = (float)x;
+    pos.y = (float)y;
+    pos.z = (float)z;
+    b1.data = button1;
+    b2.data = button2;
+    b3.data = button3;
+    b4.data = button4;
 
-    ROS_INFO("x: %.2f, y: %.2f, z: %.2f | b1: %d, b2: %d, b3: %d, b4:%d\n", msg.pos.x, msg.pos.y, msg.pos.z, msg.b1, msg.b2, msg.b3, msg.b4);
+    // ROS_INFO("x: %.2f, y: %.2f, z: %.2f | b1: %d, b2: %d, b3: %d, b4:%d\n", pos.x, pos.y, pos.z, b1.data, b2.data, b3.data, b4.data);
 
-    pub.publish(msg);
+    pub_pos.publish(pos);
+    pub_b1.publish(b1);
+    pub_b2.publish(b2);
+    pub_b3.publish(b3);
+    pub_b4.publish(b4);
 
     ros::spinOnce();
 
@@ -79,20 +105,20 @@ int main(int argc, char** argv) {
 bool initialise(libnifalcon::FalconDevice* falcon) {
   falcon->setFalconFirmware<FalconFirmwareNovintSDK>();
 
-  cout << "Setting up comm interface for Falcon comms" << endl;
+  ROS_INFO("Setting up comm interface for Falcon comms\n");
 
   unsigned int count;
   falcon->getDeviceCount(count);
-  cout << "Connected Device Count: " << count << endl;
+  ROS_INFO("Connected Device Count: %d\n", count);
 
   // Open the device number:
   int deviceNum = 0;
-  cout << "Attempting to open Falcon device:  " << deviceNum << endl;
+  ROS_INFO("Attempting to open Falcon device: %d\n", deviceNum);
   if (!falcon->open(deviceNum)) {
-    cout << "Cannot open falcon device index " << deviceNum << " - Lib Error Code: " << falcon->getErrorCode() << " Device Error Code: " << falcon->getFalconComm()->getDeviceErrorCode() << endl;
+    ROS_INFO("Cannot open falcon device index %d - Lib Error Code: %d Device Error Code: %d\n", deviceNum, falcon->getErrorCode(), falcon->getFalconComm()->getDeviceErrorCode());
     return false;
   } else {
-    cout << "Connected to Falcon device " << deviceNum << endl;
+    ROS_INFO("Connected to Falcon device %d\n", deviceNum);
   }
 
   // Load the device firmware:
@@ -105,7 +131,7 @@ bool initialise(libnifalcon::FalconDevice* falcon) {
   bool firmware_loaded = false;
   firmware_loaded = falcon->isFirmwareLoaded();
   if (!firmware_loaded) {
-    std::cout << "Loading firmware" << std::endl;
+    ROS_INFO("Loading firmware\n");
     uint8_t* firmware_block;
     long firmware_size;
     {
@@ -116,7 +142,7 @@ bool initialise(libnifalcon::FalconDevice* falcon) {
         if (!falcon->getFalconFirmware()->loadFirmware(skip_checksum, NOVINT_FALCON_NVENT_FIRMWARE_SIZE, const_cast<uint8_t*>(NOVINT_FALCON_NVENT_FIRMWARE)))
 
         {
-          cout << "Firmware loading try failed";
+          ROS_INFO("Firmware loading try failed\n");
           // Completely close and reopen
           // falcon.close();
           // if(!falcon.open(m_varMap["device_index"].as<int>()))
@@ -131,16 +157,16 @@ bool initialise(libnifalcon::FalconDevice* falcon) {
       }
     }
   } else if (!firmware_loaded) {
-    std::cout << "No firmware loaded to device, and no firmware specified to load (--nvent_firmware, --test_firmware, etc...). Cannot continue" << std::endl;
+    ROS_INFO("No firmware loaded to device, and no firmware specified to load (--nvent_firmware, --test_firmware, etc...). Cannot continue\n");
     // return false;
   } else {
     // return true;
   }
   if (!firmware_loaded || !falcon->isFirmwareLoaded()) {
-    std::cout << "No firmware loaded to device, cannot continue" << std::endl;
+    ROS_INFO("No firmware loaded to device, cannot continue\n");
     // return false;
   }
-  std::cout << "Firmware loaded" << std::endl;
+  ROS_INFO("Firmware loaded\n");
 
   // Seems to be important to run the io loop once to be sure of sensible values next time:
   falcon->runIOLoop();
@@ -356,7 +382,7 @@ void FK(const gmtl::Vec3d& theta0, gmtl::Vec3d& pos) {
   }
 
   // Failed to converge, leave last position as it was
-  cout << "Failed to find the tool position in the max tries" << endl;
+  ROS_INFO("Failed to find the tool position in the max tries, leave last position as it was\n");
 }
 
 Falcon::Falcon(FalconDevice* falcon) {
@@ -397,6 +423,17 @@ Falcon::Falcon(FalconDevice* falcon) {
   this->button2 = 0;
   this->button3 = 0;
   this->button4 = 0;
+}
+
+void Falcon::calibrate(FalconDevice* falcon) {
+  while (true) {
+    this->update(falcon);
+
+    if (this->button3 == 1) {
+      break;
+    }
+  }
+  this->button3 = 0;
 }
 
 void Falcon::update(FalconDevice* falcon) {

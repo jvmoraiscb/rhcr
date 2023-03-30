@@ -6,22 +6,11 @@ find_package(
   geometry_msgs
   roscpp
   std_msgs
-  message_generation
-)
-
-add_message_files(
-  FILES
-  output.msg
-)
-
-generate_messages(
-  DEPENDENCIES
   geometry_msgs
-  std_msgs
 )
 
 catkin_package(
-  CATKIN_DEPENDS geometry_msgs roscpp std_msgs message_runtime
+  CATKIN_DEPENDS roscpp std_msgs geometry_msgs
 )
 
 add_executable(
