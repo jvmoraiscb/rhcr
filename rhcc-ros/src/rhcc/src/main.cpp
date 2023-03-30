@@ -50,7 +50,7 @@ int main(int argc, char** argv) {
   // ROS objects
   ros::init(argc, argv, "main");
   ros::NodeHandle n;
-  ros::Publisher pub_pos = n.advertise<geometry_msgs::Vector3>("position", 1000);
+  ros::Publisher pub_pos = n.advertise<geometry_msgs::Vector3>("position_vector", 1000);
   ros::Publisher pub_b1 = n.advertise<std_msgs::Int32>("right_button", 1000);
   ros::Publisher pub_b2 = n.advertise<std_msgs::Int32>("up_button", 1000);
   ros::Publisher pub_b3 = n.advertise<std_msgs::Int32>("center_button", 1000);
@@ -58,11 +58,14 @@ int main(int argc, char** argv) {
   ros::Rate loop_rate(100);
 
   ROS_INFO("The following topics started:\n");
-  ROS_INFO("/position\n");
-  ROS_INFO("/right_button\n");
-  ROS_INFO("/up_button\n");
-  ROS_INFO("/center_button\n");
-  ROS_INFO("/left_button\n");
+  ROS_INFO("Publisher:\n");
+  ROS_INFO("- /position_vector\n");
+  ROS_INFO("- /right_button\n");
+  ROS_INFO("- /up_button\n");
+  ROS_INFO("- /center_button\n");
+  ROS_INFO("- /left_button\n");
+  ROS_INFO("Subscriber:\n");
+  ROS_INFO("- /force_vector\n");
 
   // Variables
   geometry_msgs::Vector3 pos;
