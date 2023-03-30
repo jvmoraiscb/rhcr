@@ -15,9 +15,68 @@ using namespace libnifalcon;
 using namespace std;
 using namespace StamperKinematicImpl;
 
+bool initialise(libnifalcon::FalconDevice* falcon);
+void IK(Angle& angles, const gmtl::Vec3d& worldPosition);
+void FK(const gmtl::Vec3d& theta0, gmtl::Vec3d& pos);
+gmtl::Matrix33d jacobian(const Angle& angles);
+
+class Falcon {
+ private:
+  double max_x, max_y, max_z;
+  double min_x, min_y, min_z;
+  double x, y, z;
+  bool button1Down, button2Down, button3Down, button4Down;
+  int button1, button2, button3, button4;
+
+ public:
+  Falcon(libnifalcon::FalconDevice* falcon);
+  void update(libnifalcon::FalconDevice* falcon);
+  void get(double* x, double* y, double* z, int* button1, int* button2, int* button3, int* button4);
+};
+
+int main(int argc, char** argv) {
+  // Falcon object
+  libnifalcon::FalconDevice falcon;
+  if (!initialise(&falcon))
+    return 1;
+  Falcon f = Falcon(&falcon);
+
+  // ROS objects
+  ros::init(argc, argv, "main");
+  ros::NodeHandle n;
+  ros::Publisher pub = n.advertise<rhcc::output>("output", 1);
+  ros::Rate loop_rate(10);
+
+  // Variables
+  rhcc::output msg;
+  double x, y, z;
+  int button1, button2, button3, button4;
+
+  while (ros::ok()) {
+    f.update(&falcon);
+    f.get(&x, &y, &z, &button1, &button2, &button3, &button4);
+
+    msg.pos.x = (float)x;
+    msg.pos.y = (float)y;
+    msg.pos.z = (float)z;
+    msg.b1 = button1;
+    msg.b2 = button2;
+    msg.b3 = button3;
+    msg.b4 = button4;
+
+    ROS_INFO("x: %.2f, y: %.2f, z: %.2f | b1: %d, b2: %d, b3: %d, b4:%d\n", msg.pos.x, msg.pos.y, msg.pos.z, msg.b1, msg.b2, msg.b3, msg.b4);
+
+    pub.publish(msg);
+
+    ros::spinOnce();
+
+    loop_rate.sleep();
+  }
+}
+
 /// Ask libnifalcon to get the Falcon ready for action
 /// nothing clever here, straight from the examples
-bool initialise(FalconDevice* falcon) {
+bool initialise(libnifalcon::FalconDevice* falcon) {
   falcon->setFalconFirmware<FalconFirmwareNovintSDK>();
 
   cout << "Setting up comm interface for Falcon comms" << endl;
@@ -300,7 +359,7 @@ void FK(const gmtl::Vec3d& theta0, gmtl::Vec3d& pos) {
   cout << "Failed to find the tool position in the max tries" << endl;
 }
 
-myFalcon::myFalcon(FalconDevice* falcon) {
+Falcon::Falcon(FalconDevice* falcon) {
   // Ask libnifalcon to update the encoder positions and apply any forces waiting:
   falcon->runIOLoop();
 
@@ -322,7 +381,7 @@ myFalcon::myFalcon(FalconDevice* falcon) {
   double y_temp = pos[1];
   double z_temp = pos[2];
 
-  // default values
+  // Default values
   this->max_x = x_temp;
   this->min_x = x_temp;
   this->max_y = y_temp;
@@ -340,7 +399,7 @@ myFalcon::myFalcon(FalconDevice* falcon) {
   this->button4 = 0;
 }
 
-void myFalcon::update(FalconDevice* falcon) {
+void Falcon::update(FalconDevice* falcon) {
   // Ask libnifalcon to update the encoder positions and apply any forces waiting:
   falcon->runIOLoop();
 
@@ -358,10 +417,10 @@ void myFalcon::update(FalconDevice* falcon) {
   // Forward Kinematics
   FK(encoderAngles, pos);
 
+  // Normalize values
   double x_temp = pos[0];
   double y_temp = pos[1];
   double z_temp = pos[2];
-
   if (x_temp > this->max_x) {
     this->max_x = x_temp;
   }
@@ -385,7 +444,7 @@ void myFalcon::update(FalconDevice* falcon) {
   this->y = (y_temp - this->min_y) / (this->max_y - this->min_y);
   this->z = (z_temp - this->min_z) / (this->max_z - this->min_z);
 
-  // Cheap debounce
+  // Debounces for all buttons
   if (falcon->getFalconGrip()->getDigitalInputs() & libnifalcon::FalconGripFourButton::BUTTON_1) {
     this->button1Down = true;
   } else if (button1Down) {
@@ -396,8 +455,6 @@ void myFalcon::update(FalconDevice* falcon) {
     }
     this->button1Down = false;
   }
-
-  // Cheap debounce
   if (falcon->getFalconGrip()->getDigitalInputs() & libnifalcon::FalconGripFourButton::BUTTON_2) {
     this->button2Down = true;
   } else if (button2Down) {
@@ -408,8 +465,6 @@ void myFalcon::update(FalconDevice* falcon) {
     }
     this->button2Down = false;
   }
-
-  // Cheap debounce
   if (falcon->getFalconGrip()->getDigitalInputs() & libnifalcon::FalconGripFourButton::BUTTON_3) {
     this->button3Down = true;
   } else if (this->button3Down) {
@@ -420,8 +475,6 @@ void myFalcon::update(FalconDevice* falcon) {
     }
     this->button3Down = false;
   }
-
-  // Cheap debounce
   if (falcon->getFalconGrip()->getDigitalInputs() & libnifalcon::FalconGripFourButton::BUTTON_4) {
     this->button4Down = true;
   } else if (this->button4Down) {
@@ -434,7 +487,7 @@ void myFalcon::update(FalconDevice* falcon) {
   }
 }
 
-void myFalcon::get(double* x, double* y, double* z, int* button1, int* button2, int* button3, int* button4) {
+void Falcon::get(double* x, double* y, double* z, int* button1, int* button2, int* button3, int* button4) {
   *x = this->x;
   *y = this->y;
   *z = this->z;
@@ -442,32 +495,4 @@ void myFalcon::get(double* x, double* y, double* z, int* button1, int* button2, 
   *button2 = this->button2;
   *button3 = this->button3;
   *button4 = this->button4;
-}
-
-int main(int argc, char** argv) {
-  // ROS objects
-  ros::init(argc, argv, "main");
-  ros::NodeHandle n;
-  ros::Publisher pub = n.advertise<rhcc::output>("output", 1);
-  ros::Rate loop_rate(10);
-
-  rhcc::output msg;
-
-  while (ros::ok()) {
-    msg.pos.x = 0;
-    msg.pos.y = 0;
-    msg.pos.z = 0;
-    msg.b1 = false;
-    msg.b2 = false;
-    msg.b3 = false;
-    msg.b4 = false;
-
-    ROS_INFO("x: %.2f, y: %.2f, z: %.2f | b1: %d, b2: %d, b3: %d, b4:%d\n", msg.pos.x, msg.pos.y, msg.pos.z, msg.b1, msg.b2, msg.b3, msg.b4);
-
-    pub.publish(msg);
-
-    ros::spinOnce();
-
-    loop_rate.sleep();
-  }
 }

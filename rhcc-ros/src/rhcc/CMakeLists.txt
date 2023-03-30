@@ -26,10 +26,14 @@ catkin_package(
 
 add_executable(
   main
-  src/main.cpp)
+  src/main.cpp
+)
+
 target_link_libraries(
   main
   ${catkin_LIBRARIES}
+  nifalcon
+  usb-1.0
 )
 
 include_directories(
