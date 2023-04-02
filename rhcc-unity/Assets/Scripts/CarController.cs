@@ -3,16 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(InputManager))]
 public class CarController : MonoBehaviour
 {
-    private const string HORIZONTAL = "Horizontal";
-    private const string VERTICAL = "Vertical";
-
-    private float horizontalInput;
-    private float verticalInput;
+    private InputManager im;
     private float currentSteerAngle;
     private float currentbreakForce;
-    private bool isBreaking;
 
     [SerializeField] private float motorForce;
     [SerializeField] private float breakForce;
@@ -28,27 +24,22 @@ public class CarController : MonoBehaviour
     [SerializeField] private Transform rearLeftWheelTransform;
     [SerializeField] private Transform rearRightWheelTransform;
 
+    void Start(){
+        im = GetComponent<InputManager>();
+    }
+    
     private void FixedUpdate()
     {
-        GetInput();
         HandleMotor();
         HandleSteering();
         UpdateWheels();
     }
 
-
-    private void GetInput()
-    {
-        horizontalInput = Input.GetAxis(HORIZONTAL);
-        verticalInput = Input.GetAxis(VERTICAL);
-        isBreaking = Input.GetKey(KeyCode.Space);
-    }
-
     private void HandleMotor()
     {
-        frontLeftWheelCollider.motorTorque = verticalInput * motorForce;
-        frontRightWheelCollider.motorTorque = verticalInput * motorForce;
-        currentbreakForce = isBreaking ? breakForce : 0f;
+        frontLeftWheelCollider.motorTorque = im.verticalInput * motorForce;
+        frontRightWheelCollider.motorTorque = im.verticalInput * motorForce;
+        currentbreakForce = im.isBreaking ? breakForce : 0f;
         ApplyBreaking();
     }
 
@@ -62,7 +53,7 @@ public class CarController : MonoBehaviour
 
     private void HandleSteering()
     {
-        currentSteerAngle = maxSteerAngle * horizontalInput;
+        currentSteerAngle = maxSteerAngle * im.horizontalInput;
         frontLeftWheelCollider.steerAngle = currentSteerAngle;
         frontRightWheelCollider.steerAngle = currentSteerAngle;
     }
