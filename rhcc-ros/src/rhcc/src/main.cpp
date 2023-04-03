@@ -12,5 +12,5 @@ int main(int argc, char** argv) {
   Node n = Node(Falcon(&falconDevice), 100, nodeHandle);
   n.Run();
 
-  return 0;
+  return 2;
 }

@@ -1,21 +1,5 @@
 #include "falcon.h"
 
-#include <falcon/core/FalconDevice.h>
-#include <falcon/firmware/FalconFirmwareNovintSDK.h>
-#include <falcon/grip/FalconGripFourButton.h>
-#include <falcon/kinematic/FalconKinematicStamper.h>
-#include <falcon/util/FalconFirmwareBinaryNvent.h>
-
-#include <cmath>
-#include <iostream>
-#include <string>
-
-#include "ros/ros.h"
-
-using namespace libnifalcon;
-using namespace std;
-using namespace StamperKinematicImpl;
-
 /// Ask libnifalcon to get the Falcon ready for action
 /// nothing clever here, straight from the examples
 bool initialise(libnifalcon::FalconDevice* falcon) {
@@ -332,6 +316,9 @@ Falcon::Falcon(FalconDevice* falcon) {
   this->max_z = z_temp;
   this->min_z = z_temp;
 
+  this->x_force = 0;
+  this->y_force = 0;
+  this->z_force = 0;
   this->button1Down = false;
   this->button2Down = false;
   this->button3Down = false;
@@ -371,6 +358,33 @@ void Falcon::update() {
 
   // Forward Kinematics
   FK(encoderAngles, pos);
+
+  // Call input function
+  this->updatePosition(pos);
+
+  // // Inverse kinematics
+  // Angle angles;
+  // IK(angles, pos);
+
+  // // Jacobian
+  // gmtl::Matrix33d J;
+  // J = jacobian(angles);
+
+  // gmtl::Vec3d force(this->x_force, this->y_force, this->z_force);
+  // // Convert force to motor torque values:
+  // J.setTranspose(J.getData());
+  // gmtl::Vec3d torque = J * force;
+
+  // Call output function
+  std::array<double, 3UL> force;
+  force[0] = this->x_force;
+  force[1] = this->y_force;
+  force[2] = this->z_force;
+  this->updateForces(force);
+}
+
+void Falcon::updatePosition(gmtl::Vec3d pos) {
+  FalconDevice* falcon = this->falconDevice;
 
   // Normalize values
   double x_temp = pos[0];
@@ -442,6 +456,47 @@ void Falcon::update() {
   }
 }
 
+void Falcon::updateForces(std::array<double, 3UL> force) {
+  FalconDevice* falcon = this->falconDevice;
+
+  // // Now, we must scale the torques to avoid saturation of a motor
+  // // changing the ratio of torques and thus the force direction
+
+  // // Find highest torque:
+  // double maxTorque = 300.0;  // Rather random choice here, could be higher
+  // double largestTorqueValue = 0.0;
+  // int largestTorqueAxis = -1;
+  // for (int i = 0; i < 3; i++) {
+  //   if (abs(torque[i]) > largestTorqueValue) {
+  //     largestTorqueValue = abs(torque[i]);
+  //     largestTorqueAxis = i;
+  //   }
+  // }
+  // // If axis with the largest torque is over the limit, scale them all to
+  // // bring it back to the limit:
+  // if (largestTorqueValue > maxTorque) {
+  //   double scale = largestTorqueValue / maxTorque;
+  //   torque /= scale;
+  // }
+
+  // // Convert torque to motor voltages:
+  // torque *= 10000.0;
+  // std::array<int, 3> enc_vec;
+  // enc_vec[0] = -torque[0];
+  // enc_vec[1] = -torque[1];
+  // enc_vec[2] = -torque[2];
+
+  // And send them off to libnifalcon
+  // falcon->getFalconFirmware()->setForces(enc_vec);
+
+  double maxForce = 10;
+  for (int i = 0; i < 3; i++) {
+    if (force[i] > maxForce)
+      maxForce[i] = maxForce;
+  }
+  falcon->setForce(force);
+}
+
 void Falcon::get(double* x, double* y, double* z, int* button1, int* button2, int* button3, int* button4) {
   *x = this->x * 2 - 1;
   *y = this->y * 2 - 1;
@@ -450,4 +505,10 @@ void Falcon::get(double* x, double* y, double* z, int* button1, int* button2, in
   *button2 = this->button2;
   *button3 = this->button3;
   *button4 = this->button4;
+}
+
+void Falcon::set(double x, double y, double z) {
+  this->x_force = x;
+  this->y_force = y;
+  this->z_force = z;
 }

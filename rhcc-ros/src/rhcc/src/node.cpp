@@ -13,15 +13,16 @@ Node::Node(Falcon falcon, int rate, ros::NodeHandle n) {
   this->pub_up_b = n.advertise<std_msgs::Int32>("up_button", rate);
   this->pub_center_b = n.advertise<std_msgs::Int32>("center_button", rate);
   this->pub_left_b = n.advertise<std_msgs::Int32>("left_button", rate);
+  this->sub_force = n.subscribe("force_vector", rate, &Node::subCallback, this);
 
   ROS_INFO("The following topics started:\n");
-  ROS_INFO("Publisher:\n");
+  ROS_INFO("Publishers:\n");
   ROS_INFO("- /position_vector\n");
   ROS_INFO("- /right_button\n");
   ROS_INFO("- /up_button\n");
   ROS_INFO("- /center_button\n");
   ROS_INFO("- /left_button\n");
-  ROS_INFO("Subscriber:\n");
+  ROS_INFO("Subscribers:\n");
   ROS_INFO("- /force_vector\n");
 }
 
@@ -59,4 +60,7 @@ void Node::Run() {
 
     loop_rate.sleep();
   }
+}
+void Node::subCallback(const geometry_msgs::Vector3::ConstPtr& msg) {
+  this->falcon.set((double)(msg->x), (double)(msg->y), (double)(msg->z));
 }

@@ -5,6 +5,10 @@ using UnityEngine;
 
 public class CarController : MonoBehaviour
 {
+    public float force_x;
+    public float force_y;
+    public float force_z;
+    
     public float throttle;
     public float steer;
     public bool isBreaking;
