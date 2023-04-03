@@ -3,12 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(InputManager))]
 public class CarController : MonoBehaviour
 {
-    private InputManager im;
+    public float throttle;
+    public float steer;
+    public bool isBreaking;
+    
     private float currentSteerAngle;
     private float currentbreakForce;
+    
 
     [SerializeField] private float motorForce;
     [SerializeField] private float breakForce;
@@ -23,10 +26,6 @@ public class CarController : MonoBehaviour
     [SerializeField] private Transform frontRightWheeTransform;
     [SerializeField] private Transform rearLeftWheelTransform;
     [SerializeField] private Transform rearRightWheelTransform;
-
-    void Start(){
-        im = GetComponent<InputManager>();
-    }
     
     private void FixedUpdate()
     {
@@ -37,9 +36,9 @@ public class CarController : MonoBehaviour
 
     private void HandleMotor()
     {
-        frontLeftWheelCollider.motorTorque = im.verticalInput * motorForce;
-        frontRightWheelCollider.motorTorque = im.verticalInput * motorForce;
-        currentbreakForce = im.isBreaking ? breakForce : 0f;
+        rearLeftWheelCollider.motorTorque = throttle * motorForce;
+        rearRightWheelCollider.motorTorque = throttle * motorForce;
+        currentbreakForce = isBreaking ? breakForce : 0f;
         ApplyBreaking();
     }
 
@@ -53,7 +52,7 @@ public class CarController : MonoBehaviour
 
     private void HandleSteering()
     {
-        currentSteerAngle = maxSteerAngle * im.horizontalInput;
+        currentSteerAngle = maxSteerAngle * steer;
         frontLeftWheelCollider.steerAngle = currentSteerAngle;
         frontRightWheelCollider.steerAngle = currentSteerAngle;
     }
