@@ -20,7 +20,7 @@ namespace RosSharp.RosBridgeClient
     public class RosForceVectorPublisher : UnityPublisher<MessageTypes.Geometry.Vector3>
     {
         [SerializeField]
-        private CarController carController;
+        private CollisionController collisionController;
         
         private MessageTypes.Geometry.Vector3 message;
 
@@ -41,9 +41,9 @@ namespace RosSharp.RosBridgeClient
         }
         private void UpdateMessage()
         {
-            message.x = carController.force_x;
-            message.y = carController.force_y;
-            message.z = carController.force_z;
+            message.x = collisionController.force_x;
+            message.y = collisionController.force_y;
+            message.z = collisionController.force_z;
             
             Publish(message);
         }

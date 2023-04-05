@@ -5,17 +5,14 @@ using UnityEngine;
 
 public class CarController : MonoBehaviour
 {
-    public float force_x;
-    public float force_y;
-    public float force_z;
-    
+    [SerializeField] private Rigidbody car;
+
     public float throttle;
     public float steer;
     public bool isBreaking;
-    
+
     private float currentSteerAngle;
     private float currentbreakForce;
-    
 
     [SerializeField] private float motorForce;
     [SerializeField] private float breakForce;
@@ -31,8 +28,15 @@ public class CarController : MonoBehaviour
     [SerializeField] private Transform rearLeftWheelTransform;
     [SerializeField] private Transform rearRightWheelTransform;
     
+    private void Update()
+    {
+        
+    }
+    
     private void FixedUpdate()
     {
+        Debug.Log(car.velocity);
+
         HandleMotor();
         HandleSteering();
         UpdateWheels();
