@@ -11,6 +11,12 @@ public class CarController : MonoBehaviour
     public float steer;
     public bool isBreaking;
 
+    public float acceleration;
+
+    private float lastAbsSpeed;
+    private float lastTime;
+    private int i;
+    private float speed;
     private float currentSteerAngle;
     private float currentbreakForce;
 
@@ -28,18 +34,30 @@ public class CarController : MonoBehaviour
     [SerializeField] private Transform rearLeftWheelTransform;
     [SerializeField] private Transform rearRightWheelTransform;
     
-    private void Update()
+    private void Start()
     {
-        
+        lastTime = Time.time;
+        i = 0;
     }
     
     private void FixedUpdate()
     {
-        Debug.Log(car.velocity);
+        speed = Mathf.Sqrt(Mathf.Pow(car.velocity.x, 2) + Mathf.Pow(car.velocity.y, 2) + Mathf.Pow(car.velocity.z,2));
+        i += 1;
 
         HandleMotor();
         HandleSteering();
         UpdateWheels();
+
+        if(i == 100){
+            lastAbsSpeed = Mathf.Sqrt(Mathf.Pow(car.velocity.x, 2) + Mathf.Pow(car.velocity.y, 2) + Mathf.Pow(car.velocity.z,2));
+            lastTime += Time.time;
+            i = 0;
+
+            acceleration = (speed - lastAbsSpeed) / (Time.time - lastTime);
+        }
+
+        Debug.Log(acceleration); 
     }
 
     private void HandleMotor()
