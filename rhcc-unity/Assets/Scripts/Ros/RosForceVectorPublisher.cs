@@ -41,9 +41,9 @@ namespace RosSharp.RosBridgeClient
         }
         private void UpdateMessage()
         {
-            message.x = collisionController.force_x;
-            message.y = collisionController.force_y;
-            message.z = collisionController.force_z;
+            message.x = collisionController.force.x;
+            message.y = collisionController.force.x;
+            message.z = collisionController.force.z;
             
             Publish(message);
         }

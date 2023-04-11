@@ -4,11 +4,8 @@ using UnityEngine;
 
 public class CollisionController : MonoBehaviour
 {
-    [SerializeField] private Rigidbody car;
-    
-    public float force_x;
-    public float force_y;
-    public float force_z;
+    [SerializeField]
+    public Vector3 force;
     
     // Start is called before the first frame update
     void Start()

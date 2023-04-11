@@ -7,19 +7,6 @@ public class CarController : MonoBehaviour
 {
     [SerializeField] private Rigidbody car;
 
-    public float throttle;
-    public float steer;
-    public bool isBreaking;
-
-    public float acceleration;
-
-    private float lastAbsSpeed;
-    private float lastTime;
-    private int i;
-    private float speed;
-    private float currentSteerAngle;
-    private float currentbreakForce;
-
     [SerializeField] private float motorForce;
     [SerializeField] private float breakForce;
     [SerializeField] private float maxSteerAngle;
@@ -33,31 +20,42 @@ public class CarController : MonoBehaviour
     [SerializeField] private Transform frontRightWheeTransform;
     [SerializeField] private Transform rearLeftWheelTransform;
     [SerializeField] private Transform rearRightWheelTransform;
+
+    public float throttle;
+    public float steer;
+    public bool isBreaking;
+
+    public float acceleration;
+    public float speed;
+
+    private float currentVelocity;
+    private float lastVelocity;
+    
+    private float currentSteerAngle;
+    private float currentbreakForce;
     
     private void Start()
     {
-        lastTime = Time.time;
-        i = 0;
+
+    }
+
+    private void Update(){
+        Debug.Log(acceleration);
     }
     
     private void FixedUpdate()
     {
-        speed = Mathf.Sqrt(Mathf.Pow(car.velocity.x, 2) + Mathf.Pow(car.velocity.y, 2) + Mathf.Pow(car.velocity.z,2));
-        i += 1;
-
         HandleMotor();
         HandleSteering();
         UpdateWheels();
 
-        if(i == 100){
-            lastAbsSpeed = Mathf.Sqrt(Mathf.Pow(car.velocity.x, 2) + Mathf.Pow(car.velocity.y, 2) + Mathf.Pow(car.velocity.z,2));
-            lastTime += Time.time;
-            i = 0;
+        speed = (car.velocity.magnitude > 0.0005) ? car.velocity.magnitude : 0f;
 
-            acceleration = (speed - lastAbsSpeed) / (Time.time - lastTime);
-        }
+        currentVelocity = speed;
+        acceleration = Mathf.Abs((currentVelocity - lastVelocity) / Time.fixedDeltaTime);
+        // float scalarAcceleration = Mathf.Sqrt(Mathf.Pow(acceleration.x, 2) + Mathf.Pow(acceleration.y, 2) + Mathf.Pow(acceleration.z,2));
 
-        Debug.Log(acceleration); 
+        lastVelocity = currentVelocity; 
     }
 
     private void HandleMotor()
