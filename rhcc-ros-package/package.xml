@@ -2,7 +2,7 @@
 <package format="2">
   <name>rhcc</name>
   <version>1.0.0</version>
-  <description>The remote-haptic-control-car package</description>
+  <description>The Remote-Haptic-Control-Car ROS package</description>
 
   <maintainer email="jv.moraiscb@gmail.com">Joao Victor Morais</maintainer>
 
