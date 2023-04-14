@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>rhcc</name>
+  <name>rhcr</name>
   <version>1.0.0</version>
-  <description>The Remote-Haptic-Control-Car ROS package</description>
+  <description>The Remote Haptic Control Robot ROS package</description>
 
   <maintainer email="jv.moraiscb@gmail.com">Joao Victor Morais</maintainer>
 
