@@ -18,7 +18,7 @@ RHCR is a scientific initiation project carried out by [NTA's Laboratory](https:
 
 Our goal is to promote a user-friendly robot controller using virtual reality elements, creating an environment where the user can see, feel and control a robot even if they are not in the same place.
 
-##Methods
+## Methods
 
 - **Ackermann Robot**
 
