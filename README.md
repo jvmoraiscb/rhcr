@@ -54,7 +54,7 @@ sudo apt-get upgrade
 and for the next steps:
 
 ```bash
-sudo apt-get git curl build-essential udev
+sudo apt-get install git curl build-essential udev
 ```
 
 #### Docker Alternative
@@ -94,7 +94,7 @@ source ~/.bashrc
 install the dependencies:
 
 ```bash
-sudo apt install python-rosdep python-rosinstall python-rosinstall-generator python-wstool ros-melodic-rosbridge-suite
+sudo apt-get install python-rosdep python-rosinstall python-rosinstall-generator python-wstool ros-melodic-rosbridge-suite
 ```
 
 and finally, initialize and update rosdep:
@@ -157,7 +157,8 @@ sudo /sbin/ldconfig -v
 set the udev permission:
 
 ```bash
-sudo echo 'SUBSYSTEM=="usb", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="cb48", MODE="0666"' > /etc/udev/rules.d/99-falcon-rules.rules
+echo 'SUBSYSTEM=="usb", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="cb48", MODE="0666"' > 99-falcon-rules.rules
+sudo cp 99-falcon-rules.rules /etc/udev/rules.d
 ```
 
 reload the udev rules:
@@ -166,7 +167,7 @@ reload the udev rules:
 sudo udevadm control --reload-rules
 ```
 
-and finally, delete the temporary folder:
+and finally, **unplug and replug the falcon** and delete the temporary folder:
 
 ```bash
 sudo rm -r ~/rhcr_temp/
