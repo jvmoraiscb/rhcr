@@ -492,7 +492,7 @@ void Falcon::updateForces(std::array<double, 3UL> force) {
   double maxForce = 10;
   for (int i = 0; i < 3; i++) {
     if (force[i] > maxForce)
-      maxForce[i] = maxForce;
+      force[i] = maxForce;
   }
   falcon->setForce(force);
 }
