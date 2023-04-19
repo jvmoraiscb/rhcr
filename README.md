@@ -6,7 +6,6 @@
 - [Methods](#methods)
 - [Installation](#installation)
   - [Linux](#linux)
-    - [Docker Alternative](#docker-alternative)
     - [ROS Melodic](#ros-melodic)
     - [Libnifalcon](#libnifalcon)
   - [Windows](#windows)
@@ -20,19 +19,22 @@ Our goal is to promote a user-friendly robot controller using virtual reality el
 
 ## Methods
 
-- **Ackermann Robot**
+- #### Ackermann Robot
 
-#### Linux environment
+  ![ackermann](/doc/images/ackermann.jpg)
 
-- **Novint Falcon** as the main controller
-  - using the open-source library [libnifalcon](https://github.com/libnifalcon/libnifalcon)
-- **ROS** for communication between all components
-  - using the [Melodic](http://wiki.ros.org/melodic/Installation/Ubuntu) version (Ubuntu 18.04)
+- #### Linux environment
 
-#### Windows environment
+  - **Novint Falcon** as the main controller
+    ![novint falcon](/doc/images/falcon.jpeg)
+    - using the open-source library [libnifalcon](https://github.com/libnifalcon/libnifalcon)
+  - **ROS** for communication between all components
+    - using the [Melodic](http://wiki.ros.org/melodic/Installation/Ubuntu) version (Ubuntu 18.04)
 
-- **Unity** to simulate the environment
-  - using the open-source library [ros-sharp](https://github.com/siemens/ros-sharp)
+- #### Windows environment
+
+  - **Unity** to simulate the environment
+    - using the open-source library [ros-sharp](https://github.com/siemens/ros-sharp)
 
 ## Installation
 
@@ -54,12 +56,8 @@ sudo apt-get upgrade
 and for the next steps:
 
 ```bash
-sudo apt-get install git curl build-essential udev
+sudo apt-get install git curl build-essential udev iproute2 lsb-release
 ```
-
-#### Docker Alternative
-
-_Under construction_
 
 #### ROS Melodic
 
