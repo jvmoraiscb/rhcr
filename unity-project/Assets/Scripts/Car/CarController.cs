@@ -49,11 +49,12 @@ public class CarController : MonoBehaviour
         HandleSteering();
         UpdateWheels();
 
-        speed = (car.velocity.magnitude > 0.0005) ? car.velocity.magnitude : 0f;
+        speed = (Mathf.Abs(car.velocity.magnitude) > 0.1) ? car.velocity.magnitude : 0f;
 
         currentVelocity = speed;
-        acceleration = Mathf.Abs((currentVelocity - lastVelocity) / Time.fixedDeltaTime);
-        // float scalarAcceleration = Mathf.Sqrt(Mathf.Pow(acceleration.x, 2) + Mathf.Pow(acceleration.y, 2) + Mathf.Pow(acceleration.z,2));
+
+        acceleration = (currentVelocity - lastVelocity) / Time.fixedDeltaTime;
+        if(throttle < 0) acceleration *= -1;
 
         lastVelocity = currentVelocity; 
     }

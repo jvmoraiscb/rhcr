@@ -6,6 +6,9 @@ public class CollisionController : MonoBehaviour
 {
     [SerializeField]
     public Vector3 force;
+
+    [SerializeField]
+    public CarController car;
     
     // Start is called before the first frame update
     void Start()
@@ -16,6 +19,6 @@ public class CollisionController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        force.z = -1 * car.acceleration;
     }
 }

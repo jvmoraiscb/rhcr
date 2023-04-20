@@ -29,11 +29,13 @@ Our goal is to promote a user-friendly robot controller using virtual reality el
     ![novint falcon](/doc/images/falcon.jpg)
     - using the open-source library [libnifalcon](https://github.com/libnifalcon/libnifalcon)
   - **ROS** for communication between all components
+    ![ros terminal](/doc/images/ros_terminal.png)
     - using the [Melodic](http://wiki.ros.org/melodic/Installation/Ubuntu) version (Ubuntu 18.04)
 
 - #### Windows environment
 
   - **Unity** to simulate the environment
+    ![unity project](/doc/images/unity-project.png)
     - using the open-source library [ros-sharp](https://github.com/siemens/ros-sharp)
 
 ## Installation
