@@ -26,7 +26,7 @@ Our goal is to promote a user-friendly robot controller using virtual reality el
 - #### Linux environment
 
   - **Novint Falcon** as the main controller
-    ![novint falcon](/doc/images/falcon.jpeg)
+    ![novint falcon](/doc/images/falcon.jpg)
     - using the open-source library [libnifalcon](https://github.com/libnifalcon/libnifalcon)
   - **ROS** for communication between all components
     - using the [Melodic](http://wiki.ros.org/melodic/Installation/Ubuntu) version (Ubuntu 18.04)
