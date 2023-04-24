@@ -1,23 +1,10 @@
 # RHCR - Remote Haptic Control Robot
 
-## Sections
-
-- [Introduction](#introduction)
-- [Methods](#methods)
-- [Installation](#installation)
-  - [Linux](#linux)
-    - [ROS Melodic](#ros-melodic)
-    - [Libnifalcon](#libnifalcon)
-  - [Windows](#windows)
-    - [Unity](#unity)
-
-## Introduction
-
 RHCR is a scientific initiation project carried out by [NTA's Laboratory](https://nta.ufes.br/) at [UFES](https://www.ufes.br/).
 
 Our goal is to promote a user-friendly robot controller using virtual reality elements, creating an environment where the user can see, feel and control a robot even if they are not in the same place.
 
-## Methods
+## Components
 
 - #### Ackermann Robot
 
@@ -44,7 +31,7 @@ As previously mentioned, the project needs two operating systems, a linux enviro
 
 Below is a step-by-step tutorial on how to prepare each environment:
 
-### Linux
+### Linux environment
 
 _Recommended version:_ **_Ubuntu 18.04_**
 
@@ -58,10 +45,10 @@ sudo apt-get upgrade
 and for the next steps:
 
 ```bash
-sudo apt-get install git curl build-essential udev iproute2 lsb-release
+sudo apt-get install -y git curl build-essential udev iproute2 lsb-release
 ```
 
-#### ROS Melodic
+#### Installing ROS Melodic
 
 _A more complete tutorial can be found on their official [website](http://wiki.ros.org/melodic/Installation/Ubuntu)._
 
@@ -81,20 +68,20 @@ install the package:
 
 ```bash
 sudo apt-get update
-sudo apt-get install ros-melodic-desktop-full
+sudo apt-get install -y ros-melodic-desktop-full
 ```
 
 setup the environment:
 
 ```bash
-echo "source /opt/ros/melodic/setup.bash" >> ~/.bashrc
+printf "\nsource /opt/ros/melodic/setup.bash" >> ~/.bashrc
 source ~/.bashrc
 ```
 
 install the dependencies:
 
 ```bash
-sudo apt-get install python-rosdep python-rosinstall python-rosinstall-generator python-wstool ros-melodic-rosbridge-suite
+sudo apt-get install -y python-rosdep python-rosinstall python-rosinstall-generator python-wstool ros-melodic-rosbridge-suite
 ```
 
 and finally, initialize and update rosdep:
@@ -104,15 +91,14 @@ sudo rosdep init
 rosdep update
 ```
 
-#### Libnifalcon
+#### Installing libnifalcon
 
 _A more complete tutorial can be found on their official [repository](https://github.com/libnifalcon/libnifalcon)._
 
-First, create a temporary folder:
+First, go to linux temporary folder:
 
 ```bash
-mkdir ~/rhcr_temp
-cd ~/rhcr_temp
+cd /tmp
 ```
 
 clone the libnifalcon repository:
@@ -125,10 +111,10 @@ cd libnifalcon
 install the dependecies:
 
 ```bash
-sudo apt-get install cmake libusb-1.0.0
+sudo apt-get install -y cmake libusb-1.0.0
 ```
 
-create another temporary folder:
+create a build folder:
 
 ```bash
 mkdir build
@@ -167,13 +153,73 @@ reload the udev rules:
 sudo udevadm control --reload-rules
 ```
 
-and finally, **unplug and replug the falcon** and delete the temporary folder:
+and finally, **unplug and replug the falcon**
+
+#### Setting up ROS workspace
+
+First, go to linux temporary folder:
 
 ```bash
-sudo rm -r ~/rhcr_temp/
-cd ~/
+cd /tmp
 ```
 
-### Windows
+clone this repository:
+
+```bash
+git clone https://github.com/jvmoraiscb/rhcr.git
+cd rhcr
+```
+
+create a ROS workspace folder in home **if it doesn't already exist**:
+
+```bash
+mkdir ~/ros-workspace ~/ros-workspace/src
+```
+
+copy the ros-package to ros-workspace/src:
+
+```bash
+cp -r ros-package ~/ros-workspace/src
+```
+
+go to ros-workspace and run catkin make:
+
+```bash
+cd ~/ros-workspace
+catkin_make
+```
+
+and finally, setup the environment:
+
+```bash
+printf "\nsource ~/ros-workspace/devel/setup.bash" >> ~/.bashrc
+source ~/.bashrc
+```
+
+### Windows environment
 
 _Under construction_
+
+## Running
+
+Now that both systems are set up:
+
+- #### In the Linux environment:
+
+  - First, open a terminal and start the websocket:
+
+  ```bash
+  roslaunch rosbridge_server rosbridge_websocket.launch
+  ```
+
+  - open **another** terminal and run the package:
+
+  ```bash
+  rosrun rhcr main
+  ```
+
+  - Follow the second terminal instructions to calibrate the Falcon.
+
+- #### In the Windows environment:
+
+  - Just hit unity play button.

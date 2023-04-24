@@ -24,6 +24,8 @@ public class CarController : MonoBehaviour
     public float throttle;
     public float steer;
     public bool isBreaking;
+    public bool isColliding;
+    public bool isCollidingFront;
 
     public float acceleration;
     public float speed;
@@ -40,7 +42,7 @@ public class CarController : MonoBehaviour
     }
 
     private void Update(){
-        Debug.Log(acceleration);
+        Debug.Log(speed);
     }
     
     private void FixedUpdate()
@@ -54,7 +56,6 @@ public class CarController : MonoBehaviour
         currentVelocity = speed;
 
         acceleration = (currentVelocity - lastVelocity) / Time.fixedDeltaTime;
-        if(throttle < 0) acceleration *= -1;
 
         lastVelocity = currentVelocity; 
     }
@@ -96,5 +97,19 @@ public class CarController : MonoBehaviour
         Quaternion rot;
         wheelCollider.GetWorldPose(out pos, out rot);
         wheelTransform.rotation = rot;
+    }
+
+    private void OnCollisionEnter(Collision collision){
+        isColliding = true;
+        if(throttle > 0){
+            isCollidingFront = true;
+        }
+        else{
+            isCollidingFront = false;
+        }
+    }
+
+    private void OnCollisionExit(Collision collision){
+        isColliding = false;
     }
 }
