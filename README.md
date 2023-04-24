@@ -198,7 +198,13 @@ source ~/.bashrc
 
 ### Windows environment
 
-_Under construction_
+_Recommended version:_ **_Windows 10_**
+
+First, visit https://unity.com/download to download and install Unity Hub.
+
+After, visit https://unity.com/releases/editor/archive and find **Unity 2020.3.29** version, then click the Unity Hub button and proceed to install the editor.
+
+Now, download 
 
 ## Running
 
