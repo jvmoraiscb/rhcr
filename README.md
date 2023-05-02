@@ -204,7 +204,15 @@ First, visit https://unity.com/download to download and install Unity Hub.
 
 After, visit https://unity.com/releases/editor/archive and find **Unity 2020.3.29** version, then click the Unity Hub button and proceed to install the editor.
 
-Now, download 
+Now, download this repository, unzip and open **unity-project** folder in Unity (all necessary plugins and libraries are already included in the project).
+
+Finally, open the RosHolder gameobject in inspector and change the **Ros Bridge Server Url** to the **ipv4** of the linux environment, following the example below:
+
+```bash
+ws://127.0.0.1:9090
+```
+
+_Before running the project, it's a good idea to check that both computers are "seeing" each other (just ping them)._
 
 ## Running
 
@@ -228,4 +236,4 @@ Now that both systems are set up:
 
 - #### In the Windows environment:
 
-  - Just hit unity play button.
+  - Just hit Unity play button and have fun.
