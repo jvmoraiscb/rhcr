@@ -20,4 +20,14 @@ make && \
 make install && \
 /sbin/ldconfig -v
 
-RUN mkdir -p ros-workspace/src
+RUN mkdir -p /ros-workspace/src
+COPY rhcr/ /ros-workspace/src/rhcr
+
+RUN . /opt/ros/humble/setup.sh && \
+cd /ros-workspace && \
+rosdep install -i --from-path src --rosdistro humble -y && \
+colcon build
+
+CMD . /opt/ros/humble/setup.sh && \
+. /ros-workspace/install/local_setup.sh && \
+ros2 run rhcr main
