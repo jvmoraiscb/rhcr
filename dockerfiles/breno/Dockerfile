@@ -1,20 +1,19 @@
-FROM ros:humble
+FROM ros:noetic
 
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update
 
-RUN apt-get install -y git
+RUN apt-get install -y git build-essential
 
-RUN mkdir -p /ros-workspace/src && \
-cd /ros-workspace/src && \
-git clone https://github.com/allenh1/rplidar_ros.git
+RUN mkdir -p ros-workspace/src
 
-RUN . /opt/ros/humble/setup.sh && \
-cd /ros-workspace && \
-rosdep install -i --from-path src --rosdistro humble -y && \
-colcon build
+RUN cd ros-workspace/src && \
+git clone https://github.com/Slamtec/rplidar_ros.git
 
-CMD . /opt/ros/humble/setup.sh && \
-. /ros-workspace/install/local_setup.sh && \
-ros2 launch rplidar_ros rplidar.launch.py
+RUN . /opt/ros/noetic/setup.sh && \
+cd ros-workspace && \
+catkin_make
+
+CMD . /ros-workspace/devel/setup.sh && \
+roslaunch rplidar_ros rplidar_a2m8.launch
