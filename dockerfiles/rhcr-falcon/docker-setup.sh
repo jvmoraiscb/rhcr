@@ -11,3 +11,7 @@ echo \
   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
   sudo apt-get update
   sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo docker build -t rhcr-falcon .
+cp docker-run.sh ~/
+cd
+sudo chmod +x docker-run.sh
