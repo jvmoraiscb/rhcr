@@ -549,14 +549,21 @@ class Falcon {
 
 class Falcon_Node : public rclcpp::Node {
    public:
-    Falcon_Node(Falcon* falcon)
-        : Node("rhcr_falcon"), count_(0) {
+    Falcon_Node(Falcon* falcon) : Node("rhcr_falcon"), count_(0) {
         falcon_ = falcon;
+        timer_ = this->create_wall_timer(10ms, std::bind(&Falcon_Node::timer_callback, this));
+
         position_vector_pub = this->create_publisher<geometry_msgs::msg::Vector3>("position_vector", 10);
-        timer_ = this->create_wall_timer(
-            10ms, std::bind(&Falcon_Node::timer_callback, this));
+        right_button_pub = this->create_publisher<std_msgs::msg::Int16>("right_button", 10);
+        up_button_pub = this->create_publisher<std_msgs::msg::Int16>("up_button", 10);
+        center_button_pub = this->create_publisher<std_msgs::msg::Int16>("center_button", 10);
+        left_button_pub = this->create_publisher<std_msgs::msg::Int16>("left_button", 10);
+        force_vector_sub = this->create_subscription<geometry_msgs::msg::Vector3>("force_vector", 10, std::bind(&Falcon_Node::topic_callback, this, std::placeholders::_1));
+
         printf("Please calibrate the controller: move it around and then press the center button.\n");
+
         falcon_->calibrate();
+
         printf("The following topics started:\n");
         printf("Publishers:\n");
         printf("- /position_vector\n");
@@ -581,12 +588,37 @@ class Falcon_Node : public rclcpp::Node {
         pos.y = (float)y;
         pos.z = (float)z;
 
+        auto right = std_msgs::msg::Int16();
+        right.data = button1;
+
+        auto up = std_msgs::msg::Int16();
+        up.data = button2;
+
+        auto center = std_msgs::msg::Int16();
+        center.data = button3;
+
+        auto left = std_msgs::msg::Int16();
+        left.data = button4;
+
         position_vector_pub->publish(pos);
+        right_button_pub->publish(right);
+        up_button_pub->publish(up);
+        center_button_pub->publish(center);
+        left_button_pub->publish(left);
     }
+    void topic_callback(const geometry_msgs::msg::Vector3::SharedPtr msg) {
+        falcon_->set(msg->x, msg->y, msg->z);
+    }
+
     Falcon* falcon_;
     rclcpp::TimerBase::SharedPtr timer_;
     size_t count_;
     rclcpp::Publisher<geometry_msgs::msg::Vector3>::SharedPtr position_vector_pub;
+    rclcpp::Publisher<std_msgs::msg::Int16>::SharedPtr right_button_pub;
+    rclcpp::Publisher<std_msgs::msg::Int16>::SharedPtr up_button_pub;
+    rclcpp::Publisher<std_msgs::msg::Int16>::SharedPtr center_button_pub;
+    rclcpp::Publisher<std_msgs::msg::Int16>::SharedPtr left_button_pub;
+    rclcpp::Subscription<geometry_msgs::msg::Vector3>::SharedPtr force_vector_sub;
 };
 
 int main(int argc, char* argv[]) {
