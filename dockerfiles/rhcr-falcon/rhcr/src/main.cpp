@@ -551,10 +551,21 @@ class Falcon_Node : public rclcpp::Node {
    public:
     Falcon_Node(Falcon* falcon)
         : Node("rhcr_falcon"), count_(0) {
-        falcon = falcon;
-        position_vector_pub = this->create_publisher<geometry_msgs::msg::Vector3>("position_vector", 100);
+        falcon_ = falcon;
+        position_vector_pub = this->create_publisher<geometry_msgs::msg::Vector3>("position_vector", 10);
         timer_ = this->create_wall_timer(
             10ms, std::bind(&Falcon_Node::timer_callback, this));
+        printf("Please calibrate the controller: move it around and then press the center button.\n");
+        falcon_->calibrate();
+        printf("The following topics started:\n");
+        printf("Publishers:\n");
+        printf("- /position_vector\n");
+        printf("- /right_button\n");
+        printf("- /up_button\n");
+        printf("- /center_button\n");
+        printf("- /left_button\n");
+        printf("Subscribers:\n");
+        printf("- /force_vector\n");
     }
 
    private:
@@ -562,8 +573,8 @@ class Falcon_Node : public rclcpp::Node {
         double x, y, z;
         int button1, button2, button3, button4;
 
-        falcon->update();
-        falcon->get(&x, &y, &z, &button1, &button2, &button3, &button4);
+        falcon_->update();
+        falcon_->get(&x, &y, &z, &button1, &button2, &button3, &button4);
 
         auto pos = geometry_msgs::msg::Vector3();
         pos.x = (float)x;
@@ -572,7 +583,7 @@ class Falcon_Node : public rclcpp::Node {
 
         position_vector_pub->publish(pos);
     }
-    Falcon* falcon;
+    Falcon* falcon_;
     rclcpp::TimerBase::SharedPtr timer_;
     size_t count_;
     rclcpp::Publisher<geometry_msgs::msg::Vector3>::SharedPtr position_vector_pub;
