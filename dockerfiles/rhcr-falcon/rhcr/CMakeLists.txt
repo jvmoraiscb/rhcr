@@ -8,16 +8,24 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
 
 add_executable(
     main
     src/main.cpp
 )
 
+target_link_libraries(
+  main
+  nifalcon
+  usb-1.0
+)
+
 ament_target_dependencies(
     main
     rclcpp
     std_msgs
+    geometry_msgs
 )
 
 install(
