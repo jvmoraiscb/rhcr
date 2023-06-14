@@ -1,6 +1,6 @@
 #!/bin/bash
 
 sudo docker build -t rhcr-falcon .
-cp docker-run.sh ~/
 cd
-sudo chmod +x docker-run.sh
+printf "#!/bin/bash\n\nsudo docker run -it --rm --network host --privileged -v /dev/bus/usb:/dev/bus/usb rhcr-falcon" > rhcr-falcon.sh
+sudo chmod +x rhcr-falcon.sh
