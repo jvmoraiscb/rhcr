@@ -624,10 +624,8 @@ class Falcon_Node : public rclcpp::Node {
 int main(int argc, char* argv[]) {
     // Falcon device object
     libnifalcon::FalconDevice falconDevice;
-    bool v = false;
-    while (!v) {
-        v = initialise(&falconDevice);
-    }
+    if (!initialise(&falconDevice))
+        return 1;
 
     auto falcon = Falcon(&falconDevice);
 
