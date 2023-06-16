@@ -575,7 +575,9 @@ class Falcon_Node : public rclcpp::Node {
 
         printf("Please calibrate the controller: move it around and then press the center button.\n");
 
+        falcon_->rgb(true, false, false);
         falcon_->calibrate();
+        falcon_->rgb(false, true, false);
 
         printf("The following topics started:\n");
         printf("Publishers:\n");
@@ -586,6 +588,7 @@ class Falcon_Node : public rclcpp::Node {
         printf("- /left_button\n");
         printf("Subscribers:\n");
         printf("- /force_vector\n");
+        printf("- /rgb_vector\n");
     }
 
    private:
@@ -653,5 +656,6 @@ int main(int argc, char* argv[]) {
     rclcpp::init(argc, argv);
     rclcpp::spin(std::make_shared<Falcon_Node>(&falcon));
     rclcpp::shutdown();
+
     return 0;
 }
