@@ -424,6 +424,7 @@ class Falcon {
     }
 
     void rgb(bool red, bool green, bool blue) {
+        FalconDevice* falcon = this->falconDevice;
         int led = 0;
         if (red)
             led |= FalconFirmware::RED_LED;
@@ -622,9 +623,9 @@ class Falcon_Node : public rclcpp::Node {
         falcon_->set(msg->x, msg->y, msg->z);
     }
     void rgb_callback(const geometry_msgs::msg::Vector3::SharedPtr msg) {
-        bool red = ((int)msg.x == 1) : true   ? false;
-        bool green = ((int)msg.y == 1) : true ? false;
-        bool blue = ((int)msg.z == 1) : true  ? false;
+        bool red = ((int)msg->x == 1) ? true : false;
+        bool green = ((int)msg->y == 1) ? true : false;
+        bool blue = ((int)msg->z == 1) ? true : false;
 
         falcon_->rgb(red, green, blue);
     }
