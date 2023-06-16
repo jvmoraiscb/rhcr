@@ -17,6 +17,7 @@ namespace ROS2
         private ISubscription<std_msgs.msg.Int16> center_sub;
         private ISubscription<std_msgs.msg.Int16> left_sub;
         private IPublisher<geometry_msgs.msg.Vector3> force_pub;
+        private IPublisher<geometry_msgs.msg.Vector3> rgb_pub;
 
         private const int RIGHT = 1;
         private const int UP = 2;
@@ -41,12 +42,14 @@ namespace ROS2
                 left_sub = ros2Node.CreateSubscription<std_msgs.msg.Int16>("left_button", msg => ButtonHandler(LEFT, msg.Data));
 
                 force_pub = ros2Node.CreatePublisher<geometry_msgs.msg.Vector3>("force_vector");
+                rgb_pub = ros2Node.CreatePublisher<geometry_msgs.msg.Vector3>("rgb_vector");
             }
         }
 
         void Update()
         {
             ForceHandler();
+            RgbHandler();
         }
 
         void PositionHandler(double x, double z)
@@ -61,6 +64,30 @@ namespace ROS2
             msg.Y = collisionController.force.y;
             msg.Z = collisionController.force.z;
             force_pub.Publish(msg);
+        }
+        void RgbHandler()
+        {
+            geometry_msgs.msg.Vector3 msg = new geometry_msgs.msg.Vector3();
+            if (carController.isColliding)
+            {
+                msg.X = 1;
+                msg.Y = 0;
+                msg.Z = 0;
+            }
+            else {
+                if (carController.isBreaking)
+                {
+                    msg.Z = 1;
+                    msg.Y = 0;
+                }
+                else
+                {
+                    msg.Z = 0;
+                    msg.Y = 1;
+                }
+                msg.X = 0;
+            }
+            rgb_pub.Publish(msg);
         }
         void ButtonHandler(int button, int value)
         {
