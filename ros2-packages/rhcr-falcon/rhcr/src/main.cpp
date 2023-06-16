@@ -423,6 +423,17 @@ class Falcon {
         this->z_force = z;
     }
 
+    void rgb(bool red, bool green, bool blue) {
+        int led = 0;
+        if (red)
+            led |= FalconFirmware::RED_LED;
+        if (green)
+            led |= FalconFirmware::GREEN_LED;
+        if (blue)
+            led |= FalconFirmware::BLUE_LED;
+        falcon->getFalconFirmware()->setLEDStatus(led);
+    }
+
    private:
     libnifalcon::FalconDevice* falconDevice;
     double max_x, max_y, max_z;
@@ -558,7 +569,8 @@ class Falcon_Node : public rclcpp::Node {
         up_button_pub = this->create_publisher<std_msgs::msg::Int16>("up_button", 10);
         center_button_pub = this->create_publisher<std_msgs::msg::Int16>("center_button", 10);
         left_button_pub = this->create_publisher<std_msgs::msg::Int16>("left_button", 10);
-        force_vector_sub = this->create_subscription<geometry_msgs::msg::Vector3>("force_vector", 10, std::bind(&Falcon_Node::topic_callback, this, std::placeholders::_1));
+        force_vector_sub = this->create_subscription<geometry_msgs::msg::Vector3>("force_vector", 10, std::bind(&Falcon_Node::force_callback, this, std::placeholders::_1));
+        rgb_vector_sub = this->create_subscription<geometry_msgs::msg::Vector3>("rgb_vector", 10, std::bind(&Falcon_Node::rgb_callback, this, std::placeholders::_1));
 
         printf("Please calibrate the controller: move it around and then press the center button.\n");
 
@@ -606,8 +618,15 @@ class Falcon_Node : public rclcpp::Node {
         center_button_pub->publish(center);
         left_button_pub->publish(left);
     }
-    void topic_callback(const geometry_msgs::msg::Vector3::SharedPtr msg) {
+    void force_callback(const geometry_msgs::msg::Vector3::SharedPtr msg) {
         falcon_->set(msg->x, msg->y, msg->z);
+    }
+    void rgb_callback(const geometry_msgs::msg::Vector3::SharedPtr msg) {
+        bool red = ((int)msg.x == 1) : true   ? false;
+        bool green = ((int)msg.y == 1) : true ? false;
+        bool blue = ((int)msg.z == 1) : true  ? false;
+
+        falcon_->rgb(red, green, blue);
     }
 
     Falcon* falcon_;
@@ -619,6 +638,7 @@ class Falcon_Node : public rclcpp::Node {
     rclcpp::Publisher<std_msgs::msg::Int16>::SharedPtr center_button_pub;
     rclcpp::Publisher<std_msgs::msg::Int16>::SharedPtr left_button_pub;
     rclcpp::Subscription<geometry_msgs::msg::Vector3>::SharedPtr force_vector_sub;
+    rclcpp::Subscription<geometry_msgs::msg::Vector3>::SharedPtr rgb_vector_sub;
 };
 
 int main(int argc, char* argv[]) {
