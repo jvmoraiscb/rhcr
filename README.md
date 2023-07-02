@@ -43,35 +43,22 @@ With the system already installed, connect the USB to the virtual machine via:
 
 **Player > Removable Devices > Future Devices FALCON HAPTIC > Connect**
 
-_to facilitate the process and guarantee the functioning of the system, we will use a docker image (currently it needs to be built)._
+_to facilitate the process and guarantee the functioning of the system, we will use a docker image._
 
-First, install git:
+Now, install docker:
 
 ```bash
 sudo apt-get update
-sudo apt-get -y install git
-```
-
-go to linux temporary folder and clone this repository:
-
-```bash
-cd /tmp
-git clone https://github.com/jvmoraiscb/rhcr.git
-```
-
-go to rhcr/ros2-package and run the docker-install script:
-
-```bash
-cd /tmp/rhcr/ros2-package
-chmod +x docker-install.sh
-./docker-install.sh
-```
-
-and finally, run the docker-setup script:
-
-```bash
-chmod +x docker-setup.sh
-./docker-setup.sh
+sudo apt-get install -y ca-certificates curl gnupg
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+echo \
+  "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+  sudo apt-get update
+  sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 ```
 
 ### Windows environment
@@ -90,11 +77,10 @@ _Before running the project, it's a good idea to check that both computers are "
 
 Now that both systems are set up:
 
-- #### In the Linux environment, go to home and run the rhcr-falcon script:
+- #### In the Linux environment, run this command and follow the terminal instructions to calibrate the Falcon:
 
 ```bash
-cd
-./rhcr-falcon.sh
+sudo docker run -it --rm --network host --privileged -v /dev/bus/usb:/dev/bus/usb jvmoraiscb/ros2-falcon
 ```
 
 - #### In the Windows environment, just hit Unity play button and have fun.

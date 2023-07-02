@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-    <name>rhcr</name>
+    <name>falcon-ros</name>
     <version>1.0.0</version>
-    <description>RHCR ROS2 Package</description>
+    <description>ROS2 Novint Falcon Package</description>
     <maintainer email="jv.moraiscb@gmail.com">João Victor Morais</maintainer>
     <license>MIT</license>
 

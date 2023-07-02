@@ -1,8 +1,8 @@
 FROM ros:humble
 
 LABEL maintainer="jv.moraiscb@gmail.com"
-LABEL version="0.1"
-LABEL description="RHCR ROS2 Package Docker image"
+LABEL version="1.0.0"
+LABEL description="ROS2 Novint Falcon Package Docker image"
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -21,7 +21,7 @@ make install && \
 /sbin/ldconfig -v
 
 RUN mkdir -p /ros-workspace/src
-COPY rhcr/ /ros-workspace/src/rhcr
+COPY falcon-ros/ /ros-workspace/src/rhcr
 
 RUN . /opt/ros/humble/setup.sh && \
 cd /ros-workspace && \
@@ -30,4 +30,4 @@ colcon build
 
 CMD . /opt/ros/humble/setup.sh && \
 . /ros-workspace/install/local_setup.sh && \
-ros2 run rhcr main
+ros2 run falcon-ros main

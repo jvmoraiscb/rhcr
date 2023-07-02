@@ -561,7 +561,7 @@ class Falcon {
 
 class Falcon_Node : public rclcpp::Node {
    public:
-    Falcon_Node(Falcon* falcon) : Node("rhcr_falcon"), count_(0) {
+    Falcon_Node(Falcon* falcon) : Node("falcon_node"), count_(0) {
         falcon_ = falcon;
         timer_ = this->create_wall_timer(10ms, std::bind(&Falcon_Node::timer_callback, this));
 
