@@ -36,12 +36,12 @@ namespace RosSharp.RosBridgeClient
         protected override void ReceiveMessage(MessageTypes.Nav.Odometry message)
         {
             msg = message;
-            Debug.Log(msg);
             isMessageReceived = true;
         }
 
         private void Update()
         {
+            Debug.Log(msg);
             if (isMessageReceived)
                 ProcessMessage();
             previousRealTime = Time.realtimeSinceStartup;

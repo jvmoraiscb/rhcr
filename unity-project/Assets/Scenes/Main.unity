@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641275, b: 0.5748171, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -840,11 +840,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 566012460}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3e759ae222dec9544b5ef2e94729d73a, type: 3}
+  m_Script: {fileID: 11500000, guid: 255d6b62565ad7a478935cb17ca690a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /odom
-  TimeStep: 0
+  Topic: /cmd_vel
+  falcon: {fileID: 530364418}
+  ackermann: {fileID: 668189230}
 --- !u!1 &668189228
 GameObject:
   m_ObjectHideFlags: 0
@@ -854,6 +855,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1105568160}
+  - component: {fileID: 668189230}
   - component: {fileID: 668189229}
   m_Layer: 0
   m_Name: Ackermann
@@ -875,6 +877,19 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.66928494, y: 0.2656585, z: 0.76930463}
   m_Center: {x: 0.0009306669, y: 0.1291793, z: 0.0023270845}
+--- !u!114 &668189230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 668189228}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 330a51c153fbc7743936ef114d925ce7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 0.2
 --- !u!1 &698376293
 GameObject:
   m_ObjectHideFlags: 0
