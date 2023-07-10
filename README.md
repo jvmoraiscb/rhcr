@@ -6,32 +6,37 @@ Our goal is to promote a user-friendly robot controller using virtual reality el
 
 ## Components
 
-- #### Ackermann Robot
+- #### Wheeltec Ackermann Robot
 
   ![ackermann](/doc/images/ackermann.jpg)
 
-- #### Linux environment
+  - using ROS [Melodic](http://wiki.ros.org/melodic) (Ubuntu 18.04)
 
-  - **Novint Falcon** as the main controller
-    ![novint falcon](/doc/images/falcon.jpg)
-    - using the open-source library [libnifalcon](https://github.com/libnifalcon/libnifalcon)
-  - **ROS** for communication between all components
-    ![ros terminal](/doc/images/ros_terminal.png)
-    - using the [Humble](http://wiki.ros.org/melodic/Installation/Ubuntu) version (Ubuntu 22.04)
+- #### Novint Falcon
 
-- #### Windows environment
+  ![novint falcon](/doc/images/falcon.jpg)
 
-  - **Unity** to simulate the environment
-    ![unity project](/doc/images/unity-project.png)
-    - using the open-source library [ros2-for-unity](https://github.com/RobotecAI/ros2-for-unity)
+  - using [libnifalcon](https://github.com/libnifalcon/libnifalcon) library and ROS [Humble](https://docs.ros.org/en/humble/index.html) (Ubuntu 22.04)
+
+- #### Unity
+
+  ![unity project](/doc/images/unity-project.png)
+
+  - using [ros2-for-unity](https://github.com/RobotecAI/ros2-for-unity) and [ros-sharp](https://github.com/siemens/ros-sharp) libraries
+
+- #### ROS
+
+  ![ros-terminal](/doc/images/ros-terminal.png)
+
+  - using [rosbridge](http://wiki.ros.org/rosbridge_suite), [navigation](http://wiki.ros.org/navigation) and others ROS packages
 
 ## Installation
 
-As previously mentioned, the project needs two operating systems, a linux environment to run ROS and Novint Falcon open-source drivers, and a windows environment to run Unity and ROS#.
+The project needs two operating systems, a linux virtual machine to run ROS and Novint Falcon open-source drivers, and a windows environment to run Unity and ROS-Unity packages.
 
 Below is a step-by-step tutorial on how to prepare each environment:
 
-### Linux environment
+### Linux virtual machine
 
 _Recommended version:_ **_Ubuntu 22.04_**
 
@@ -39,13 +44,13 @@ First, visit https://www.vmware.com to download and install VMWare Workstation P
 
 After, visit https://ubuntu.com/download and download the Ubuntu 22.04 image, then open VMWare and proceed to install the OS.
 
-With the system already installed, connect the USB to the virtual machine via:
+The install settings should look like this:
 
-**Player > Removable Devices > Future Devices FALCON HAPTIC > Connect**
+![vmware config](/doc/images/vmware-config.jpg)
 
 _to facilitate the process and guarantee the functioning of the system, we will use a docker image._
 
-Now, install docker:
+After installation, open a terminal and install docker:
 
 ```bash
 sudo apt-get update
@@ -61,6 +66,12 @@ echo \
   sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 ```
 
+And pull the ros2-falcon image:
+
+```bash
+sudo docker pull jvmoraiscb/ros2-falcon
+```
+
 ### Windows environment
 
 _Recommended version:_ **_Windows 10_**
@@ -71,16 +82,46 @@ After, visit https://unity.com/releases/editor/archive and find **Unity 2020.3.2
 
 Now, download this repository, unzip and open **unity-project** folder in Unity (all necessary plugins and libraries are already included in the project).
 
-_Before running the project, it's a good idea to check that both computers are "seeing" each other (just ping them)._
+And finally, open Ros1Holder object and change the rosbridge url to **ws://ROBOT_IP:9090**
+
+![ros1-holder](/doc/images/ros1-holder.jpg)
 
 ## Running
 
-Now that both systems are set up:
+_Before running the project, it's a good idea to check that both computers are "seeing" each other (just ping them)._
 
-- #### In the Linux environment, run this command and follow the terminal instructions to calibrate the Falcon:
+### Linux virtual machine
+
+First, connect **Novint Falcon** to vmware:
+
+![falcon-vmware](/doc/images/falcon-vmware.png)
+
+Second, run this command and follow the terminal instructions:
 
 ```bash
 sudo docker run -it --rm --network host --privileged -v /dev/bus/usb:/dev/bus/usb jvmoraiscb/ros2-falcon
 ```
 
-- #### In the Windows environment, just hit Unity play button and have fun.
+![falcon-vmware](/doc/images/falcon-vmware2.png)
+
+### Windows environment
+
+First, connect to robot access point:
+
+![wheeltec-wifi](/doc/images/wheeltec-wifi.jpg)
+
+![wheeltec-ssh](/doc/images/wheeltec-ssh.jpg)
+
+Now, launch navigation package:
+
+```bash
+roslaunch turn_on_wheeltec_robot navigation.launch
+```
+
+Open new terminal and launch rosbridge package:
+
+```bash
+roslaunch rosbridge_server rosbridge_websocket.launch
+```
+
+Finally, open **unity-project** and hit play button.

@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace RosSharp.RosBridgeClient
 {
-    public class Ros_Cmd_Vel_Publisher : UnityPublisher<MessageTypes.Geometry.Twist>
+    public class RosCmdVelPublisher : UnityPublisher<MessageTypes.Geometry.Twist>
     {
         [SerializeField]
         private Falcon falcon;
