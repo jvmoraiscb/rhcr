@@ -654,6 +654,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86065beceb082904d999c8601023efd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ackermann: {fileID: 668189230}
   position: {x: 0, y: 0, z: 0}
   force: {x: 0, y: 0, z: 0}
   rgb: {x: 0, y: 0, z: 0}
@@ -669,7 +670,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &530856225
 GameObject:
@@ -813,7 +814,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &566012462
 MonoBehaviour:
@@ -889,7 +890,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 330a51c153fbc7743936ef114d925ce7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 0.2
+  speed: 0.5
+  maxSpeed: 1
+  minSpeed: 0.2
+  isBreaking: 1
 --- !u!1 &698376293
 GameObject:
   m_ObjectHideFlags: 0
@@ -1651,7 +1655,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2102196996
 GameObject:

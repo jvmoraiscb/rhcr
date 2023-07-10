@@ -28,13 +28,33 @@ namespace RosSharp.RosBridgeClient
         }
         private void UpdateMessage()
         {
-            message.linear.x = falcon.position.z * ackermann.speed;
-            message.linear.y = 0;
-            message.linear.z = 0;
+            if (ackermann.isBreaking) {
+                message.linear.x = 0;
+                message.linear.y = 0;
+                message.linear.z = 0;
 
-            message.angular.x = 0;
-            message.angular.y = 0;
-            message.angular.z = falcon.position.x * ackermann.speed;
+                message.angular.x = 0;
+                message.angular.y = 0;
+                message.angular.z = 0;
+            }
+            else
+            {
+                message.linear.x = falcon.position.z * ackermann.speed;
+                message.linear.y = 0;
+                message.linear.z = 0;
+
+                message.angular.x = 0;
+                message.angular.y = 0;
+
+                if (falcon.position.z > 0)
+                {
+                    message.angular.z = falcon.position.x * ackermann.speed * -1;
+                }
+                else
+                {
+                    message.angular.z = falcon.position.x * ackermann.speed;
+                }
+            }
 
             Publish(message);
         }
