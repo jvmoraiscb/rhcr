@@ -102,23 +102,17 @@ Second, run this command and follow the terminal instructions:
 sudo docker run -it --rm --network host --privileged -v /dev/bus/usb:/dev/bus/usb jvmoraiscb/ros2-falcon
 ```
 
-![falcon-vmware](/doc/images/falcon-vmware2.png)
-
 ### Windows environment
 
-First, connect to robot access point:
+First, connect to robot access point and open two terminals through ssh protocol.
 
-![wheeltec-wifi](/doc/images/wheeltec-wifi.jpg)
-
-![wheeltec-ssh](/doc/images/wheeltec-ssh.jpg)
-
-Now, launch navigation package:
+In the first launch navigation package:
 
 ```bash
 roslaunch turn_on_wheeltec_robot navigation.launch
 ```
 
-Open new terminal and launch rosbridge package:
+In the second launch rosbridge package:
 
 ```bash
 roslaunch rosbridge_server rosbridge_websocket.launch
