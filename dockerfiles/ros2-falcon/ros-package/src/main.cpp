@@ -618,14 +618,10 @@ class Falcon_Node : public rclcpp::Node {
 Falcon* falcon_pt = NULL;
 
 void sigint_handler(int sig) {
-    cout << "Exiting..." << endl;
-    // shutdown ros node and topics
     // shutdown rgb
     falcon_pt->rgb(false, false, false);
-    cout << "Debug..." << endl;
     // shutdown forces
     falcon_pt->set(0.0, 0.0, 0.0);
-    cout << "Debug..." << endl;
 }
 
 int main(int argc, char* argv[]) {
