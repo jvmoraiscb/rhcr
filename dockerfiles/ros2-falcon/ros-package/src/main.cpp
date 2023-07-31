@@ -6,6 +6,7 @@
 #include <falcon/kinematic/FalconKinematicStamper.h>
 #include <falcon/kinematic/stamper/StamperUtils.h>
 #include <falcon/util/FalconFirmwareBinaryNvent.h>
+#include <stdlib.h>
 
 #include <chrono>
 #include <cmath>
@@ -364,7 +365,6 @@ class Falcon {
         }
         this->button3 = 0;
     }
-
     void update() {
         // Ask libnifalcon to update the encoder positions and apply any forces waiting:
         FalconDevice* falcon = this->falconDevice;
@@ -387,27 +387,12 @@ class Falcon {
         // Call input function
         this->updatePosition(pos);
 
-        // // Inverse kinematics
-        // Angle angles;
-        // IK(angles, pos);
-
-        // // Jacobian
-        // gmtl::Matrix33d J;
-        // J = jacobian(angles);
-
-        // gmtl::Vec3d force(this->x_force, this->y_force, this->z_force);
-        // // Convert force to motor torque values:
-        // J.setTranspose(J.getData());
-        // gmtl::Vec3d torque = J * force;
-
-        // Call output function
         std::array<double, 3UL> force;
         force[0] = this->x_force;
         force[1] = this->y_force;
         force[2] = this->z_force;
         this->updateForces(force);
     }
-
     void get(double* x, double* y, double* z, int* button1, int* button2, int* button3, int* button4) {
         *x = this->x * 2 - 1;
         *y = this->y * 2 - 1;
@@ -417,13 +402,11 @@ class Falcon {
         *button3 = this->button3;
         *button4 = this->button4;
     }
-
     void set(double x, double y, double z) {
         this->x_force = x;
         this->y_force = y;
         this->z_force = z;
     }
-
     void rgb(bool red, bool green, bool blue) {
         FalconDevice* falcon = this->falconDevice;
         int led = 0;
@@ -517,7 +500,6 @@ class Falcon {
             this->button4Down = false;
         }
     }
-
     void updateForces(std::array<double, 3UL> force) {
         FalconDevice* falcon = this->falconDevice;
         double maxForce = 10;
@@ -531,8 +513,9 @@ class Falcon {
 
 class Falcon_Node : public rclcpp::Node {
    public:
-    Falcon_Node(Falcon* falcon) : Node("falcon_node"), count_(0) {
+    Falcon_Node(Falcon* falcon, bool* debug_mode) : Node("falcon_node"), count_(0) {
         falcon_ = falcon;
+        debug_mode_ = debug_mode;
         timer_ = this->create_wall_timer(10ms, std::bind(&Falcon_Node::timer_callback, this));
 
         position_vector_pub = this->create_publisher<geometry_msgs::msg::Vector3>("position_vector", 10);
@@ -568,6 +551,10 @@ class Falcon_Node : public rclcpp::Node {
 
         falcon_->update();
         falcon_->get(&x, &y, &z, &button1, &button2, &button3, &button4);
+
+        if (*debug_mode_) {
+            printf("X: %.2f | Y: %.2f | Z: %.2f | B1: %d | B2: %d | B3: %d | B4: %d\n", x, y, z, button1, button2, button3, button4);
+        }
 
         auto pos = geometry_msgs::msg::Vector3();
         pos.x = (float)x;
@@ -606,6 +593,7 @@ class Falcon_Node : public rclcpp::Node {
     Falcon* falcon_;
     rclcpp::TimerBase::SharedPtr timer_;
     size_t count_;
+    bool* debug_mode_;
     rclcpp::Publisher<geometry_msgs::msg::Vector3>::SharedPtr position_vector_pub;
     rclcpp::Publisher<std_msgs::msg::Int16>::SharedPtr right_button_pub;
     rclcpp::Publisher<std_msgs::msg::Int16>::SharedPtr up_button_pub;
@@ -615,7 +603,9 @@ class Falcon_Node : public rclcpp::Node {
     rclcpp::Subscription<geometry_msgs::msg::Vector3>::SharedPtr rgb_vector_sub;
 };
 
-Falcon* falcon_pt = NULL;
+// global pointers
+Falcon* falcon_pt;
+bool* debug_mode_pt;
 
 void sigint_handler(int sig) {
     // shutdown rgb
@@ -624,20 +614,43 @@ void sigint_handler(int sig) {
     falcon_pt->set(0.0, 0.0, 0.0);
 }
 
+void sigtstp_handler(int sig) {
+    if (*debug_mode_pt) {
+        *debug_mode_pt = false;
+        system("clear");
+        printf("Publishers:\n");
+        printf("- /position_vector\n");
+        printf("- /right_button\n");
+        printf("- /up_button\n");
+        printf("- /center_button\n");
+        printf("- /left_button\n");
+        printf("Subscribers:\n");
+        printf("- /force_vector\n");
+        printf("- /rgb_vector\n");
+    } else {
+        *debug_mode_pt = true;
+    }
+}
+
 int main(int argc, char* argv[]) {
     // initialize falcon variables
     libnifalcon::FalconDevice falconDevice;
     if (!initialise(&falconDevice))
         return 1;
     auto falcon = Falcon(&falconDevice);
-    falcon_pt = &falcon;
+    auto debug_mode = false;
 
-    // register custom handler to ctrl-c
+    // initialize global pointers
+    falcon_pt = &falcon;
+    debug_mode_pt = &debug_mode;
+
+    // register custom handler to ctrl-c and ctrl-z
     signal(SIGINT, sigint_handler);
+    signal(SIGTSTP, sigtstp_handler);
 
     // initialize ros variables
     rclcpp::init(argc, argv);
-    rclcpp::spin(std::make_shared<Falcon_Node>(falcon_pt));
+    rclcpp::spin(std::make_shared<Falcon_Node>(falcon_pt, debug_mode_pt));
 
     return 0;
 }
