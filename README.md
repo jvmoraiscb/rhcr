@@ -104,15 +104,21 @@ sudo docker run -it --rm --network host --privileged -v /dev/bus/usb:/dev/bus/us
 
 ### Windows environment
 
-First, connect to robot access point and open two terminals through ssh protocol.
+First, connect to robot access point:
 
-In the first launch navigation package:
+![wheeltec-wifi](/doc/images/wheeltec-wifi.jpg)
+
+Second, open two terminals and connect to robot through ssh protocol:
+
+![wheeltec-ssh](/doc/images/wheeltec-ssh.jpg)
+
+Now, launch navigation package in the first terminal:
 
 ```bash
 roslaunch turn_on_wheeltec_robot navigation.launch
 ```
 
-In the second launch rosbridge package:
+Then, launch rosbridge package in the second terminal:
 
 ```bash
 roslaunch rosbridge_server rosbridge_websocket.launch
