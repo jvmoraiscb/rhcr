@@ -542,6 +542,7 @@ class Falcon_Node : public rclcpp::Node {
         printf("Subscribers:\n");
         printf("- /force_vector\n");
         printf("- /rgb_vector\n");
+        printf("\nPress Ctrl-Z to start debug mode.\n");
     }
 
    private:
@@ -553,7 +554,7 @@ class Falcon_Node : public rclcpp::Node {
         falcon_->get(&x, &y, &z, &button1, &button2, &button3, &button4);
 
         if (*debug_mode_) {
-            printf("X: %.2f | Y: %.2f | Z: %.2f | B1: %d | B2: %d | B3: %d | B4: %d\n", x, y, z, button1, button2, button3, button4);
+            printf("X: %+.2f | Y: %+.2f | Z: %+.2f | B1: %d | B2: %d | B3: %d | B4: %d\n", x, y, z, button1, button2, button3, button4);
         }
 
         auto pos = geometry_msgs::msg::Vector3();
@@ -604,15 +605,7 @@ class Falcon_Node : public rclcpp::Node {
 };
 
 // global pointers
-Falcon* falcon_pt;
 bool* debug_mode_pt;
-
-void sigint_handler(int sig) {
-    // shutdown rgb
-    falcon_pt->rgb(false, false, false);
-    // shutdown forces
-    falcon_pt->set(0.0, 0.0, 0.0);
-}
 
 void sigtstp_handler(int sig) {
     if (*debug_mode_pt) {
@@ -627,6 +620,7 @@ void sigtstp_handler(int sig) {
         printf("Subscribers:\n");
         printf("- /force_vector\n");
         printf("- /rgb_vector\n");
+        printf("\nPress Ctrl-Z to start debug mode.\n");
     } else {
         *debug_mode_pt = true;
     }
@@ -641,16 +635,15 @@ int main(int argc, char* argv[]) {
     auto debug_mode = false;
 
     // initialize global pointers
-    falcon_pt = &falcon;
     debug_mode_pt = &debug_mode;
 
-    // register custom handler to ctrl-c and ctrl-z
-    signal(SIGINT, sigint_handler);
+    // register custom handler to ctrl-z
     signal(SIGTSTP, sigtstp_handler);
 
     // initialize ros variables
     rclcpp::init(argc, argv);
-    rclcpp::spin(std::make_shared<Falcon_Node>(falcon_pt, debug_mode_pt));
+    rclcpp::spin(std::make_shared<Falcon_Node>(&falcon, debug_mode_pt));
+    rclcpp::shutdown();
 
     return 0;
 }

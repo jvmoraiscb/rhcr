@@ -2,9 +2,6 @@ using UnityEngine;
 
 public class Ackermann : MonoBehaviour
 {
-    [SerializeField]
-    private Transform transform;
-    
     public float speed = 0.5f;
     public float maxSpeed = 1.0f;
     public float minSpeed = 0.2f;
@@ -15,7 +12,6 @@ public class Ackermann : MonoBehaviour
 
     private void FixedUpdate()
     {
-        transform.position = position;
-        transform.localRotation = rotation;
+        transform.SetPositionAndRotation(position, rotation);
     }
 }

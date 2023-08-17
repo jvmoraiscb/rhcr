@@ -34,10 +34,20 @@ namespace RosSharp.RosBridgeClient
             ackermann.position.y = 0f;
             ackermann.position.z = (float)msg.pose.pose.position.x;
 
-            ackermann.rotation.x = 0f;
-            ackermann.rotation.y = (float)msg.pose.pose.orientation.z * -1;
-            ackermann.rotation.z = 0f;
-            ackermann.rotation.w = (float)msg.pose.pose.orientation.w;
+            Quaternion quart_aux;
+
+            quart_aux.x = ackermann.rotation.x;
+            quart_aux.y = ackermann.rotation.y;
+            quart_aux.z = ackermann.rotation.z;
+            quart_aux.w = ackermann.rotation.w;
+
+            Vector3 euler_aux = quart_aux.eulerAngles;
+
+            euler_aux.y = euler_aux.z;
+            euler_aux.x = 0;
+            euler_aux.z = 0;
+
+            ackermann.rotation = Quaternion.Euler(euler_aux);
 
             float deltaTime = Time.realtimeSinceStartup - previousRealTime;
             isMessageReceived = false;
