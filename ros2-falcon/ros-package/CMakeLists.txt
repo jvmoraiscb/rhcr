@@ -10,9 +10,15 @@ find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 
+include_directories(
+    include
+)
+
 add_executable(
     main
     src/main.cpp
+    src/falcon.cpp
+    src/falcon_node.cpp
 )
 
 target_link_libraries(
