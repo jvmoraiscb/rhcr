@@ -29,17 +29,17 @@ namespace RosSharp.RosBridgeClient
             previousRealTime = Time.realtimeSinceStartup;
         }
         private void ProcessMessage()
-        {
+        {   
             ackermann.position.x = (float)msg.pose.pose.position.y;
-            ackermann.position.y = 0f;
+            ackermann.position.y = -0.1f;
             ackermann.position.z = (float)msg.pose.pose.position.x;
 
             Quaternion quart_aux;
 
-            quart_aux.x = ackermann.rotation.x;
-            quart_aux.y = ackermann.rotation.y;
-            quart_aux.z = ackermann.rotation.z;
-            quart_aux.w = ackermann.rotation.w;
+            quart_aux.x = (float)msg.pose.pose.orientation.x;
+            quart_aux.y = (float)msg.pose.pose.orientation.y;
+            quart_aux.z = (float)msg.pose.pose.orientation.z;
+            quart_aux.w = (float)msg.pose.pose.orientation.w;
 
             Vector3 euler_aux = quart_aux.eulerAngles;
 

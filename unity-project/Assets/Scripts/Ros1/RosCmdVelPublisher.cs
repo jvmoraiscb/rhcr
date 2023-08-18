@@ -48,7 +48,7 @@ namespace RosSharp.RosBridgeClient
 
                 if (falcon.position.z > 0)
                 {
-                    message.angular.z = falcon.position.x * ackermann.speed * -1;
+                    message.angular.z = falcon.position.x * ackermann.speed;
                 }
                 else
                 {
