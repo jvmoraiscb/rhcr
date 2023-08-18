@@ -8,7 +8,7 @@
 
 class Falcon_Node : public rclcpp::Node {
    public:
-    Falcon_Node(Falcon* falcon, bool* debug_mode) : Node("falcon_node"), count_(0);
+    Falcon_Node(Falcon* falcon, bool* debug_mode);
 
    private:
     Falcon* falcon_;

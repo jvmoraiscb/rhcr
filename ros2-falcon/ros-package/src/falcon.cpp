@@ -324,7 +324,7 @@ Falcon::Falcon() {
 }
 
 void Falcon::print_info() {
-    system(clear);
+    system("clear");
     printf("The following topics started:\n");
     printf("Publishers:\n");
     printf("- /position_vector\n");

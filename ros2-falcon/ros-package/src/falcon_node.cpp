@@ -3,7 +3,7 @@
 using namespace std;
 using namespace chrono_literals;
 
-Falcon_Node::Falcon_Node(Falcon* falcon, bool* debug_mode) {
+Falcon_Node::Falcon_Node(Falcon* falcon, bool* debug_mode) : Node("falcon_node"), count_(0) {
     falcon_ = falcon;
     debug_mode_ = debug_mode;
     timer_ = this->create_wall_timer(10ms, std::bind(&Falcon_Node::timer_callback, this));
