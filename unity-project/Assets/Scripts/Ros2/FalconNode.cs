@@ -74,22 +74,22 @@ namespace ROS2
         {
             if (button == RIGHT && value != lastStatus_right) {
                 if (lastStatus_right != -1)
-                    falcon.right_button_handler();
+                    falcon.Right_button_handler();
                 lastStatus_right = value;
             }
             if (button == UP && value != lastStatus_up) {
                 if (lastStatus_up != -1)
-                    falcon.up_button_handler();
+                    falcon.Up_button_handler();
                 lastStatus_up = value;
             }
             if (button == CENTER && value != lastStatus_center) {
                 if (lastStatus_center != -1)
-                    falcon.center_button_handler();
+                    falcon.Center_button_handler();
                 lastStatus_center = value;
             }
             if (button == LEFT && value != lastStatus_left) {
                 if (lastStatus_left != -1)
-                    falcon.left_button_handler();
+                    falcon.Left_button_handler();
                 lastStatus_left = value;
             }
         }

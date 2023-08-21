@@ -31,7 +31,7 @@ namespace RosSharp.RosBridgeClient
         private void ProcessMessage()
         {   
             ackermann.position.x = (float)msg.pose.pose.position.y;
-            ackermann.position.y = -0.1f;
+            ackermann.position.y = 0f;
             ackermann.position.z = (float)msg.pose.pose.position.x;
 
             Quaternion quart_aux;

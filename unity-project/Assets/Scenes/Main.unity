@@ -763,11 +763,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 330a51c153fbc7743936ef114d925ce7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  velocityFactor: 30
+  falcon: {fileID: 530364418}
+  rbVelocityFactor: 30
+  falconForceFactor: 10
   speed: 0.5
   maxSpeed: 1
   minSpeed: 0.2
+  throttle: 0
+  steer: 0
   isBreaking: 1
+  isColliding: 0
+  isCollidingFront: 0
   position: {x: 0, y: 0, z: 0}
   rotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!54 &668189231
@@ -1198,8 +1204,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1412464528}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2, y: 0.4, z: 4}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0.08, y: 0.4, z: 3.88}
+  m_LocalScale: {x: 50, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 6

@@ -5,8 +5,6 @@ namespace RosSharp.RosBridgeClient
     public class RosCmdVelPublisher : UnityPublisher<MessageTypes.Geometry.Twist>
     {
         [SerializeField]
-        private Falcon falcon;
-        [SerializeField]
         private Ackermann ackermann;
 
         private MessageTypes.Geometry.Twist message;
@@ -28,33 +26,13 @@ namespace RosSharp.RosBridgeClient
         }
         private void UpdateMessage()
         {
-            if (ackermann.isBreaking) {
-                message.linear.x = 0;
-                message.linear.y = 0;
-                message.linear.z = 0;
+            message.linear.x = ackermann.throttle;
+            message.linear.y = 0;
+            message.linear.z = 0;
 
-                message.angular.x = 0;
-                message.angular.y = 0;
-                message.angular.z = 0;
-            }
-            else
-            {
-                message.linear.x = falcon.position.z * ackermann.speed;
-                message.linear.y = 0;
-                message.linear.z = 0;
-
-                message.angular.x = 0;
-                message.angular.y = 0;
-
-                if (falcon.position.z > 0)
-                {
-                    message.angular.z = falcon.position.x * ackermann.speed;
-                }
-                else
-                {
-                    message.angular.z = falcon.position.x * ackermann.speed;
-                }
-            }
+            message.angular.x = 0;
+            message.angular.y = 0;
+            message.angular.z = ackermann.steer;
 
             Publish(message);
         }
