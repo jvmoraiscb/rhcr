@@ -36,11 +36,8 @@ public class Ackermann : MonoBehaviour
         rb = GetComponent<Rigidbody>();    
     }
 
-    private void FixedUpdate()
-    {
-        transform.rotation = rotation;
-        rb.velocity = (position - transform.position) * rbVelocityFactor;
-        
+    private void Update()
+    {   
         if (isBreaking)
         {
             throttle = 0f;
@@ -63,7 +60,7 @@ public class Ackermann : MonoBehaviour
 
                 falcon.force.x = 0f;
                 falcon.force.y = 0f;
-                falcon.force.z = speed * falconForceFactor;
+                falcon.force.z = falcon.position.z * falconForceFactor;
 
                 falcon.rgb.x = 1f;
                 falcon.rgb.y = 0f;
@@ -72,7 +69,9 @@ public class Ackermann : MonoBehaviour
             else
             {
                 throttle = falcon.position.z * speed;
-                steer = falcon.position.x;
+
+                float auxSteer = Mathf.Abs(falcon.position.x) > 0.3f ? falcon.position.x : 0f;
+                steer = throttle > 0f ? auxSteer * -1 : auxSteer;
 
                 falcon.force.x = 0f;
                 falcon.force.y = 0f;
@@ -84,6 +83,12 @@ public class Ackermann : MonoBehaviour
             }
             
         }
+    }
+
+    private void FixedUpdate()
+    {
+        transform.rotation = rotation;
+        rb.velocity = (position - transform.position) * rbVelocityFactor;
     }
 
     private void OnCollisionEnter(Collision collision)

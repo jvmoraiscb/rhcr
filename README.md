@@ -82,7 +82,7 @@ After, visit https://unity.com/releases/editor/archive and find **Unity 2020.3.2
 
 Now, download this repository, unzip and open **unity-project** folder in Unity (all necessary plugins and libraries are already included in the project).
 
-And finally, open Ros1Holder object and change the rosbridge url to **ws://ROBOT_IP:9090**
+And finally, open Ros1Holder object and change the rosbridge url to **ws://10.10.10.10:9090**
 
 ![ros1-holder](/doc/images/ros1-holder.jpg)
 
@@ -115,7 +115,7 @@ Second, open two terminals and connect to robot through ssh protocol:
 Now, launch navigation package in the first terminal:
 
 ```bash
-roslaunch turn_on_wheeltec_robot navigation.launch
+roslaunch roslaunch turn_on_wheeltec_robot turn_on_wheeltec_robot.launch
 ```
 
 Then, launch rosbridge package in the second terminal:
