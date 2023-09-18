@@ -115,7 +115,7 @@ Second, open two terminals and connect to robot through ssh protocol:
 Now, launch navigation package in the first terminal:
 
 ```bash
-roslaunch roslaunch turn_on_wheeltec_robot turn_on_wheeltec_robot.launch
+roslaunch turn_on_wheeltec_robot turn_on_wheeltec_robot.launch
 ```
 
 Then, launch rosbridge package in the second terminal:
