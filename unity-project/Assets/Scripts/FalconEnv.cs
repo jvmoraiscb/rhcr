@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Falcon : MonoBehaviour
+public class FalconEnv : MonoBehaviour
 {
     [SerializeField]
     private Ackermann ackermann;

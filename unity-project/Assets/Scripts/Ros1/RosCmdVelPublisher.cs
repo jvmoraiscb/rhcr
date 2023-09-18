@@ -5,7 +5,7 @@ namespace RosSharp.RosBridgeClient
     public class RosCmdVelPublisher : UnityPublisher<MessageTypes.Geometry.Twist>
     {
         [SerializeField]
-        private Ackermann ackermann;
+        private AckermannEnv ackermannEnv;
 
         private MessageTypes.Geometry.Twist message;
 
@@ -26,13 +26,13 @@ namespace RosSharp.RosBridgeClient
         }
         private void UpdateMessage()
         {
-            message.linear.x = ackermann.throttle;
+            message.linear.x = ackermannEnv.throttle;
             message.linear.y = 0;
             message.linear.z = 0;
 
             message.angular.x = 0;
             message.angular.y = 0;
-            message.angular.z = ackermann.steer;
+            message.angular.z = ackermannEnv.steer;
 
             Publish(message);
         }

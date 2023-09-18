@@ -1,85 +1,73 @@
 using UnityEngine;
 
+// Ackermann is the main class, all others classes just send or receive data from it
 public class Ackermann : MonoBehaviour
 {
+    [SerializeField]
     private Rigidbody rb;
     [SerializeField]
-    private Falcon falcon;
+    private FalconEnv falconEnv;
+    [SerializeField]
+    private AckermannEnv ackermannEnv;
     
     [SerializeField]
     private float rbVelocityFactor;
     [SerializeField]
     private float falconForceFactor;
 
-    public float speed;
-    public float maxSpeed;
-    public float minSpeed;
-    public float throttle;
-    public float steer;
-    public bool isBreaking;
-    public bool isColliding;
-    public bool isCollidingFront;
+    [SerializeField]
+    private float defaultSpeed;
+    [SerializeField]
+    private float maxSpeed;
+    [SerializeField]
+    private float minSpeed;
 
-    public Vector3 position;
-    public Quaternion rotation;
+    private float speed;
+    private bool isBreaking;
 
     private void Start()
     {
-        speed = 0.5f;
-        maxSpeed = 1.0f;
-        minSpeed = 0.2f;
-
+        speed = defaultSpeed;
+        
         isBreaking = true;
-        isColliding = false;
-        isCollidingFront = false;
-
-        rb = GetComponent<Rigidbody>();    
     }
 
     private void Update()
     {   
         if (isBreaking)
         {
-            throttle = 0f;
-            steer = 0f;
+            ackermannEnv.throttle = 0f;
+            ackermannEnv.steer = 0f;
 
-            falcon.force.x = 0f;
-            falcon.force.y = 0f;
-            falcon.force.z = 0f;
+            falconEnv.force.x = 0f;
+            falconEnv.force.y = 0f;
+            falconEnv.force.z = 0f;
 
-            falcon.rgb.x = 0;
-            falcon.rgb.y = 0;
-            falcon.rgb.z = 1;
+            falconEnv.rgb.x = 0;
+            falconEnv.rgb.y = 0;
+            falconEnv.rgb.z = 1;
         }
         else
         {
-            if((isColliding && isCollidingFront && falcon.position.z > 0f) || (isColliding && !isCollidingFront && falcon.position.z < 0f))
+            // TODO: fazer com seis colisores
+            if(false)
             {
-                throttle = 0f;
-                steer = 0f;
 
-                falcon.force.x = 0f;
-                falcon.force.y = 0f;
-                falcon.force.z = falcon.position.z * falconForceFactor;
-
-                falcon.rgb.x = 1f;
-                falcon.rgb.y = 0f;
-                falcon.rgb.z = 0f;
             }
             else
             {
-                throttle = falcon.position.z * speed;
+                ackermannEnv.throttle = falconEnv.position.z * speed;
 
-                float auxSteer = Mathf.Abs(falcon.position.x) > 0.3f ? falcon.position.x : 0f;
-                steer = throttle > 0f ? auxSteer * -1 : auxSteer;
+                float auxSteer = Mathf.Abs(falconEnv.position.x) > 0.3f ? falconEnv.position.x : 0f;
+                ackermannEnv.steer = ackermannEnv.throttle > 0f ? auxSteer * -1 : auxSteer;
 
-                falcon.force.x = 0f;
-                falcon.force.y = 0f;
-                falcon.force.z = 0f;
+                falconEnv.force.x = 0f;
+                falconEnv.force.y = 0f;
+                falconEnv.force.z = 0f;
 
-                falcon.rgb.x = 0f;
-                falcon.rgb.y = 1f;
-                falcon.rgb.z = 0f;
+                falconEnv.rgb.x = 0f;
+                falconEnv.rgb.y = 1f;
+                falconEnv.rgb.z = 0f;
             }
             
         }
@@ -87,26 +75,8 @@ public class Ackermann : MonoBehaviour
 
     private void FixedUpdate()
     {
-        transform.rotation = rotation;
-        rb.velocity = (position - transform.position) * rbVelocityFactor;
-    }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        isColliding = true;
-        if (throttle > 0f)
-        {
-            isCollidingFront = true;
-        }
-        else
-        {
-            isCollidingFront = false;
-        }
-    }
-
-    private void OnCollisionExit(Collision collision)
-    {
-        isColliding = false;
+        transform.rotation = ackermannEnv.rotation;
+        rb.velocity = (ackermannEnv.position - transform.position) * rbVelocityFactor;
     }
 
     public void CenterButtonHandler()

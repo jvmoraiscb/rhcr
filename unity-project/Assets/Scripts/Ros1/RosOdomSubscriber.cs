@@ -5,7 +5,7 @@ namespace RosSharp.RosBridgeClient
     public class RosOdomSubscriber : UnitySubscriber<MessageTypes.Nav.Odometry>
     {
         [SerializeField]
-        private Ackermann ackermann;
+        private AckermannEnv ackermannEnv;
         
         private MessageTypes.Nav.Odometry msg;
         private bool isMessageReceived;
@@ -28,9 +28,9 @@ namespace RosSharp.RosBridgeClient
         }
         private void ProcessMessage()
         {   
-            ackermann.position.x = (float)msg.pose.pose.position.y * -1;
-            ackermann.position.y = 0f;
-            ackermann.position.z = (float)msg.pose.pose.position.x;
+            ackermannEnv.position.x = (float)msg.pose.pose.position.y * -1;
+            ackermannEnv.position.y = 0f;
+            ackermannEnv.position.z = (float)msg.pose.pose.position.x;
 
             Quaternion quart_aux;
 
@@ -45,7 +45,7 @@ namespace RosSharp.RosBridgeClient
             euler_aux.x = 0;
             euler_aux.z = 0;
 
-            ackermann.rotation = Quaternion.Euler(euler_aux);
+            ackermannEnv.rotation = Quaternion.Euler(euler_aux);
 
             isMessageReceived = false;
         }
