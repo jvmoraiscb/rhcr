@@ -1,19 +1,12 @@
 using UnityEngine;
 
-// Ackermann is the main class, all others classes just send or receive data from it
-public class Ackermann : MonoBehaviour
+// Remote Haptic Control Robot (RHCR) is the main class, all others classes just send or receive data from it
+public class RemoteHapticControlRobot : MonoBehaviour
 {
-    [SerializeField]
-    private Rigidbody rb;
     [SerializeField]
     private FalconEnv falconEnv;
     [SerializeField]
     private AckermannEnv ackermannEnv;
-    
-    [SerializeField]
-    private float rbVelocityFactor;
-    [SerializeField]
-    private float falconForceFactor;
 
     [SerializeField]
     private float defaultSpeed;
@@ -28,12 +21,15 @@ public class Ackermann : MonoBehaviour
     private void Start()
     {
         speed = defaultSpeed;
-        
         isBreaking = true;
+        falconEnv.OnCenterButtonPress += CenterButtonHandler;
+        falconEnv.OnLeftButtonPress += LeftButtonHandler;
+        falconEnv.OnRightButtonPress += RightButtonHandler;
+        falconEnv.OnUpButtonPress += UpButtonHandler;
     }
 
     private void Update()
-    {   
+    {
         if (isBreaking)
         {
             ackermannEnv.throttle = 0f;
@@ -49,10 +45,10 @@ public class Ackermann : MonoBehaviour
         }
         else
         {
-            // TODO: fazer com seis colisores
+            // TODO: new collisions
             if(false)
             {
-
+                // TODO: we need collisions?
             }
             else
             {
@@ -75,8 +71,7 @@ public class Ackermann : MonoBehaviour
 
     private void FixedUpdate()
     {
-        transform.rotation = ackermannEnv.rotation;
-        rb.velocity = (ackermannEnv.position - transform.position) * rbVelocityFactor;
+        transform.SetPositionAndRotation(ackermannEnv.position, ackermannEnv.rotation);
     }
 
     public void CenterButtonHandler()
@@ -95,6 +90,6 @@ public class Ackermann : MonoBehaviour
     }
     public void UpButtonHandler()
     {
-
+        speed = defaultSpeed;
     }
 }

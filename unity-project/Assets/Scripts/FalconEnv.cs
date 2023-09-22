@@ -1,24 +1,27 @@
+using System;
 using UnityEngine;
 
 public class FalconEnv : MonoBehaviour
 {
-    [SerializeField]
-    private Ackermann ackermann;
-    
+    public event Action OnCenterButtonPress;
+    public event Action OnLeftButtonPress;
+    public event Action OnRightButtonPress;
+    public event Action OnUpButtonPress;
+
     public Vector3 position;
     public Vector3 force;
     public Vector3 rgb;
 
-    public void Center_button_handler() {
-        ackermann.CenterButtonHandler();
+    public void CenterButtonHandler() {
+        OnCenterButtonPress?.Invoke();
     }
-    public void Left_button_handler() {
-        ackermann.LeftButtonHandler();
+    public void LeftButtonHandler() {
+        OnLeftButtonPress?.Invoke();
     }
-    public void Right_button_handler() {
-        ackermann.RightButtonHandler();
+    public void RightButtonHandler() {
+        OnRightButtonPress?.Invoke();
     }
-    public void Up_button_handler() {
-        ackermann.UpButtonHandler();
+    public void UpButtonHandler() {
+        OnUpButtonPress?.Invoke();
     }
 }

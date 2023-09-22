@@ -6,29 +6,29 @@ Our goal is to promote a user-friendly robot controller using virtual reality el
 
 ## Components
 
-- #### Wheeltec Ackermann Robot
+-   #### Wheeltec Ackermann Robot
 
-  ![ackermann](/doc/images/ackermann.jpg)
+    ![ackermann](/doc/images/ackermann.jpg)
 
-  - using ROS [Melodic](http://wiki.ros.org/melodic) (Ubuntu 18.04)
+    -   using ROS [Melodic](http://wiki.ros.org/melodic) (Ubuntu 18.04)
 
-- #### Novint Falcon
+-   #### Novint Falcon
 
-  ![novint falcon](/doc/images/falcon.jpg)
+    ![novint falcon](/doc/images/falcon.jpg)
 
-  - using [libnifalcon](https://github.com/libnifalcon/libnifalcon) library and ROS [Humble](https://docs.ros.org/en/humble/index.html) (Ubuntu 22.04)
+    -   using [libnifalcon](https://github.com/libnifalcon/libnifalcon) library and ROS [Humble](https://docs.ros.org/en/humble/index.html) (Ubuntu 22.04)
 
-- #### Unity
+-   #### Unity
 
-  ![unity project](/doc/images/unity-project.png)
+    ![unity project](/doc/images/unity-project.png)
 
-  - using [ros2-for-unity](https://github.com/RobotecAI/ros2-for-unity) and [ros-sharp](https://github.com/siemens/ros-sharp) libraries
+    -   using [ros2-for-unity](https://github.com/RobotecAI/ros2-for-unity) and [ros-sharp](https://github.com/siemens/ros-sharp) libraries
 
-- #### ROS
+-   #### ROS
 
-  ![ros-terminal](/doc/images/ros-terminal.png)
+    ![ros-terminal](/doc/images/ros-terminal.png)
 
-  - using [rosbridge](http://wiki.ros.org/rosbridge_suite), [navigation](http://wiki.ros.org/navigation) and others ROS packages
+    -   using [rosbridge](http://wiki.ros.org/rosbridge_suite), [navigation](http://wiki.ros.org/navigation) and others ROS packages
 
 ## Installation
 
@@ -104,11 +104,15 @@ sudo docker run -it --rm --network host --privileged -v /dev/bus/usb:/dev/bus/us
 
 ### Windows environment
 
-First, connect to robot access point:
+First, disable Windows Firewall:
+
+![windows-firewall](/doc/images/windows-firewall.jpg)
+
+Second, connect to robot access point:
 
 ![wheeltec-wifi](/doc/images/wheeltec-wifi.jpg)
 
-Second, open two terminals and connect to robot through ssh protocol:
+Third, open two terminals and connect to robot through ssh protocol:
 
 ![wheeltec-ssh](/doc/images/wheeltec-ssh.jpg)
 
