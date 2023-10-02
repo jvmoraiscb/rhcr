@@ -43,7 +43,7 @@ namespace ROS2
             {
                 Linear = new geometry_msgs.msg.Vector3
                 {
-                    X = ackermannEnv.position.x,
+                    X = ackermannEnv.throttle,
                     Y = 0f,
                     Z = 0f
                 },

@@ -10,29 +10,29 @@ Our goal is to promote a user-friendly robot controller using virtual reality el
 
     ![ackermann](/doc/images/ackermann.jpg)
 
-    -   using ROS [Melodic](http://wiki.ros.org/melodic) (Ubuntu 18.04)
+    -   using proprietary ROS 2 version by Wheeltec
 
 -   #### Novint Falcon
 
-    ![novint falcon](/doc/images/falcon.jpg)
+    ![falcon](/doc/images/falcon.jpg)
 
     -   using [libnifalcon](https://github.com/libnifalcon/libnifalcon) library and ROS [Humble](https://docs.ros.org/en/humble/index.html) (Ubuntu 22.04)
 
 -   #### Unity
 
-    ![unity project](/doc/images/unity-project.png)
+    ![unity-project](/doc/images/unity-project.png)
 
-    -   using [ros2-for-unity](https://github.com/RobotecAI/ros2-for-unity) and [ros-sharp](https://github.com/siemens/ros-sharp) libraries
+    -   using [ros2-for-unity](https://github.com/RobotecAI/ros2-for-unity) library
 
--   #### ROS
+-   #### ROS 2
 
     ![ros-terminal](/doc/images/ros-terminal.png)
 
-    -   using [rosbridge](http://wiki.ros.org/rosbridge_suite), [navigation](http://wiki.ros.org/navigation) and others ROS packages
+    -   using [navigation](http://wiki.ros.org/navigation) and others ROS packages
 
 ## Installation
 
-The project needs two operating systems, a linux virtual machine to run ROS and Novint Falcon open-source drivers, and a windows environment to run Unity and ROS-Unity packages.
+The project needs two operating systems, a linux virtual machine to run ROS and Novint Falcon open-source drivers, and a windows environment to run Unity and ros2-for-unity library.
 
 Below is a step-by-step tutorial on how to prepare each environment:
 
@@ -44,9 +44,13 @@ First, visit https://www.vmware.com to download and install VMWare Workstation P
 
 After, visit https://ubuntu.com/download and download the Ubuntu 22.04 image, then open VMWare and proceed to install the OS.
 
-The install settings should look like this:
+The network adapter must be in Bridged mode and **ONLY** the **adapter that the robot is connected to** must be turned on (in our case, the Wi-Fi):
 
-![vmware config](/doc/images/vmware-config.jpg)
+![vmware-network](/doc/images/vmware-network.jpg)
+
+In the end, settings should look like this:
+
+![vmware-config](/doc/images/vmware-config.jpg)
 
 _to facilitate the process and guarantee the functioning of the system, we will use a docker image._
 
@@ -82,10 +86,6 @@ After, visit https://unity.com/releases/editor/archive and find **Unity 2020.3.2
 
 Now, download this repository, unzip and open **unity-project** folder in Unity (all necessary plugins and libraries are already included in the project).
 
-And finally, open Ros1Holder object and change the rosbridge url to **ws://10.10.10.10:9090**
-
-![ros1-holder](/doc/images/ros1-holder.jpg)
-
 ## Running
 
 _Before running the project, it's a good idea to check that both computers are "seeing" each other (just ping them)._
@@ -108,24 +108,22 @@ First, disable Windows Firewall:
 
 ![windows-firewall](/doc/images/windows-firewall.jpg)
 
-Second, connect to robot access point:
+Second, go to Windows Advanced network settings and disable **all adapters that are not connected to the same network as the robot** (same way as in vmware):
 
-![wheeltec-wifi](/doc/images/wheeltec-wifi.jpg)
+![windows-network](/doc/images/windows-network.jpg)
 
-Third, open two terminals and connect to robot through ssh protocol:
+Third, connect to the same network as the robot:
+
+![windows-wifi](/doc/images/windows-wifi.jpg)
+
+Then, open a powershell terminal and connect to robot through ssh protocol:
 
 ![wheeltec-ssh](/doc/images/wheeltec-ssh.jpg)
 
-Now, launch navigation package in the first terminal:
+Now, launch default package in the first terminal:
 
 ```bash
-roslaunch turn_on_wheeltec_robot turn_on_wheeltec_robot.launch
-```
-
-Then, launch rosbridge package in the second terminal:
-
-```bash
-roslaunch rosbridge_server rosbridge_websocket.launch
+roslaunch ros2 launch turn_on_wheeltec_robot turn_on_wheeltec_robot.launch.py
 ```
 
 Finally, open **unity-project** and hit play button.
