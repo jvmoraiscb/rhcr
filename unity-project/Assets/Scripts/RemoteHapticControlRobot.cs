@@ -7,6 +7,12 @@ public class RemoteHapticControlRobot : MonoBehaviour
     private FalconEnv falconEnv;
     [SerializeField]
     private AckermannEnv ackermannEnv;
+    [SerializeField]
+    private WheelsAnimation wheelsAnim;
+    [SerializeField]
+    private Camera closeUpCam;
+    [SerializeField]
+    private Camera topDownCam;
 
     [SerializeField]
     private float defaultSpeed;
@@ -20,6 +26,8 @@ public class RemoteHapticControlRobot : MonoBehaviour
 
     private void Start()
     {
+        closeUpCam.enabled = true;
+        topDownCam.enabled = false;
         speed = defaultSpeed;
         isBreaking = true;
         falconEnv.OnCenterButtonPress += CenterButtonHandler;
@@ -30,6 +38,8 @@ public class RemoteHapticControlRobot : MonoBehaviour
 
     private void Update()
     {
+        float auxSteer = 0f;
+
         if (isBreaking)
         {
             ackermannEnv.throttle = 0f;
@@ -54,7 +64,7 @@ public class RemoteHapticControlRobot : MonoBehaviour
             {
                 ackermannEnv.throttle = falconEnv.position.z * speed;
 
-                float auxSteer = Mathf.Abs(falconEnv.position.x) > 0.3f ? falconEnv.position.x : 0f;
+                auxSteer = Mathf.Abs(falconEnv.position.x) > 0.3f ? falconEnv.position.x : 0f;
                 ackermannEnv.steer = ackermannEnv.throttle > 0f ? auxSteer * -1 : auxSteer;
 
                 falconEnv.force.x = 0f;
@@ -67,6 +77,8 @@ public class RemoteHapticControlRobot : MonoBehaviour
             }
             
         }
+
+        wheelsAnim.wheelsSteer = ackermannEnv.throttle != 0f ? auxSteer : 0f;
     }
 
     private void FixedUpdate()
@@ -90,6 +102,6 @@ public class RemoteHapticControlRobot : MonoBehaviour
     }
     public void UpButtonHandler()
     {
-        speed = defaultSpeed;
+        // TODO: change camera view
     }
 }
