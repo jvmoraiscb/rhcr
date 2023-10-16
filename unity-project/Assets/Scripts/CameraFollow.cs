@@ -2,13 +2,36 @@ using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
-    [SerializeField] private Vector3 offset;
-    [SerializeField] private Transform target;
-    [SerializeField] private float translateSpeed;
-    [SerializeField] private float rotationSpeed;
+    [SerializeField]
+    private Vector3 offsetCloseUp;
+    [SerializeField]
+    private Vector3 offsetTopDown;
+    [SerializeField]
+    private Transform target;
+    [SerializeField]
+    private float translateSpeed;
+    [SerializeField]
+    private float rotationSpeed;
 
-    private void FixedUpdate()
+    private Vector3 offset;
+
+    public bool isCloseUpCam;
+
+    private void Start()
     {
+        isCloseUpCam = true;
+    }
+
+    private void Update()
+    {
+        if (isCloseUpCam)
+        {
+            offset = offsetCloseUp;
+        }
+        else
+        {
+            offset = offsetTopDown;
+        }
         HandleTranslation();
         HandleRotation();
     }
