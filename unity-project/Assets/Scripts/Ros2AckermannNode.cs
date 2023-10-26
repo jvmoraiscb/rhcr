@@ -7,11 +7,15 @@ namespace ROS2
         [SerializeField]
         private AckermannEnv ackermannEnv;
         [SerializeField]
+        private MapEnv mapEnv;
+        [SerializeField]
         private string nodeName;
         [SerializeField]
         private string odomTopicName;
         [SerializeField]
         private string cmdVelTopicName;
+        [SerializeField]
+        private string laserScanTopicName;
 
         private ROS2UnityComponent ros2Unity;
         private ROS2Node ros2Node;
@@ -24,8 +28,9 @@ namespace ROS2
                 ros2Node = ros2Unity.CreateNode(nodeName);
             if (ros2Unity.Ok())
             {
-                ros2Node.CreateSubscription<nav_msgs.msg.Odometry>(odomTopicName, msg => OdomHandler(msg));
                 cmdVel_pub = ros2Node.CreatePublisher<geometry_msgs.msg.Twist>(cmdVelTopicName);
+                ros2Node.CreateSubscription<nav_msgs.msg.Odometry>(odomTopicName, msg => OdomHandler(msg));
+                ros2Node.CreateSubscription<sensor_msgs.msg.LaserScan>(laserScanTopicName, msg => LaserScanHandler(msg));
             }
         }
 
@@ -33,11 +38,11 @@ namespace ROS2
         {
             if (ros2Unity.Ok())
             {
-                CmdVelHandler();
+                CmdVelUpdate();
             }
         }
 
-        void CmdVelHandler()
+        void CmdVelUpdate()
         {
             geometry_msgs.msg.Twist msg = new geometry_msgs.msg.Twist
             {
@@ -58,7 +63,7 @@ namespace ROS2
             cmdVel_pub.Publish(msg);
         }
 
-        void OdomHandler(nav_msgs.msg.Odometry msg) 
+        void OdomHandler(nav_msgs.msg.Odometry msg)
         {
             ackermannEnv.position.x = (float)msg.Pose.Pose.Position.Y * -1;
             ackermannEnv.position.y = 0f;
@@ -78,6 +83,11 @@ namespace ROS2
             euler_aux.z = 0;
 
             ackermannEnv.rotation = Quaternion.Euler(euler_aux);
+        }
+        // Code created by Fabiana Machado
+        void LaserScanHandler(sensor_msgs.msg.LaserScan msg)
+        {
+            mapEnv.SetRobotLaser(ackermannEnv.rotation.eulerAngles, msg.Ranges, msg.Range_max, msg.Range_min, msg.Angle_max, msg.Angle_min, msg.Angle_increment);
         }
     }
 

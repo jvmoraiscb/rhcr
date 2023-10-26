@@ -204,52 +204,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 118822043}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &530364417
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 530364419}
-  - component: {fileID: 530364418}
-  m_Layer: 0
-  m_Name: FalconEnv
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &530364418
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 530364417}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 86065beceb082904d999c8601023efd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  position: {x: 0, y: 0, z: 0}
-  force: {x: 0, y: 0, z: 0}
-  rgb: {x: 0, y: 0, z: 0}
---- !u!4 &530364419
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 530364417}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 1105568160}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &603841725
 GameObject:
   m_ObjectHideFlags: 0
@@ -353,6 +307,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1105568160}
   - component: {fileID: 668189230}
+  - component: {fileID: 668189232}
+  - component: {fileID: 668189231}
+  - component: {fileID: 668189229}
   m_Layer: 0
   m_Name: RemoteHapticControlRobot
   m_TagString: Untagged
@@ -360,6 +317,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &668189229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 668189228}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a07a2678b1bbd1428ee9867d93b48ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefab: {fileID: 1699737291531827737, guid: 9c883a1150dc08d4f82e95b28b66468b, type: 3}
+  range_min_filter: 0.15
+  range_max_filter: 1.5
+  tempoParaDestruir: 0.2
 --- !u!114 &668189230
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -372,13 +345,45 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 330a51c153fbc7743936ef114d925ce7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  falconEnv: {fileID: 530364418}
-  ackermannEnv: {fileID: 1137395988}
-  wheelsAnim: {fileID: 2864149503773526659}
+  falconEnv: {fileID: 668189231}
+  ackermannEnv: {fileID: 668189232}
   cam: {fileID: 603841729}
-  defaultSpeed: 0.7
-  maxSpeed: 1.2
+  defaultSpeed: 0.6
+  maxSpeed: 1
   minSpeed: 0.2
+  speed: 0
+  isBreaking: 1
+--- !u!114 &668189231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 668189228}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86065beceb082904d999c8601023efd8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  position: {x: 0, y: 0, z: 0}
+  force: {x: 0, y: 0, z: 0}
+  rgb: {x: 0, y: 0, z: 0}
+--- !u!114 &668189232
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 668189228}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45d62165c1252a84cbe3a66298df15d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  position: {x: 0, y: 0, z: 0}
+  rotation: {x: 0, y: 0, z: 0, w: 0}
+  throttle: 0
+  steer: 0
 --- !u!1 &1049139517
 GameObject:
   m_ObjectHideFlags: 0
@@ -423,8 +428,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2864149502132889870}
-  - {fileID: 1137395987}
-  - {fileID: 530364419}
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -515,59 +518,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1127951920}
   m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: -1.789309, y: 4.597006, z: 2.2944999}
+  m_LocalPosition: {x: -1.789309, y: 7.69, z: 2.2944999}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1049139518}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
---- !u!1 &1137395986
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1137395987}
-  - component: {fileID: 1137395988}
-  m_Layer: 0
-  m_Name: AckermannEnv
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1137395987
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1137395986}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 1105568160}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1137395988
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1137395986}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45d62165c1252a84cbe3a66298df15d4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  position: {x: 0, y: 0, z: 0}
-  rotation: {x: 0, y: 0, z: 0, w: 0}
-  throttle: 0
-  steer: 0
 --- !u!1 &2097183036
 GameObject:
   m_ObjectHideFlags: 0
@@ -599,7 +555,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 611399fe020f3de479c71731da92a15f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  falconEnv: {fileID: 530364418}
+  falconEnv: {fileID: 668189231}
   nodeName: FalconNode_Unity
   positionTopicName: position_vector
   rightButtonTopicName: right_button
@@ -646,10 +602,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 385866dd3bdd78f4e9c34d8d63afd25c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ackermannEnv: {fileID: 1137395988}
+  ackermannEnv: {fileID: 668189232}
+  mapEnv: {fileID: 668189229}
   nodeName: AckermannNode_Unity
   odomTopicName: odom_combined
   cmdVelTopicName: cmd_vel
+  laserScanTopicName: 
 --- !u!4 &2864149501738617792
 Transform:
   m_ObjectHideFlags: 0
@@ -1772,7 +1730,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2864149502132889870}
-  - component: {fileID: 2864149503773526659}
   m_Layer: 0
   m_Name: AckermannModel
   m_TagString: Untagged
@@ -1780,23 +1737,3 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2864149503773526659
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2864149503773526658}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd1fee9468862af46828f46bf7feaaa2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  frontLeft: {fileID: 2864149502595178491}
-  frontRight: {fileID: 2864149503493947277}
-  rearLeft: {fileID: 2864149503211135043}
-  rearRight: {fileID: 2864149502732086721}
-  maxAngleDegrees: 25
-  angleDifferenceDegrees: 5
-  wheelsSteer: 0
-  wheelsThrottle: 0

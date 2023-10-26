@@ -8,8 +8,6 @@ public class RemoteHapticControlRobot : MonoBehaviour
     [SerializeField]
     private AckermannEnv ackermannEnv;
     [SerializeField]
-    private WheelsAnimation wheelsAnim;
-    [SerializeField]
     private CameraFollow cam;
 
     [SerializeField]
@@ -18,8 +16,9 @@ public class RemoteHapticControlRobot : MonoBehaviour
     private float maxSpeed;
     [SerializeField]
     private float minSpeed;
-
+    [SerializeField]
     private float speed;
+    [SerializeField]
     private bool isBreaking;
 
     private void Start()
@@ -73,10 +72,6 @@ public class RemoteHapticControlRobot : MonoBehaviour
             }
             
         }
-
-        wheelsAnim.wheelsSteer = ackermannEnv.throttle != 0f ? auxSteer : 0f;
-
-        //Debug.Log(Vector3.Distance(ackermannEnv.position, transform.position) / Time.fixedDeltaTime);
         transform.SetPositionAndRotation(ackermannEnv.position, ackermannEnv.rotation);
     }
 
