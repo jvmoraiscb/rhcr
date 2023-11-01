@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class CollisionController : MonoBehaviour
+public class TestCollisionController : MonoBehaviour
 {
     public Vector3 force;
 
@@ -8,7 +8,7 @@ public class CollisionController : MonoBehaviour
     private float maxForce;
 
     [SerializeField]
-    private CarController car;
+    private TestCarController car;
 
     private float finalForce;
 

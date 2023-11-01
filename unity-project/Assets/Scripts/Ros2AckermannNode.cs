@@ -7,8 +7,6 @@ namespace ROS2
         [SerializeField]
         private AckermannEnv ackermannEnv;
         [SerializeField]
-        private MapEnv mapEnv;
-        [SerializeField]
         private string nodeName;
         [SerializeField]
         private string odomTopicName;
@@ -16,6 +14,27 @@ namespace ROS2
         private string cmdVelTopicName;
         [SerializeField]
         private string laserScanTopicName;
+
+        [SerializeField]
+        private GameObject LidarPosition;
+        [SerializeField]
+        private float range_min_filter;
+        [SerializeField]
+        private float range_max_filter;
+        private float range_max;
+        private float range_min;
+        private float angle_min;
+        private float angle_max;
+        private float angle_increment;
+        private float[] ranges = null;
+        private Vector3[] directions;
+        private Vector3 directionsNew;
+
+        [SerializeField]
+        private GameObject prefab;
+        [SerializeField]
+        private float tempoParaDestruir;
+        private GameObject destruidor;
 
         private ROS2UnityComponent ros2Unity;
         private ROS2Node ros2Node;
@@ -39,6 +58,7 @@ namespace ROS2
             if (ros2Unity.Ok())
             {
                 CmdVelUpdate();
+                LaserScanUpdate();
             }
         }
 
@@ -61,6 +81,37 @@ namespace ROS2
             };
 
             cmdVel_pub.Publish(msg);
+        }
+
+        // Code created by Fabiana Machado
+        void LaserScanUpdate()
+        {
+            Vector3 angle = LidarPosition.transform.eulerAngles;
+
+            if (ranges != null)
+            {
+                for (int i = 0; i < ranges.Length; i++)
+                {
+                    // if the ranges are between the lower and upper limits
+                    if (ranges[i] > range_min_filter)
+                    {
+                        if (ranges[i] < range_max_filter)
+                        {
+                            // transform the scan topic so it can have the walker reference and corrected angles
+                            directions[i] = new Vector3(-Mathf.Cos(angle_min + angle_increment * i - (angle.y * Mathf.PI / 180)), -Mathf.Sin(angle_min + angle_increment * i - (angle.y * Mathf.PI / 180)), 0).Ros2Unity();
+                            directionsNew = new Vector3(directions[i].x * 10 * ranges[i] + transform.position.x, transform.position.y, directions[i].z * 10 * ranges[i] + transform.position.z);
+                            // Instatiate a prefab to warn the user that that is a possible colision in the real env
+                            destruidor = (GameObject)Instantiate(prefab, new Vector3(directionsNew.x, directionsNew.y, directionsNew.z), new Quaternion(0, 0, 0, 1));
+                            // destroy this game object after 0.3 seconds so it doesnt flood the scene
+                            Destroy(destruidor, tempoParaDestruir);
+                            //Debug.DrawLine(transform.position, directionsNew);
+                            //Debug.Log(directionsNew);
+                        }
+
+                    }
+
+                }
+            }
         }
 
         void OdomHandler(nav_msgs.msg.Odometry msg)
@@ -87,7 +138,14 @@ namespace ROS2
         // Code created by Fabiana Machado
         void LaserScanHandler(sensor_msgs.msg.LaserScan msg)
         {
-            mapEnv.SetRobotLaser(ackermannEnv.rotation.eulerAngles, msg.Ranges, msg.Range_max, msg.Range_min, msg.Angle_max, msg.Angle_min, msg.Angle_increment);
+            ranges = new float[msg.Ranges.Length];
+            directions = new Vector3[msg.Ranges.Length];
+            range_max = msg.Range_max;
+            range_min = msg.Range_min;
+            ranges = msg.Ranges;
+            angle_min = msg.Angle_min;
+            angle_max = msg.Angle_max;
+            angle_increment = msg.Angle_increment;
         }
     }
 

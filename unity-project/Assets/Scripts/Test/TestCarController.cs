@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class CarController : MonoBehaviour
+public class TestCarController : MonoBehaviour
 {
     [SerializeField] private Rigidbody car;
 

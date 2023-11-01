@@ -292,7 +292,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   offsetCloseUp: {x: 0, y: 0.5, z: -1}
-  offsetTopDown: {x: 0, y: 10, z: -1}
+  offsetTopDown: {x: 0, y: 5, z: -1}
   target: {fileID: 1105568160}
   translateSpeed: 10
   rotationSpeed: 10
@@ -309,7 +309,6 @@ GameObject:
   - component: {fileID: 668189230}
   - component: {fileID: 668189232}
   - component: {fileID: 668189231}
-  - component: {fileID: 668189229}
   m_Layer: 0
   m_Name: RemoteHapticControlRobot
   m_TagString: Untagged
@@ -317,22 +316,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &668189229
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 668189228}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a07a2678b1bbd1428ee9867d93b48ad, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  prefab: {fileID: 1699737291531827737, guid: 9c883a1150dc08d4f82e95b28b66468b, type: 3}
-  range_min_filter: 0.15
-  range_max_filter: 1.5
-  tempoParaDestruir: 0.2
 --- !u!114 &668189230
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -408,8 +391,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1049139517}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.789309, y: -1.494, z: -2.2944999}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 1.789309, y: -14.94, z: -2.2944999}
+  m_LocalScale: {x: 10, y: 10, z: 10}
   m_Children:
   - {fileID: 1127951922}
   - {fileID: 118822044}
@@ -425,9 +408,10 @@ Transform:
   m_GameObject: {fileID: 668189228}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 10, y: 10, z: 10}
   m_Children:
   - {fileID: 2864149502132889870}
+  - {fileID: 1910071435}
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -524,6 +508,36 @@ Transform:
   m_Father: {fileID: 1049139518}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &1910071434
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1910071435}
+  m_Layer: 0
+  m_Name: LidarPosition
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1910071435
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1910071434}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.3173, z: 0.2313}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1105568160}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2097183036
 GameObject:
   m_ObjectHideFlags: 0
@@ -603,11 +617,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ackermannEnv: {fileID: 668189232}
-  mapEnv: {fileID: 668189229}
   nodeName: AckermannNode_Unity
   odomTopicName: odom_combined
   cmdVelTopicName: cmd_vel
-  laserScanTopicName: 
+  laserScanTopicName: scan
+  LidarPosition: {fileID: 1910071434}
+  range_min_filter: 0
+  range_max_filter: 100
+  prefab: {fileID: 1699737291531827737, guid: 9c883a1150dc08d4f82e95b28b66468b, type: 3}
+  tempoParaDestruir: 0.3
 --- !u!4 &2864149501738617792
 Transform:
   m_ObjectHideFlags: 0

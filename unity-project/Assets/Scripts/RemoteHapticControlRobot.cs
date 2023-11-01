@@ -11,11 +11,12 @@ public class RemoteHapticControlRobot : MonoBehaviour
     private CameraFollow cam;
 
     [SerializeField]
-    private float defaultSpeed;
+    private float defaultSpeed = .6f;
     [SerializeField]
-    private float maxSpeed;
+    private float maxSpeed = 1f;
     [SerializeField]
-    private float minSpeed;
+    private float minSpeed = .2f;
+
     [SerializeField]
     private float speed;
     [SerializeField]
@@ -33,9 +34,7 @@ public class RemoteHapticControlRobot : MonoBehaviour
 
     private void Update()
     {
-        float auxSteer = 0f;
-
-        if (isBreaking)
+    if (isBreaking)
         {
             ackermannEnv.throttle = 0f;
             ackermannEnv.steer = 0f;
@@ -50,8 +49,9 @@ public class RemoteHapticControlRobot : MonoBehaviour
         }
         else
         {
+            float auxSteer;
             // TODO: new collisions
-            if(false)
+            if (false)
             {
                 // TODO: we need collisions?
             }
@@ -72,7 +72,7 @@ public class RemoteHapticControlRobot : MonoBehaviour
             }
             
         }
-        transform.SetPositionAndRotation(ackermannEnv.position, ackermannEnv.rotation);
+        // transform.SetPositionAndRotation(ackermannEnv.position, ackermannEnv.rotation);
     }
 
     private void CenterButtonHandler()

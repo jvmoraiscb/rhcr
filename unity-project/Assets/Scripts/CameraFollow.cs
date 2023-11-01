@@ -22,7 +22,7 @@ public class CameraFollow : MonoBehaviour
         isCloseUpCam = true;
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         if (isCloseUpCam)
         {

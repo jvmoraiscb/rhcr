@@ -2,12 +2,12 @@ using UnityEngine;
 
 namespace ROS2
 {
-    public class FalconNode : MonoBehaviour
+    public class TestFalconNode : MonoBehaviour
     {
         [SerializeField]
-        private CarController carController;
+        private TestCarController carController;
         [SerializeField]
-        private CollisionController collisionController;
+        private TestCollisionController collisionController;
 
         private ROS2UnityComponent ros2Unity;
         private ROS2Node ros2Node;
