@@ -15,19 +15,15 @@ public class MockupAckermann : MonoBehaviour
     [SerializeField] private WheelCollider rearLeftWheelCollider;
     [SerializeField] private WheelCollider rearRightWheelCollider;
 
-    [SerializeField] private Transform frontLeftWheelTransform;
-    [SerializeField] private Transform frontRightWheeTransform;
-    [SerializeField] private Transform rearLeftWheelTransform;
-    [SerializeField] private Transform rearRightWheelTransform;
-
     private float currentSteerAngle;
-    private float currentbreakForce;
+    public float currentbreakForce;
 
     private void FixedUpdate()
     {
         HandleMotor();
         HandleSteering();
-        UpdateWheels();
+        ackermannEnv.position = transform.position;
+        ackermannEnv.rotation = transform.rotation;
     }
 
     private void HandleMotor()
@@ -51,19 +47,5 @@ public class MockupAckermann : MonoBehaviour
         currentSteerAngle = ackermannEnv.throttle > 0 ? maxSteerAngle * ackermannEnv.steer * -1 : maxSteerAngle * ackermannEnv.steer;
         frontLeftWheelCollider.steerAngle = currentSteerAngle;
         frontRightWheelCollider.steerAngle = currentSteerAngle;
-    }
-
-    private void UpdateWheels()
-    {
-        UpdateSingleWheel(frontLeftWheelCollider, frontLeftWheelTransform);
-        UpdateSingleWheel(frontRightWheelCollider, frontRightWheeTransform);
-        UpdateSingleWheel(rearRightWheelCollider, rearRightWheelTransform);
-        UpdateSingleWheel(rearLeftWheelCollider, rearLeftWheelTransform);
-    }
-
-    private void UpdateSingleWheel(WheelCollider wheelCollider, Transform wheelTransform)
-    {
-        wheelCollider.GetWorldPose(out _, out Quaternion rot);
-        wheelTransform.rotation = rot;
     }
 }

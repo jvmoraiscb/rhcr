@@ -3,23 +3,15 @@ using UnityEngine;
 // Remote Haptic Control Robot (RHCR) is the main class, all others classes just send or receive data from it
 public class RemoteHapticControlRobot : MonoBehaviour
 {
-    [SerializeField]
-    private FalconEnv falconEnv;
-    [SerializeField]
-    private AckermannEnv ackermannEnv;
-    [SerializeField]
-    private CameraFollow cam;
+    [SerializeField] private FalconEnv falconEnv;
+    [SerializeField] private AckermannEnv ackermannEnv;
+    [SerializeField] private CameraFollow cam;
 
-    [SerializeField]
-    private float defaultSpeed = .6f;
-    [SerializeField]
-    private float maxSpeed = 1f;
-    [SerializeField]
-    private float minSpeed = .2f;
+    [SerializeField] private float defaultSpeed = .6f;
+    [SerializeField] private float maxSpeed = 1f;
+    [SerializeField] private float minSpeed = .2f;
 
-    [SerializeField]
     private float speed;
-    [SerializeField]
     private bool isBreaking;
 
     private void Start()
@@ -72,7 +64,7 @@ public class RemoteHapticControlRobot : MonoBehaviour
             }
             
         }
-        // transform.SetPositionAndRotation(ackermannEnv.position, ackermannEnv.rotation);
+        transform.SetPositionAndRotation(ackermannEnv.position, ackermannEnv.rotation);
     }
 
     private void CenterButtonHandler()
