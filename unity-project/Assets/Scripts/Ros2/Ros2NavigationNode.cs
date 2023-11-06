@@ -43,6 +43,7 @@ namespace ROS2
         public RaycastHit hit;
 
         [SerializeField] private GameObject virtualLidarPosition;
+        [SerializeField] private GameObject virtualLidarFixPosition;
         [SerializeField] private GameObject real_prefab;
         [SerializeField] private float timeForDestructor;
         private GameObject destructor;
@@ -71,7 +72,7 @@ namespace ROS2
             }
         }
 
-        void Update()
+        void FixedUpdate()
         {
             if (ros2Unity.Ok())
             {
@@ -128,7 +129,8 @@ namespace ROS2
         private void VirtualLaserUpdate()
         {
             // rays always statrting from hokuyo fake in vWalker
-            Vector3 rayOrigin = virtualLidarPosition.transform.eulerAngles;
+            Vector3 rayOriginPos = virtualLidarFixPosition.transform.position;
+            Vector3 rayOrigin = virtualLidarFixPosition.transform.eulerAngles;
             Vector3 rayDirection;
 
 
@@ -136,7 +138,7 @@ namespace ROS2
             {
 
                 // Correcting the childs rotation in relation to the parent (90 degrees /1,57)
-                float angle = (float)(i - transform.parent.rotation.eulerAngles.y) / rad_2_deg;
+                float angle = (float)(i - rayOrigin.y) / rad_2_deg;
 
 
                 rayDirection.x = Mathf.Cos(angle);
@@ -151,11 +153,9 @@ namespace ROS2
                     // if the ray collides, this distance information will be used to fill the ranges list
                     // also, it can draw the lines from vWalker to the colision point. uncomment debug.drawline
                     // it only collides with the Default mask (1)
-                    if (Physics.Raycast(rayOrigin, rayDirection, out hit, range_max * 10))
+                    if (Physics.Raycast(rayOriginPos, rayDirection, out hit, range_max * 10))
                     {
-
                         // if it is between the allowed ranges
-
                         if (hit.distance / 10 > range_min && hit.distance / 10 < range_max)
                         {
 
@@ -166,7 +166,7 @@ namespace ROS2
                                 // divided by ten due to scale factor
                                 ranges[i - 360 + angleRVIZ] = hit.distance / 10;
                                 hitPoints[i - 360 + angleRVIZ] = hit.point;
-                                //Debug.DrawLine(rayOrigin, hit.point, Color.white);
+                                Debug.DrawLine(rayOriginPos, hit.point, Color.white);
 
                                 // vector from the hit point
                                 //hitPoints[i - (int)(angle_min_deg)] = hit.point;
@@ -179,7 +179,7 @@ namespace ROS2
                                 ranges[i + angleRVIZ - (int)(angle_min_deg)] = hit.distance / 10;
                                 hitPoints[i + angleRVIZ - (int)(angle_min_deg)] = hit.point;
                                 //Debug.Log("hit distance: " + hit.distance + " hitPoint: " + hit.point + " angle: " + i);
-                                //Debug.DrawLine(rayOrigin, hit.point, Color.white);
+                                Debug.DrawLine(rayOriginPos, hit.point, Color.white);
 
                                 //hitPoints[i - (int)(angle_min_deg)] = hit.point;
 
@@ -211,7 +211,6 @@ namespace ROS2
 
 
             }
-
         }
 
         private void VirtualLaserHandler()

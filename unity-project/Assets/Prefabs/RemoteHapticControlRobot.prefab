@@ -1,5 +1,35 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1465478875
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1465478876}
+  m_Layer: 0
+  m_Name: LidarFixPosition
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1465478876
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1465478875}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.3173, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 3515776317009669621}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1690269478325847958
 GameObject:
   m_ObjectHideFlags: 0
@@ -1194,6 +1224,7 @@ Transform:
   m_Children:
   - {fileID: 1690269478200026459}
   - {fileID: 3515776317279399134}
+  - {fileID: 1465478876}
   m_Father: {fileID: 3515776315618327196}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1272,7 +1303,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3515776316505843944}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.4883158, y: 98.69681, z: -0.91184616}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 3515776315618327196}
@@ -1422,7 +1453,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3515776317359551849}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 611399fe020f3de479c71731da92a15f, type: 3}
   m_Name: 
@@ -1443,7 +1474,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3515776317359551849}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 385866dd3bdd78f4e9c34d8d63afd25c, type: 3}
   m_Name: 
@@ -1466,9 +1497,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeName: NavNode_Unity
   realLaserScanTopicName: /scan
-  virtualLaserScanTopicName: /virtual_scan
-  LidarPosition: {fileID: 3515776317279399135}
+  virtualLaserScanTopicName: /scan
   range_min_filter: 0
-  range_max_filter: 1000
-  prefab: {fileID: 1699737291531827737, guid: 9c883a1150dc08d4f82e95b28b66468b, type: 3}
-  tempoParaDestruir: 0.3
+  range_max_filter: 10000
+  range_max: 100000
+  range_min: 0
+  angle_max: 6.28
+  angle_min: 0
+  angle_increment: 0.0174533
+  samples: 360
+  update_rate: 70000
+  time_increment: 0.00019911081
+  intensities: []
+  hitPoints: []
+  angleRVIZ: 90
+  ranges: []
+  virtualLidarPosition: {fileID: 3515776317279399135}
+  virtualLidarFixPosition: {fileID: 0}
+  real_prefab: {fileID: 1699737291531827737, guid: 9c883a1150dc08d4f82e95b28b66468b, type: 3}
+  timeForDestructor: 0.1
