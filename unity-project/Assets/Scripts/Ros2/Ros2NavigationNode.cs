@@ -8,28 +8,29 @@ namespace ROS2
         [SerializeField] private string realLaserScanTopicName;
         [SerializeField] private string virtualLaserScanTopicName;
 
-        [SerializeField] private float range_min_filter;
-        [SerializeField] private float range_max_filter;
-        private float real_range_max;
-        private float real_range_min;
-        private float real_angle_min;
-        private float real_angle_max;
-        private float real_angle_increment;
-        private float[] real_ranges = null;
-        private Vector3[] real_directions;
-        private Vector3 real_directionsNew;
+        [SerializeField] private float rangeMinFilter = 0f;
+        [SerializeField] private float rangeMaxFilter = 1000f;
+        [SerializeField] private float realScale = 1f;
+        [SerializeField] private float virtualScale = 1f;
+        private float realRangeMax;
+        private float realRangeMin;
+        private float realAngleMax;
+        private float realAngleMin;
+        private float realAngleIncrement;
+        private float[] realRanges = null;
+        private Vector3[] realDirections;
+        private Vector3 realDirectionsNew;
 
         // O limite por angulo ainda não funciona. 
         // Comportamento estranho do laser no Rviz, melhor passar um filtro pelo ROS.
-        public float range_max = 1000;
-        public float range_min = 0.0f;
-        public float angle_max = 6.28f;
-        public float angle_min = 0.0f;
+        [SerializeField] public float range_max = 1000f;
+        [SerializeField] private float range_min = 0f;
+        [SerializeField] private float angle_max = 2*Mathf.PI;
+        [SerializeField] private float angle_min = 0f;
+        [SerializeField] private int samples = 360;
+        private float angle_increment;
         private float angle_max_deg;
         private float angle_min_deg;
-        public float angle_increment = 0.0174533f;
-        private Vector3 positionDiff;
-        public int samples = 360;
         public int update_rate = 70000;
         public float time_increment = 0.000199110814719f;
         public float[] intensities;
@@ -43,9 +44,9 @@ namespace ROS2
         public RaycastHit hit;
 
         [SerializeField] private GameObject virtualLidarPosition;
-        [SerializeField] private GameObject virtualLidarFixPosition;
-        [SerializeField] private GameObject real_prefab;
-        [SerializeField] private float timeForDestructor;
+        [SerializeField] private GameObject robotPosition;
+        [SerializeField] private GameObject realPrefab;
+        [SerializeField] private float timeForDestructor = 0.3f;
         private GameObject destructor;
 
         private ROS2UnityComponent ros2Unity;
@@ -54,6 +55,7 @@ namespace ROS2
 
         void Start()
         {
+            angle_increment = 2 * Mathf.PI / samples;
             // rad to deg
             angle_min_deg = angle_min * rad_2_deg;
             angle_max_deg = angle_max * rad_2_deg;
@@ -87,20 +89,20 @@ namespace ROS2
         {
             Vector3 angle = virtualLidarPosition.transform.eulerAngles;
 
-            if (real_ranges != null)
+            if (realRanges != null)
             {
-                for (int i = 0; i < real_ranges.Length; i++)
+                for (int i = 0; i < realRanges.Length; i++)
                 {
                     // if the real_ranges are between the lower and upper limits
-                    if (real_ranges[i] > range_min_filter)
+                    if (realRanges[i] > rangeMinFilter)
                     {
-                        if (real_ranges[i] < range_max_filter)
+                        if (realRanges[i] < rangeMaxFilter)
                         {
                             // transform the scan topic so it can have the walker reference and corrected angles
-                            real_directions[i] = new Vector3(-Mathf.Cos(real_angle_min + real_angle_increment * i - (angle.y * Mathf.PI / 180)), -Mathf.Sin(real_angle_min + real_angle_increment * i - (angle.y * Mathf.PI / 180)), 0).Ros2Unity();
-                            real_directionsNew = new Vector3(real_directions[i].x * 10 * real_ranges[i] + transform.position.x, transform.position.y, real_directions[i].z * 10 * real_ranges[i] + transform.position.z);
+                            realDirections[i] = new Vector3(-Mathf.Cos(realAngleMin + realAngleIncrement * i - (angle.y * Mathf.PI / 180)), -Mathf.Sin(realAngleMin + realAngleIncrement * i - (angle.y * Mathf.PI / 180)), 0).Ros2Unity();
+                            realDirectionsNew = new Vector3(realDirections[i].x * realScale * realRanges[i] + robotPosition.transform.position.x, robotPosition.transform.position.y, realDirections[i].z * realScale * realRanges[i] + robotPosition.transform.position.z);
                             // Instatiate a real_prefab to warn the user that that is a possible colision in the real env
-                            destructor = (GameObject)Instantiate(real_prefab, new Vector3(real_directionsNew.x, real_directionsNew.y, real_directionsNew.z), new Quaternion(0, 0, 0, 1));
+                            destructor = (GameObject)Instantiate(realPrefab, new Vector3(realDirectionsNew.x, realDirectionsNew.y, realDirectionsNew.z), new Quaternion(0, 0, 0, 1));
                             // destroy this game object after 0.3 seconds so it doesnt flood the scene
                             Destroy(destructor, timeForDestructor);
                             //Debug.DrawLine(transform.position, real_directionsNew);
@@ -116,31 +118,29 @@ namespace ROS2
         // Code created by Fabiana Machado
         void RealLaserScanHandler(sensor_msgs.msg.LaserScan msg)
         {
-            real_ranges = new float[msg.Ranges.Length];
-            real_directions = new Vector3[msg.Ranges.Length];
-            real_range_max = msg.Range_max;
-            real_range_min = msg.Range_min;
-            real_ranges = msg.Ranges;
-            real_angle_min = msg.Angle_min;
-            real_angle_max = msg.Angle_max;
-            real_angle_increment = msg.Angle_increment;
+            realRanges = new float[msg.Ranges.Length];
+            realDirections = new Vector3[msg.Ranges.Length];
+            realRangeMax = msg.Range_max;
+            realRangeMin = msg.Range_min;
+            realRanges = msg.Ranges;
+            realAngleMin = msg.Angle_min;
+            realAngleMax = msg.Angle_max;
+            realAngleIncrement = msg.Angle_increment;
         }
 
         private void VirtualLaserUpdate()
         {
             // rays always statrting from hokuyo fake in vWalker
-            Vector3 rayOriginPos = virtualLidarFixPosition.transform.position;
-            Vector3 rayOrigin = virtualLidarFixPosition.transform.eulerAngles;
+            Vector3 rayOriginPos = robotPosition.transform.position;
+            Vector3 rayOrigin = robotPosition.transform.eulerAngles;
             Vector3 rayDirection;
 
 
-            for (int i = 0; i <= 361; i++)
+            for (int i = 0; i < samples; i++)
             {
 
                 // Correcting the childs rotation in relation to the parent (90 degrees /1,57)
                 float angle = (float)(i - rayOrigin.y) / rad_2_deg;
-
-
                 rayDirection.x = Mathf.Cos(angle);
                 rayDirection.y = 0;
                 rayDirection.z = Mathf.Sin(angle);
@@ -153,10 +153,10 @@ namespace ROS2
                     // if the ray collides, this distance information will be used to fill the ranges list
                     // also, it can draw the lines from vWalker to the colision point. uncomment debug.drawline
                     // it only collides with the Default mask (1)
-                    if (Physics.Raycast(rayOriginPos, rayDirection, out hit, range_max * 10))
+                    if (Physics.Raycast(rayOriginPos, rayDirection, out hit, range_max * virtualScale))
                     {
                         // if it is between the allowed ranges
-                        if (hit.distance / 10 > range_min && hit.distance / 10 < range_max)
+                        if (hit.distance / virtualScale > range_min && hit.distance / virtualScale < range_max)
                         {
 
 
@@ -164,7 +164,7 @@ namespace ROS2
                             if (i + angleRVIZ >= 360)
                             {
                                 // divided by ten due to scale factor
-                                ranges[i - 360 + angleRVIZ] = hit.distance / 10;
+                                ranges[i - 360 + angleRVIZ] = hit.distance / virtualScale;
                                 hitPoints[i - 360 + angleRVIZ] = hit.point;
                                 Debug.DrawLine(rayOriginPos, hit.point, Color.white);
 
@@ -176,7 +176,7 @@ namespace ROS2
                             else
                             {
                                 // divided by ten due to scale factor
-                                ranges[i + angleRVIZ - (int)(angle_min_deg)] = hit.distance / 10;
+                                ranges[i + angleRVIZ - (int)(angle_min_deg)] = hit.distance / virtualScale;
                                 hitPoints[i + angleRVIZ - (int)(angle_min_deg)] = hit.point;
                                 //Debug.Log("hit distance: " + hit.distance + " hitPoint: " + hit.point + " angle: " + i);
                                 Debug.DrawLine(rayOriginPos, hit.point, Color.white);
@@ -208,8 +208,6 @@ namespace ROS2
                     }
 
                 }
-
-
             }
         }
 

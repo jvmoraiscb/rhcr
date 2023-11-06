@@ -14,8 +14,8 @@ public class MockupFalcon : MonoBehaviour
         falconEnv.position.x = Input.GetAxis("Horizontal");
         falconEnv.position.z = Input.GetAxis("Vertical");
 
-        bool status_right = Input.GetKey(KeyCode.J);
-        bool status_left = Input.GetKey(KeyCode.L);
+        bool status_right = Input.GetKey(KeyCode.L);
+        bool status_left = Input.GetKey(KeyCode.J);
         bool status_up = Input.GetKey(KeyCode.I);
         bool status_center = Input.GetKey(KeyCode.K);
 
