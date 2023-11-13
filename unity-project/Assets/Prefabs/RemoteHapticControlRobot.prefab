@@ -1459,7 +1459,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3515776317359551849}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 853793aa8477a9143a95cbaabafd3531, type: 3}
   m_Name: 
@@ -1467,13 +1467,14 @@ MonoBehaviour:
   nodeName: NavNode_Unity
   realLaserScanTopicName: /scan
   virtualLaserScanTopicName: /scan
-  range_min_filter: 0
-  range_max_filter: 10000
+  rangeMinFilter: 0
+  rangeMaxFilter: 1000
+  realScale: 1
+  virtualScale: 1
   range_max: 100000
   range_min: 0
   angle_max: 6.28
   angle_min: 0
-  angle_increment: 0.0174533
   samples: 360
   update_rate: 70000
   time_increment: 0.00019911081
@@ -1482,6 +1483,6 @@ MonoBehaviour:
   angleRVIZ: 90
   ranges: []
   virtualLidarPosition: {fileID: 3515776317279399135}
-  virtualLidarFixPosition: {fileID: 3515776316439907961}
-  real_prefab: {fileID: 1699737291531827737, guid: 9c883a1150dc08d4f82e95b28b66468b, type: 3}
+  robotPosition: {fileID: 0}
+  realPrefab: {fileID: 0}
   timeForDestructor: 0.2

@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 234303283}
   - component: {fileID: 234303282}
   - component: {fileID: 234303281}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Wall (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -430,7 +430,7 @@ GameObject:
   - component: {fileID: 644646779}
   - component: {fileID: 644646778}
   - component: {fileID: 644646777}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -556,7 +556,7 @@ GameObject:
   - component: {fileID: 687099786}
   - component: {fileID: 687099785}
   - component: {fileID: 687099784}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -707,8 +707,24 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 306961877}
     - target: {fileID: 3515776317359551764, guid: 4eebe5cc3e488e3418461439239b128e, type: 3}
+      propertyPath: obstaclesLayer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 3515776317359551764, guid: 4eebe5cc3e488e3418461439239b128e, type: 3}
+      propertyPath: virtualAngleRVIZ
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 3515776317359551764, guid: 4eebe5cc3e488e3418461439239b128e, type: 3}
       propertyPath: timeForDestructor
       value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3515776317359551764, guid: 4eebe5cc3e488e3418461439239b128e, type: 3}
+      propertyPath: realLaserScanTopicName
+      value: /scan
+      objectReference: {fileID: 0}
+    - target: {fileID: 3515776317359551764, guid: 4eebe5cc3e488e3418461439239b128e, type: 3}
+      propertyPath: virtualLaserScanTopicName
+      value: /scan
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4eebe5cc3e488e3418461439239b128e, type: 3}
@@ -894,7 +910,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1379883572}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Walls
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -934,7 +950,7 @@ GameObject:
   - component: {fileID: 1572248849}
   - component: {fileID: 1572248848}
   - component: {fileID: 1572248847}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1029,7 +1045,7 @@ GameObject:
   - component: {fileID: 1576792553}
   - component: {fileID: 1576792552}
   - component: {fileID: 1576792551}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1124,7 +1140,7 @@ GameObject:
   - component: {fileID: 1781218178}
   - component: {fileID: 1781218177}
   - component: {fileID: 1781218176}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1250,7 +1266,7 @@ GameObject:
   - component: {fileID: 2003301357}
   - component: {fileID: 2003301356}
   - component: {fileID: 2003301355}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
