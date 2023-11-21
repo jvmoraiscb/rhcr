@@ -138,11 +138,13 @@ Then, open a PowerShell terminal and connect to robot through ssh protocol:
 
 ![wheeltec-ssh](/doc/images/wheeltec-ssh.jpg)
 
-Now, launch default package:
+Now, launch the robot's default package and set ROS_DOMAIN_ID to 42:
 
 ```bash
-roslaunch ros2 launch turn_on_wheeltec_robot turn_on_wheeltec_robot.launch.py
+ROS_DOMAIN_ID=42 roslaunch ros2 launch <robot_package> <robot_package_launch>
 ```
+
+_Replace **<robot_package>** for the robot ros2 package name, and **<robot_package_launch>** for the launch file name._
 
 Finally, open another PowerShell terminal and run:
 
@@ -150,4 +152,4 @@ Finally, open another PowerShell terminal and run:
 C:\dev\ros2_humble\local_setup.ps1 ; setx ROS_DOMAIN_ID 42 ; Start-Process -FilePath '<path\to\unity2020.3.29f1>' -ArgumentList '-projectPath "<path\to\unity-project>"'
 ```
 
-_Replace **<path\to\unity2020.3.29f1>** with the path to the Unity executable, and **<path\to\unity-project>** with the path to the project folder._
+_Replace **<path\to\unity2020.3.29f1>** for the path to the Unity executable, and **<path\to\unity-project>** for the path to the project folder._
