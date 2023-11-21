@@ -78,13 +78,31 @@ sudo docker pull jvmoraiscb/ros2-falcon
 
 ### Windows environment
 
-_Recommended version:_ **_Windows 10_**
+_Recommended version:_ **_Windows 11_**
+
+First, we need to install ROS2 on Windows.
+
+Before starting the installation, we need to enable script execution in PowerShell with administrator privileges:
+
+```ps1
+Set-ExecutionPolicy Unrestricted
+```
+
+Now, follow the instructions provided in the official documentation [ROS2 Humble Installation Windows](https://docs.ros.org/en/humble/Installation/Windows-Install-Binary.html) (if the link is no longer available, this repository has a copy of the installation guide [here](https://github.com/jvmoraiscb/rhcr/blob/main/doc/ros2-humble-windows.md)).
+
+After the installation, we need to unblock the startup script in PowerShell with administrator privileges:
+
+```ps1
+Unblock-File C:\dev\ros2_humble\local_setup.ps1
+```
+
+Second, we need to install Unity on Windows.
 
 First, visit https://unity.com/download to download and install Unity Hub.
 
-After, visit https://unity.com/releases/editor/archive and find **Unity 2020.3.29** version, then click the Unity Hub button and proceed to install the editor.
+So, visit https://unity.com/releases/editor/archive and find **Unity 2020.3.29** version, then click the Unity Hub button and proceed to install the editor.
 
-Now, download this repository, unzip and open **unity-project** folder in Unity (all necessary plugins and libraries are already included in the project).
+Now, download this repository, unzip and save **unity-project** folder somewhere.
 
 ## Running
 
@@ -116,14 +134,20 @@ Third, connect to the same network as the robot:
 
 ![windows-wifi](/doc/images/windows-wifi.jpg)
 
-Then, open a powershell terminal and connect to robot through ssh protocol:
+Then, open a PowerShell terminal and connect to robot through ssh protocol:
 
 ![wheeltec-ssh](/doc/images/wheeltec-ssh.jpg)
 
-Now, launch default package in the first terminal:
+Now, launch default package:
 
 ```bash
 roslaunch ros2 launch turn_on_wheeltec_robot turn_on_wheeltec_robot.launch.py
 ```
 
-Finally, open **unity-project** and hit play button.
+Finally, open another PowerShell terminal and run:
+
+```ps1
+C:\dev\ros2_humble\local_setup.ps1 ; setx ROS_DOMAIN_ID 42 ; Start-Process -FilePath '<path\to\unity2020.3.29f1>' -ArgumentList '-projectPath "<path\to\unity-project>"'
+```
+
+_Replace **<path\to\unity2020.3.29f1>** with the path to the Unity executable, and **<path\to\unity-project>** with the path to the project folder._
