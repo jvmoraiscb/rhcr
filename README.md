@@ -149,7 +149,7 @@ _Replace **<robot_package>** for the robot ros2 package name, and **<robot_packa
 Finally, open another PowerShell terminal and run:
 
 ```ps1
-C:\dev\ros2_humble\local_setup.ps1 ; setx ROS_DOMAIN_ID 42 ; Start-Process -FilePath '<path\to\unity2020.3.29f1>' -ArgumentList '-projectPath "<path\to\unity-project>"'
+C:\dev\ros2_humble\local_setup.ps1 ; setx ROS_DOMAIN_ID 42 ; Start-Process -FilePath '<path\to\unity>' -ArgumentList '-projectPath "<path\to\unity-project>"'
 ```
 
-_Replace **<path\to\unity2020.3.29f1>** for the path to the Unity executable, and **<path\to\unity-project>** for the path to the project folder._
+_Replace **<path\to\unity>** for the path to the Unity executable, and **<path\to\unity-project>** for the path to the project folder._
