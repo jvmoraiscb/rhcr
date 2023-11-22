@@ -30,4 +30,4 @@ colcon build
 
 CMD . /opt/ros/humble/setup.sh && \
 . /ros-workspace/install/local_setup.sh && \
-ros2 run ros2-falcon main
+ROS_DOMAIN_ID=42 ros2 run ros2-falcon main
