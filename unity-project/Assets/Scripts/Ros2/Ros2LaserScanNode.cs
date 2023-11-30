@@ -2,9 +2,9 @@ using UnityEngine;
 
 namespace ROS2
 {
-    public class Ros2NavigationNode : MonoBehaviour
+    public class Ros2LaserScanNode : MonoBehaviour
     {
-        [SerializeField] private string nodeName = "NavNode_Unity";
+        [SerializeField] private string nodeName = "LaserScanNode_Unity";
         [SerializeField] private string realLaserScanTopicName = "real_scan";
         [SerializeField] private string virtualLaserScanTopicName = "virtual_scan";
         [SerializeField] private float rangeMinFilter = 0f;
@@ -28,16 +28,16 @@ namespace ROS2
         private float virtualRangeMin;
         private float virtualAngleMax;
         private float virtualAngleMin;
-        [SerializeField] private int virtualAngleMaxDeg;
-        [SerializeField] private int virtualAngleMinDeg;
+        private int virtualAngleMaxDeg;
+        private int virtualAngleMinDeg;
         private float virtualAngleIncrement;
         private float[] virtualRanges;
         private Vector3[] virtualPositions;
 
         [SerializeField] private GameObject virtualLidarPosition;
         [SerializeField] private GameObject robotPosition;
-        [SerializeField] private GameObject realPrefab;
-        [SerializeField] private float timeForDestructor = 0.3f;
+        [SerializeField] private GameObject wallPrefab;
+        [SerializeField] private float timeToDestroyWall = 0.1f;
         private GameObject destructor;
 
         private ROS2UnityComponent ros2Unity;
@@ -90,9 +90,9 @@ namespace ROS2
                         realPositions[i] = new Vector3(-Mathf.Cos(realAngleMin + realAngleIncrement * i - (angle.y * Mathf.PI / 180)), -Mathf.Sin(realAngleMin + realAngleIncrement * i - (angle.y * Mathf.PI / 180)), 0).Ros2Unity();
                         Vector3 realDirectionsNew = new Vector3(realPositions[i].x * realScale * realRanges[i] + robotPosition.transform.position.x, robotPosition.transform.position.y, realPositions[i].z * realScale * realRanges[i] + robotPosition.transform.position.z);
                         // Instatiate a real_prefab to warn the user that that is a possible colision in the real env
-                        destructor = (GameObject)Instantiate(realPrefab, new Vector3(realDirectionsNew.x, realDirectionsNew.y, realDirectionsNew.z), new Quaternion(0, 0, 0, 1));
+                        destructor = (GameObject)Instantiate(wallPrefab, new Vector3(realDirectionsNew.x, realDirectionsNew.y, realDirectionsNew.z), new Quaternion(0, 0, 0, 1));
                         // destroy this game object after 0.3 seconds so it doesnt flood the scene
-                        Destroy(destructor, timeForDestructor);
+                        Destroy(destructor, timeToDestroyWall);
                         //Debug.DrawLine(transform.position, real_directionsNew);
                         //Debug.Log(real_directionsNew);
                     }

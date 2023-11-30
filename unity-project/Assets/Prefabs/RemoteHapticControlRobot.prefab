@@ -1469,20 +1469,14 @@ MonoBehaviour:
   virtualLaserScanTopicName: /scan
   rangeMinFilter: 0
   rangeMaxFilter: 1000
+  angleMinFilter: 0
+  angleMaxFilter: 6.2831855
   realScale: 1
   virtualScale: 1
-  range_max: 100000
-  range_min: 0
-  angle_max: 6.28
-  angle_min: 0
-  samples: 360
-  update_rate: 70000
-  time_increment: 0.00019911081
-  intensities: []
-  hitPoints: []
-  angleRVIZ: 90
-  ranges: []
+  obstaclesLayer: 6
+  virtualSamples: 360
+  virtualAngleRVIZ: 0
   virtualLidarPosition: {fileID: 3515776317279399135}
-  robotPosition: {fileID: 0}
-  realPrefab: {fileID: 0}
-  timeForDestructor: 0.2
+  robotPosition: {fileID: 3515776316439907961}
+  wallPrefab: {fileID: 1699737291531827737, guid: 9c883a1150dc08d4f82e95b28b66468b, type: 3}
+  timeToDestroyWall: 0.1
