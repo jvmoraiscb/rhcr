@@ -3,9 +3,9 @@ using UnityEngine;
 // Remote Haptic Control Robot (RHCR) is the main class, all others classes just send or receive data from it
 public class RemoteHapticControlRobot : MonoBehaviour
 {
-    [SerializeField] private FalconEnv falconEnv;
-    [SerializeField] private AckermannEnv ackermannEnv;
-    [SerializeField] private CameraFollow cam;
+    [SerializeField] private MiddlewareFalcon falconMid;
+    [SerializeField] private MiddlewareAckermann ackermannMid;
+    [SerializeField] private VirtualCamera cam;
 
     [SerializeField] private float defaultSpeed = .6f;
     [SerializeField] private float maxSpeed = 1f;
@@ -18,26 +18,26 @@ public class RemoteHapticControlRobot : MonoBehaviour
     {
         speed = defaultSpeed;
         isBreaking = true;
-        falconEnv.OnCenterButtonPress += CenterButtonHandler;
-        falconEnv.OnLeftButtonPress += LeftButtonHandler;
-        falconEnv.OnRightButtonPress += RightButtonHandler;
-        falconEnv.OnUpButtonPress += UpButtonHandler;
+        falconMid.OnCenterButtonPress += CenterButtonHandler;
+        falconMid.OnLeftButtonPress += LeftButtonHandler;
+        falconMid.OnRightButtonPress += RightButtonHandler;
+        falconMid.OnUpButtonPress += UpButtonHandler;
     }
 
     private void Update()
     {
     if (isBreaking)
         {
-            ackermannEnv.throttle = 0f;
-            ackermannEnv.steer = 0f;
+            ackermannMid.throttle = 0f;
+            ackermannMid.steer = 0f;
 
-            falconEnv.force.x = 0f;
-            falconEnv.force.y = 0f;
-            falconEnv.force.z = 0f;
+            falconMid.force.x = 0f;
+            falconMid.force.y = 0f;
+            falconMid.force.z = 0f;
 
-            falconEnv.rgb.x = 0;
-            falconEnv.rgb.y = 0;
-            falconEnv.rgb.z = 1;
+            falconMid.rgb.x = 0;
+            falconMid.rgb.y = 0;
+            falconMid.rgb.z = 1;
         }
         else
         {
@@ -49,22 +49,22 @@ public class RemoteHapticControlRobot : MonoBehaviour
             }
             else
             {
-                ackermannEnv.throttle = falconEnv.position.z * speed;
+                ackermannMid.throttle = falconMid.position.z * speed;
 
-                auxSteer = Mathf.Abs(falconEnv.position.x) > 0.3f ? falconEnv.position.x : 0f;
-                ackermannEnv.steer = ackermannEnv.throttle > 0f ? auxSteer * -1 : auxSteer;
+                auxSteer = Mathf.Abs(falconMid.position.x) > 0.3f ? falconMid.position.x : 0f;
+                ackermannMid.steer = ackermannMid.throttle > 0f ? auxSteer * -1 : auxSteer;
 
-                falconEnv.force.x = 0f;
-                falconEnv.force.y = 0f;
-                falconEnv.force.z = 0f;
+                falconMid.force.x = 0f;
+                falconMid.force.y = 0f;
+                falconMid.force.z = 0f;
 
-                falconEnv.rgb.x = 0f;
-                falconEnv.rgb.y = 1f;
-                falconEnv.rgb.z = 0f;
+                falconMid.rgb.x = 0f;
+                falconMid.rgb.y = 1f;
+                falconMid.rgb.z = 0f;
             }
             
         }
-        transform.SetPositionAndRotation(ackermannEnv.position, ackermannEnv.rotation);
+        transform.SetPositionAndRotation(ackermannMid.position, ackermannMid.rotation);
     }
 
     private void CenterButtonHandler()

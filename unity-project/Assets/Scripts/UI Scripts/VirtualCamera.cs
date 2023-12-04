@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class CameraFollow : MonoBehaviour
+public class VirtualCamera : MonoBehaviour
 {
     [SerializeField]
     private Vector3 offsetCloseUp;

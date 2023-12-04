@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class MockupFalcon : MonoBehaviour
 {
-    [SerializeField] private FalconEnv falconEnv;
+    [SerializeField] private MiddlewareFalcon falconMid;
     private bool lastStatus_right = true;
     private bool lastStatus_up = true;
     private bool lastStatus_center = true;
@@ -11,8 +11,8 @@ public class MockupFalcon : MonoBehaviour
 
     void Update()
     {
-        falconEnv.position.x = Input.GetAxis("Horizontal");
-        falconEnv.position.z = Input.GetAxis("Vertical");
+        falconMid.position.x = Input.GetAxis("Horizontal");
+        falconMid.position.z = Input.GetAxis("Vertical");
 
         bool status_right = Input.GetKey(KeyCode.L);
         bool status_left = Input.GetKey(KeyCode.J);
@@ -20,13 +20,13 @@ public class MockupFalcon : MonoBehaviour
         bool status_center = Input.GetKey(KeyCode.K);
 
         if (status_right && !lastStatus_right)
-            falconEnv.RightButtonHandler();
+            falconMid.RightButtonHandler();
         if (status_left && !lastStatus_left)
-            falconEnv.LeftButtonHandler();
+            falconMid.LeftButtonHandler();
         if (status_up && !lastStatus_up)
-            falconEnv.UpButtonHandler();
+            falconMid.UpButtonHandler();
         if (status_center && !lastStatus_center)
-            falconEnv.CenterButtonHandler();
+            falconMid.CenterButtonHandler();
 
         lastStatus_right = status_right;
         lastStatus_left = status_left;

@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class FalconEnv : MonoBehaviour
+public class MiddlewareFalcon : MonoBehaviour
 {
     public event Action OnCenterButtonPress;
     public event Action OnLeftButtonPress;

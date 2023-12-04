@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class MockupAckermann : MonoBehaviour
 {
-    [SerializeField] private AckermannEnv ackermannEnv;
+    [SerializeField] private MiddlewareAckermann ackermannMid;
 
     [SerializeField] private Rigidbody car;
 
@@ -22,15 +22,15 @@ public class MockupAckermann : MonoBehaviour
     {
         HandleMotor();
         HandleSteering();
-        ackermannEnv.position = transform.position;
-        ackermannEnv.rotation = transform.rotation;
+        ackermannMid.position = transform.position;
+        ackermannMid.rotation = transform.rotation;
     }
 
     private void HandleMotor()
     {
-        rearLeftWheelCollider.motorTorque = ackermannEnv.throttle * motorForce;
-        rearRightWheelCollider.motorTorque = ackermannEnv.throttle * motorForce;
-        currentbreakForce = ackermannEnv.throttle == 0 ? breakForce : 0f;
+        rearLeftWheelCollider.motorTorque = ackermannMid.throttle * motorForce;
+        rearRightWheelCollider.motorTorque = ackermannMid.throttle * motorForce;
+        currentbreakForce = ackermannMid.throttle == 0 ? breakForce : 0f;
         ApplyBreaking();
     }
 
@@ -44,7 +44,7 @@ public class MockupAckermann : MonoBehaviour
 
     private void HandleSteering()
     {
-        currentSteerAngle = ackermannEnv.throttle > 0 ? maxSteerAngle * ackermannEnv.steer * -1 : maxSteerAngle * ackermannEnv.steer;
+        currentSteerAngle = ackermannMid.throttle > 0 ? maxSteerAngle * ackermannMid.steer * -1 : maxSteerAngle * ackermannMid.steer;
         frontLeftWheelCollider.steerAngle = currentSteerAngle;
         frontRightWheelCollider.steerAngle = currentSteerAngle;
     }

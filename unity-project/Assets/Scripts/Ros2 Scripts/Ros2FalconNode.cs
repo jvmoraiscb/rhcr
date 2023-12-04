@@ -5,7 +5,7 @@ namespace ROS2
     public class Ros2FalconNode : MonoBehaviour
     {
         [SerializeField]
-        private FalconEnv falconEnv;
+        private MiddlewareFalcon falconMid;
         [SerializeField]
         private string nodeName;
         [SerializeField]
@@ -69,9 +69,9 @@ namespace ROS2
         {
             geometry_msgs.msg.Vector3 msg = new geometry_msgs.msg.Vector3
             {
-                X = falconEnv.force.x,
-                Y = falconEnv.force.y,
-                Z = falconEnv.force.z
+                X = falconMid.force.x,
+                Y = falconMid.force.y,
+                Z = falconMid.force.z
             };
 
             force_pub.Publish(msg);
@@ -81,9 +81,9 @@ namespace ROS2
         {
             geometry_msgs.msg.Vector3 msg = new geometry_msgs.msg.Vector3
             {
-                X = falconEnv.rgb.x,
-                Y = falconEnv.rgb.y,
-                Z = falconEnv.rgb.z
+                X = falconMid.rgb.x,
+                Y = falconMid.rgb.y,
+                Z = falconMid.rgb.z
             };
 
             rgb_pub.Publish(msg);
@@ -91,31 +91,31 @@ namespace ROS2
 
         void PositionHandler(double x, double y, double z)
         {
-            falconEnv.position.x = (float)x;
-            falconEnv.position.y = (float)y;
-            falconEnv.position.z = (float)z;
+            falconMid.position.x = (float)x;
+            falconMid.position.y = (float)y;
+            falconMid.position.z = (float)z;
         }
 
         void ButtonHandler(int button, int value)
         {
             if (button == RIGHT && value != lastStatus_right) {
                 if (lastStatus_right != -1)
-                    falconEnv.RightButtonHandler();
+                    falconMid.RightButtonHandler();
                 lastStatus_right = value;
             }
             if (button == UP && value != lastStatus_up) {
                 if (lastStatus_up != -1)
-                    falconEnv.UpButtonHandler();
+                    falconMid.UpButtonHandler();
                 lastStatus_up = value;
             }
             if (button == CENTER && value != lastStatus_center) {
                 if (lastStatus_center != -1)
-                    falconEnv.CenterButtonHandler();
+                    falconMid.CenterButtonHandler();
                 lastStatus_center = value;
             }
             if (button == LEFT && value != lastStatus_left) {
                 if (lastStatus_left != -1)
-                    falconEnv.LeftButtonHandler();
+                    falconMid.LeftButtonHandler();
                 lastStatus_left = value;
             }
         }
