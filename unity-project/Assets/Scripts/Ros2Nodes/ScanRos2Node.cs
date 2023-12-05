@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace ROS2
 {
-    public class Ros2LaserScanNode : MonoBehaviour
+    public class ScanRos2Node : MonoBehaviour
     {
         [SerializeField] private string nodeName = "LaserScanNode_Unity";
         [SerializeField] private string realLaserScanTopicName = "real_scan";

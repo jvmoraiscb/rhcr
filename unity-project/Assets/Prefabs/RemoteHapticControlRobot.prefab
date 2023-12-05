@@ -1209,8 +1209,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 330a51c153fbc7743936ef114d925ce7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  falconEnv: {fileID: 3515776316439907962}
-  ackermannEnv: {fileID: 3515776316439907941}
+  falconMid: {fileID: 3515776316439907962}
+  ackermannMid: {fileID: 3515776316439907941}
   cam: {fileID: 3515776316505843860}
   defaultSpeed: 0.6
   maxSpeed: 1
@@ -1382,6 +1382,7 @@ GameObject:
   - component: {fileID: 3515776317359551848}
   - component: {fileID: 3515776317359551765}
   - component: {fileID: 3515776317359551764}
+  - component: {fileID: 6257929353323098713}
   m_Layer: 0
   m_Name: Ros2Holder
   m_TagString: Untagged
@@ -1427,7 +1428,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 611399fe020f3de479c71731da92a15f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  falconEnv: {fileID: 3515776316439907962}
+  falconMid: {fileID: 3515776316439907962}
   nodeName: FalconNode_Unity
   positionTopicName: position_vector
   rightButtonTopicName: right_button
@@ -1448,7 +1449,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 385866dd3bdd78f4e9c34d8d63afd25c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ackermannEnv: {fileID: 3515776316439907941}
+  ackermannMid: {fileID: 3515776316439907941}
   nodeName: AckermannNode_Unity
   odomTopicName: odom_combined
   cmdVelTopicName: cmd_vel
@@ -1464,9 +1465,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 853793aa8477a9143a95cbaabafd3531, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeName: NavNode_Unity
-  realLaserScanTopicName: /scan
-  virtualLaserScanTopicName: /scan
+  nodeName: ScanNode_Unity
+  realLaserScanTopicName: scan
+  virtualLaserScanTopicName: scan
   rangeMinFilter: 0
   rangeMaxFilter: 1000
   angleMinFilter: 0
@@ -1480,3 +1481,18 @@ MonoBehaviour:
   robotPosition: {fileID: 3515776316439907961}
   wallPrefab: {fileID: 1699737291531827737, guid: 9c883a1150dc08d4f82e95b28b66468b, type: 3}
   timeToDestroyWall: 0.1
+--- !u!114 &6257929353323098713
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3515776317359551849}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 482b3eb6ecba57246a5f24a075d90e4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ackermannMid: {fileID: 3515776316439907941}
+  nodeName: NavNode_Unity
+  odomTopicName: nav_odom

@@ -372,7 +372,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 80
   m_CollisionDetection: 0
 --- !u!1 &552257716
 GameObject:
@@ -417,7 +417,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: becd599942dacd142ad40e928547f439, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  falconMid: {fileID: 0}
+  falconMid: {fileID: 862212226}
 --- !u!1 &644646776
 GameObject:
   m_ObjectHideFlags: 0
@@ -702,9 +702,13 @@ PrefabInstance:
       propertyPath: ackermannMid
       value: 
       objectReference: {fileID: 862212225}
+    - target: {fileID: 3515776317009669621, guid: 4eebe5cc3e488e3418461439239b128e, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3515776317359551764, guid: 4eebe5cc3e488e3418461439239b128e, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3515776317359551764, guid: 4eebe5cc3e488e3418461439239b128e, type: 3}
       propertyPath: realPrefab
@@ -732,11 +736,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3515776317359551764, guid: 4eebe5cc3e488e3418461439239b128e, type: 3}
       propertyPath: realLaserScanTopicName
-      value: /scan
+      value: scan
       objectReference: {fileID: 0}
     - target: {fileID: 3515776317359551764, guid: 4eebe5cc3e488e3418461439239b128e, type: 3}
       propertyPath: virtualLaserScanTopicName
-      value: /scan
+      value: nav_scan
       objectReference: {fileID: 0}
     - target: {fileID: 3515776317359551765, guid: 4eebe5cc3e488e3418461439239b128e, type: 3}
       propertyPath: m_Enabled
@@ -888,7 +892,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8db064ef66d930f439c366615cfaf6a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ackermannMid: {fileID: 0}
+  ackermannMid: {fileID: 862212225}
   car: {fileID: 538007249}
   motorForce: 200
   breakForce: 5000
@@ -944,7 +948,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1379883572
 Transform:
   m_ObjectHideFlags: 0

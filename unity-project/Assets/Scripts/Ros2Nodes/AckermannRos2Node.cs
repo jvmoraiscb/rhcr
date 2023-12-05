@@ -2,10 +2,10 @@ using UnityEngine;
 
 namespace ROS2
 {
-    public class Ros2AckermannNode : MonoBehaviour
+    public class AckermannRos2Node : MonoBehaviour
     {
         [SerializeField]
-        private MiddlewareAckermann ackermannMid;
+        private AckermannMiddleware ackermannMid;
         [SerializeField]
         private string nodeName;
         [SerializeField]
@@ -43,7 +43,7 @@ namespace ROS2
             {
                 Linear = new geometry_msgs.msg.Vector3
                 {
-                    X = ackermannMid.throttle,
+                    X = ackermannMid.Throttle,
                     Y = 0f,
                     Z = 0f
                 },
@@ -51,7 +51,7 @@ namespace ROS2
                 {
                     X = 0f,
                     Y = 0f,
-                    Z = ackermannMid.steer
+                    Z = ackermannMid.Steer
                 }
             };
 
@@ -59,24 +59,19 @@ namespace ROS2
         }
         void OdomHandler(nav_msgs.msg.Odometry msg)
         {
-            ackermannMid.position.x = (float)msg.Pose.Pose.Position.Y * -1;
-            ackermannMid.position.y = 0f;
-            ackermannMid.position.z = (float)msg.Pose.Pose.Position.X;
-
-            Quaternion quart_aux;
-
-            quart_aux.x = (float)msg.Pose.Pose.Orientation.X;
-            quart_aux.y = (float)msg.Pose.Pose.Orientation.Y;
-            quart_aux.z = (float)msg.Pose.Pose.Orientation.Z;
-            quart_aux.w = (float)msg.Pose.Pose.Orientation.W;
-
-            Vector3 euler_aux = quart_aux.eulerAngles;
-
-            euler_aux.y = euler_aux.z * -1;
-            euler_aux.x = 0;
-            euler_aux.z = 0;
-
-            ackermannMid.rotation = Quaternion.Euler(euler_aux);
+            ackermannMid.RosPosition = new Vector3
+            {
+                x = (float)msg.Pose.Pose.Position.X,
+                y = (float)msg.Pose.Pose.Position.Y,
+                z = (float)msg.Pose.Pose.Position.Z
+            };
+            ackermannMid.RosRotation = new Quaternion
+            {
+                x = (float)msg.Pose.Pose.Orientation.X,
+                y = (float)msg.Pose.Pose.Orientation.Y,
+                z = (float)msg.Pose.Pose.Orientation.Z,
+                w = (float)msg.Pose.Pose.Orientation.W,
+            };
         }
     }
 

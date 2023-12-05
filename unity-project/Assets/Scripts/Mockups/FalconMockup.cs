@@ -1,8 +1,8 @@
 using UnityEngine;
 
-public class MockupFalcon : MonoBehaviour
+public class FalconMockup : MonoBehaviour
 {
-    [SerializeField] private MiddlewareFalcon falconMid;
+    [SerializeField] private FalconMiddleware falconMid;
     private bool lastStatus_right = true;
     private bool lastStatus_up = true;
     private bool lastStatus_center = true;
@@ -11,8 +11,7 @@ public class MockupFalcon : MonoBehaviour
 
     void Update()
     {
-        falconMid.position.x = Input.GetAxis("Horizontal");
-        falconMid.position.z = Input.GetAxis("Vertical");
+        falconMid.Position = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
 
         bool status_right = Input.GetKey(KeyCode.L);
         bool status_left = Input.GetKey(KeyCode.J);

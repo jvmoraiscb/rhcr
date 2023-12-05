@@ -2,10 +2,10 @@ using UnityEngine;
 
 namespace ROS2
 {
-    public class Ros2FalconNode : MonoBehaviour
+    public class FalconRos2Node : MonoBehaviour
     {
         [SerializeField]
-        private MiddlewareFalcon falconMid;
+        private FalconMiddleware falconMid;
         [SerializeField]
         private string nodeName;
         [SerializeField]
@@ -69,9 +69,9 @@ namespace ROS2
         {
             geometry_msgs.msg.Vector3 msg = new geometry_msgs.msg.Vector3
             {
-                X = falconMid.force.x,
-                Y = falconMid.force.y,
-                Z = falconMid.force.z
+                X = falconMid.Force.x,
+                Y = falconMid.Force.y,
+                Z = falconMid.Force.z
             };
 
             force_pub.Publish(msg);
@@ -81,9 +81,9 @@ namespace ROS2
         {
             geometry_msgs.msg.Vector3 msg = new geometry_msgs.msg.Vector3
             {
-                X = falconMid.rgb.x,
-                Y = falconMid.rgb.y,
-                Z = falconMid.rgb.z
+                X = falconMid.Rgb.x,
+                Y = falconMid.Rgb.y,
+                Z = falconMid.Rgb.z
             };
 
             rgb_pub.Publish(msg);
@@ -91,9 +91,7 @@ namespace ROS2
 
         void PositionHandler(double x, double y, double z)
         {
-            falconMid.position.x = (float)x;
-            falconMid.position.y = (float)y;
-            falconMid.position.z = (float)z;
+            falconMid.Position = new Vector3((float)x, (float)y, (float)z);
         }
 
         void ButtonHandler(int button, int value)

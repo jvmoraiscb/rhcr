@@ -3,8 +3,8 @@ using UnityEngine;
 // Remote Haptic Control Robot (RHCR) is the main class, all others classes just send or receive data from it
 public class RemoteHapticControlRobot : MonoBehaviour
 {
-    [SerializeField] private MiddlewareFalcon falconMid;
-    [SerializeField] private MiddlewareAckermann ackermannMid;
+    [SerializeField] private FalconMiddleware falconMid;
+    [SerializeField] private AckermannMiddleware ackermannMid;
     [SerializeField] private VirtualCamera cam;
 
     [SerializeField] private float defaultSpeed = .6f;
@@ -28,16 +28,12 @@ public class RemoteHapticControlRobot : MonoBehaviour
     {
     if (isBreaking)
         {
-            ackermannMid.throttle = 0f;
-            ackermannMid.steer = 0f;
+            ackermannMid.Throttle = 0f;
+            ackermannMid.Steer = 0f;
 
-            falconMid.force.x = 0f;
-            falconMid.force.y = 0f;
-            falconMid.force.z = 0f;
+            falconMid.Force = new Vector3(0f, 0f, 0f);
 
-            falconMid.rgb.x = 0;
-            falconMid.rgb.y = 0;
-            falconMid.rgb.z = 1;
+            falconMid.Rgb = new Vector3(0f, 0f, 1f);
         }
         else
         {
@@ -49,22 +45,18 @@ public class RemoteHapticControlRobot : MonoBehaviour
             }
             else
             {
-                ackermannMid.throttle = falconMid.position.z * speed;
+                ackermannMid.Throttle = falconMid.Position.z * speed;
 
-                auxSteer = Mathf.Abs(falconMid.position.x) > 0.3f ? falconMid.position.x : 0f;
-                ackermannMid.steer = ackermannMid.throttle > 0f ? auxSteer * -1 : auxSteer;
+                auxSteer = Mathf.Abs(falconMid.Position.x) > 0.3f ? falconMid.Position.x : 0f;
+                ackermannMid.Steer = ackermannMid.Throttle > 0f ? auxSteer * -1 : auxSteer;
 
-                falconMid.force.x = 0f;
-                falconMid.force.y = 0f;
-                falconMid.force.z = 0f;
+                falconMid.Force = new Vector3(0f, 0f, 0f);
 
-                falconMid.rgb.x = 0f;
-                falconMid.rgb.y = 1f;
-                falconMid.rgb.z = 0f;
+                falconMid.Rgb = new Vector3(0f, 1f, 0f);
             }
             
         }
-        transform.SetPositionAndRotation(ackermannMid.position, ackermannMid.rotation);
+        transform.SetPositionAndRotation(ackermannMid.UnityPosition, ackermannMid.UnityRotation);
     }
 
     private void CenterButtonHandler()
