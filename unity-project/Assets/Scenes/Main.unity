@@ -396,5 +396,9 @@ PrefabInstance:
       propertyPath: virtualLaserScanTopicName
       value: virtual_scan_null
       objectReference: {fileID: 0}
+    - target: {fileID: 3515776317359551848, guid: 4eebe5cc3e488e3418461439239b128e, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4eebe5cc3e488e3418461439239b128e, type: 3}

@@ -177,6 +177,10 @@ namespace ROS2
         {
             sensor_msgs.msg.LaserScan msg = new sensor_msgs.msg.LaserScan
             {
+                Header = new std_msgs.msg.Header
+                {
+                    Frame_id = "unity"
+                },
                 Angle_min = virtualAngleMin,
                 Angle_max = virtualAngleMax,
                 Angle_increment = virtualAngleIncrement,

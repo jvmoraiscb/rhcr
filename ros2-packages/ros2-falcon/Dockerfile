@@ -1,7 +1,7 @@
 FROM ros:humble
 
 LABEL maintainer="jv.moraiscb@gmail.com"
-LABEL version="1.0.0"
+LABEL version="1.0.2"
 LABEL description="ROS2 Novint Falcon Package Docker image"
 
 ARG DEBIAN_FRONTEND=noninteractive
