@@ -3,7 +3,6 @@
 
     <link name="base_link">
         <visual>
-            <origin xyz="0.255 0 0.19" rpy="0 0 0"/>
             <geometry>
                 <box size="0.762 0.35 0.150"/>
             </geometry>
@@ -13,17 +12,8 @@
         </visual>
     </link>
 
-    <link name="base_footprint"/>
-
-    <joint name="base_joint" type="fixed">
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <parent link="base_link"/>
-        <child link="base_footprint"/>
-        <axis xyz="0 1 0"/>
-    </joint>
-
     <joint name="laser_joint" type="fixed">
-        <origin xyz="0.52 0.0 0.35" rpy="0 0 0"/>
+        <origin xyz="0.265 0.0 0.16" rpy="0 0 0"/>
         <parent link="base_link"/>
         <child link="laser_link"/>
         <axis xyz="0 0 0"/>
@@ -33,7 +23,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <cylinder radius="0.05" length = "0.02"/>
+                <cylinder radius="0.035" length = "0.02"/>
             </geometry>
             <material name="black">
                 <color rgba="0 0 0 1"/>
@@ -42,7 +32,7 @@
     </link>
 
     <joint name="left_wheel_joint" type="continuous">
-        <origin xyz="-0 0.295 0.12" rpy="1.57 0 0"/>
+        <origin xyz="-0.255 0.295 -0.07" rpy="1.57 0 0"/>
         <parent link="base_link"/>
         <child link="left_wheel_link"/>
         <axis xyz="0 1 0"/>
@@ -61,7 +51,7 @@
     </link>
 
     <joint name="right_wheel_joint" type="continuous">
-        <origin xyz="-0 -0.295 0.12" rpy="1.57 0 0"/>
+        <origin xyz="-0.255 -0.295 -0.07" rpy="1.57 0 0"/>
         <parent link="base_link"/>
         <child link="right_wheel_link"/>
         <axis xyz="0 1 0"/>
@@ -80,7 +70,7 @@
     </link>
 
       <joint name="left_front_joint" type="continuous">
-        <origin xyz="0.53 0.295 0.12" rpy="1.57 0 0"/>
+        <origin xyz="0.275 0.295 -0.07" rpy="1.57 0 0"/>
         <parent link="base_link"/>
         <child link="left_front_link"/>
         <axis xyz="0 1 0"/>
@@ -99,7 +89,7 @@
     </link>
 
     <joint name="right_front_joint" type="continuous">
-        <origin xyz="0.53 -0.295 0.12" rpy="1.57 0 0"/>
+        <origin xyz="0.275 -0.295 -0.07" rpy="1.57 0 0"/>
         <parent link="base_link"/>
         <child link="right_front_link"/>
         <axis xyz="0 1 0"/>
