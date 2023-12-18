@@ -2,8 +2,9 @@ using UnityEngine;
 
 namespace ROS2
 {
-    public class ScanRos2Node : MonoBehaviour
+    public class LaserScanRos2Node : MonoBehaviour
     {
+        
         [SerializeField] private string nodeName = "LaserScanNode_Unity";
         [SerializeField] private string realLaserScanTopicName = "real_scan";
         [SerializeField] private string virtualLaserScanTopicName = "virtual_scan";
@@ -42,6 +43,7 @@ namespace ROS2
 
         private ROS2UnityComponent ros2Unity;
         private ROS2Node ros2Node;
+        private ROS2Clock ros2Clock;
         private IPublisher<sensor_msgs.msg.LaserScan> virtualScanPub;
 
         void Start()
@@ -60,6 +62,7 @@ namespace ROS2
                 ros2Node = ros2Unity.CreateNode(nodeName);
             if (ros2Unity.Ok())
             {
+                ros2Clock = new ROS2Clock();
                 virtualScanPub = ros2Node.CreatePublisher<sensor_msgs.msg.LaserScan>(virtualLaserScanTopicName);
                 ros2Node.CreateSubscription<sensor_msgs.msg.LaserScan>(realLaserScanTopicName, msg => RealLaserScanHandler(msg));
             }
@@ -116,7 +119,6 @@ namespace ROS2
         private void VirtualLaserUpdate()
         {
             int layerMask = 1 << obstaclesLayer;
-            RaycastHit hit;
             // rays always statrting from hokuyo fake in vWalker
             Vector3 rayOriginPos = robotPosition.transform.position;
             Vector3 rayOrigin = robotPosition.transform.eulerAngles;
@@ -134,7 +136,7 @@ namespace ROS2
                     // if the ray collides, this distance information will be used to fill the ranges list
                     // also, it can draw the lines from vWalker to the colision point. uncomment debug.drawline
                     // it only collides with the Default mask (1)
-                    if (Physics.Raycast(rayOriginPos, rayDirection, out hit, virtualRangeMax * virtualScale, layerMask))
+                    if (Physics.Raycast(rayOriginPos, rayDirection, out RaycastHit hit, virtualRangeMax * virtualScale, layerMask))
                     {
                         // if it is between the allowed ranges
                         if (hit.distance / virtualScale > virtualRangeMin && hit.distance / virtualScale < virtualRangeMax)
@@ -179,16 +181,18 @@ namespace ROS2
             {
                 Header = new std_msgs.msg.Header
                 {
-                    Frame_id = "unity"
+                    Frame_id = "laser_link",
                 },
                 Angle_min = virtualAngleMin,
                 Angle_max = virtualAngleMax,
                 Angle_increment = virtualAngleIncrement,
-                Time_increment = Time.deltaTime,
+                Time_increment = Time.deltaTime/virtualSamples,
+                Scan_time = Time.deltaTime,
                 Range_min = virtualRangeMin,
                 Range_max = virtualRangeMax,
                 Ranges = virtualRanges
             };
+            ros2Clock.UpdateROSClockTime(msg.Header.Stamp);
             virtualScanPub.Publish(msg);
         }
     }
