@@ -56,7 +56,7 @@ private:
 
     // Read message content and assign it to
     // corresponding tf variables
-    t.header.stamp = this->get_clock()->now();
+    t.header.stamp = msg->header.stamp;
     t.header.frame_id = odom_frame_id_.c_str();
     t.child_frame_id = child_frame_id_.c_str();
 
