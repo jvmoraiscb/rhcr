@@ -1382,8 +1382,7 @@ GameObject:
   - component: {fileID: 3515776317359551851}
   - component: {fileID: 3515776317359551765}
   - component: {fileID: 3515776317359551848}
-  - component: {fileID: 3515776317359551764}
-  - component: {fileID: 6257929353323098713}
+  - component: {fileID: 6430610428542925978}
   m_Layer: 0
   m_Name: Ros2Holder
   m_TagString: Untagged
@@ -1454,35 +1453,7 @@ MonoBehaviour:
   leftButtonTopicName: left_button
   forceTopicName: force_vector
   rgbTopicName: rgb_vector
---- !u!114 &3515776317359551764
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3515776317359551849}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 853793aa8477a9143a95cbaabafd3531, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  nodeName: ScanNode_Unity
-  realLaserScanTopicName: scan
-  virtualLaserScanTopicName: scan
-  rangeMinFilter: 0
-  rangeMaxFilter: 1000
-  angleMinFilter: 0
-  angleMaxFilter: 6.2831855
-  realScale: 1
-  virtualScale: 1
-  obstaclesLayer: 6
-  virtualSamples: 360
-  virtualAngleRVIZ: 0
-  virtualLidarPosition: {fileID: 3515776317279399135}
-  robotPosition: {fileID: 3515776316439907961}
-  wallPrefab: {fileID: 1699737291531827737, guid: 9c883a1150dc08d4f82e95b28b66468b, type: 3}
-  timeToDestroyWall: 0.1
---- !u!114 &6257929353323098713
+--- !u!114 &6430610428542925978
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1491,12 +1462,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 3515776317359551849}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 482b3eb6ecba57246a5f24a075d90e4f, type: 3}
+  m_Script: {fileID: 11500000, guid: da249245d7886aa458acb394fc1fbe07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  nodeName: VirtualSensorsNode
+  odomTopicName: virtual_odom
+  scanTopicName: virtual_scan
+  virtualLidarPosition: {fileID: 3515776317279399135}
+  rangeMinFilter: 0
+  rangeMaxFilter: 1000
+  angleMinFilter: 0
+  angleMaxFilter: 6.2831855
+  scale: 1
+  obstaclesLayer: 6
+  samples: 360
+  angleRVIZ: 0
   ackermannMid: {fileID: 3515776316439907941}
-  nodeName: NavNode_Unity
-  odomTopicName: nav_odom
 --- !u!1 &8260217449885768632
 GameObject:
   m_ObjectHideFlags: 0

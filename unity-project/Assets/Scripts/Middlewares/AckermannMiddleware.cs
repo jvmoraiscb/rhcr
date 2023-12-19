@@ -1,4 +1,5 @@
 using UnityEngine;
+using ROS2;
 
 public class AckermannMiddleware : MonoBehaviour
 {
@@ -11,7 +12,7 @@ public class AckermannMiddleware : MonoBehaviour
     {
         get
         {
-           return throttle;
+            return throttle;
         }
         set
         {
@@ -33,6 +34,17 @@ public class AckermannMiddleware : MonoBehaviour
     {
         get
         {
+            return Transformations.Unity2Ros(position);
+        }
+        set
+        {
+            position = Transformations.Ros2Unity(value);
+        }
+    }
+    public Vector3 UnityPosition
+    {
+        get
+        {
             return position;
         }
         set
@@ -40,25 +52,18 @@ public class AckermannMiddleware : MonoBehaviour
             position = value;
         }
     }
-    public Vector3 UnityPosition
+    public Quaternion RosRotation
     {
         get
         {
-            return new Vector3
-            {
-                x = position.y * -1f,
-                y = position.z,
-                z = position.x
-            };
+            return Transformations.Unity2Ros(rotation);
         }
         set
         {
-            position.x = value.z;
-            position.y = value.x * -1f;
-            position.z = value.y;
+            rotation = Transformations.Ros2Unity(value);
         }
     }
-    public Quaternion RosRotation
+    public Quaternion UnityRotation
     {
         get
         {
@@ -67,28 +72,6 @@ public class AckermannMiddleware : MonoBehaviour
         set
         {
             rotation = value;
-        }
-    }
-    public Quaternion UnityRotation
-    {
-        get
-        {
-            Vector3 euler_aux = new Vector3 {
-                x = rotation.eulerAngles.y,
-                y = rotation.eulerAngles.z * -1f,
-                z = rotation.eulerAngles.x
-            };
-            return Quaternion.Euler(euler_aux);
-        }
-        set
-        {
-            Vector3 euler_aux = new Vector3
-            {
-                x = value.eulerAngles.z,
-                y = value.eulerAngles.x,
-                z = value.eulerAngles.y * -1f
-            };
-            rotation = Quaternion.Euler(euler_aux);
         }
     }
 }

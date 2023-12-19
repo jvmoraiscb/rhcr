@@ -173,6 +173,23 @@ namespace ROS2
                     }
                 }
             }
+            sensor_msgs.msg.LaserScan msg = new sensor_msgs.msg.LaserScan
+            {
+                Header = new std_msgs.msg.Header
+                {
+                    Frame_id = "laser_link",
+                },
+                Angle_min = virtualAngleMin,
+                Angle_max = virtualAngleMax,
+                Angle_increment = virtualAngleIncrement,
+                Time_increment = Time.deltaTime / virtualSamples,
+                Scan_time = Time.deltaTime,
+                Range_min = virtualRangeMin,
+                Range_max = virtualRangeMax,
+                Ranges = virtualRanges
+            };
+            ros2Clock.UpdateROSClockTime(msg.Header.Stamp);
+            virtualScanPub.Publish(msg);
         }
 
         private void VirtualLaserHandler()
