@@ -25,7 +25,7 @@
                 </material>
             </visual>
         </link>
-        <joint name="${prefix}_joint" type="continuous">
+        <joint name="${prefix}_joint" type="fixed">
             <parent link="base_link"/>
             <child link="${prefix}_link"/>
             <origin xyz="${lwheel_xoff} ${lwheel_yoff} ${-wheel_zoff}" rpy="0 0 0"/>
