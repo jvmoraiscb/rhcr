@@ -1444,15 +1444,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 611399fe020f3de479c71731da92a15f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  falconMid: {fileID: 3515776316439907962}
   nodeName: FalconNode_Unity
   positionTopicName: position_vector
+  forceTopicName: force_vector
+  rgbTopicName: rgb_vector
   rightButtonTopicName: right_button
   upButtonTopicName: up_button
   centerButtonTopicName: center_button
   leftButtonTopicName: left_button
-  forceTopicName: force_vector
-  rgbTopicName: rgb_vector
+  falconMid: {fileID: 3515776316439907962}
 --- !u!114 &6430610428542925978
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1468,7 +1468,7 @@ MonoBehaviour:
   nodeName: VirtualSensorsNode
   odomTopicName: virtual_odom
   scanTopicName: virtual_scan
-  virtualLidarPosition: {fileID: 3515776317279399135}
+  lidarPosition: {fileID: 3515776317279399135}
   rangeMinFilter: 0
   rangeMaxFilter: 1000
   angleMinFilter: 0
@@ -1476,7 +1476,7 @@ MonoBehaviour:
   scale: 1
   obstaclesLayer: 6
   samples: 360
-  angleRVIZ: 0
+  angleRVIZ: 270
   ackermannMid: {fileID: 3515776316439907941}
 --- !u!1 &8260217449885768632
 GameObject:

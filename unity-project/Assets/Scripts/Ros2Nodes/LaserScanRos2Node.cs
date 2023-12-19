@@ -4,7 +4,6 @@ namespace ROS2
 {
     public class LaserScanRos2Node : MonoBehaviour
     {
-        
         [SerializeField] private string nodeName = "LaserScanNode_Unity";
         [SerializeField] private string realLaserScanTopicName = "real_scan";
         [SerializeField] private string virtualLaserScanTopicName = "virtual_scan";
@@ -34,17 +33,18 @@ namespace ROS2
         private float virtualAngleIncrement;
         private float[] virtualRanges;
         private Vector3[] virtualPositions;
+        
+        // ros2 variables
+        private ROS2UnityComponent ros2Unity;
+        private ROS2Node ros2Node;
+        private ROS2Clock ros2Clock;
+        private IPublisher<sensor_msgs.msg.LaserScan> virtualScanPub;
 
         [SerializeField] private GameObject virtualLidarPosition;
         [SerializeField] private GameObject robotPosition;
         [SerializeField] private GameObject wallPrefab;
         [SerializeField] private float timeToDestroyWall = 0.1f;
         private GameObject destructor;
-
-        private ROS2UnityComponent ros2Unity;
-        private ROS2Node ros2Node;
-        private ROS2Clock ros2Clock;
-        private IPublisher<sensor_msgs.msg.LaserScan> virtualScanPub;
 
         void Start()
         {
@@ -73,8 +73,6 @@ namespace ROS2
             if (ros2Unity.Ok())
             {
                 RealLaserScanUpdate();
-                VirtualLaserUpdate();
-                VirtualLaserHandler();
             }
         }
 
@@ -114,103 +112,6 @@ namespace ROS2
             realAngleMin = msg.Angle_min;
             realAngleMax = msg.Angle_max;
             realAngleIncrement = msg.Angle_increment;
-        }
-
-        private void VirtualLaserUpdate()
-        {
-            int layerMask = 1 << obstaclesLayer;
-            // rays always statrting from hokuyo fake in vWalker
-            Vector3 rayOriginPos = robotPosition.transform.position;
-            Vector3 rayOrigin = robotPosition.transform.eulerAngles;
-            Vector3 rayDirection;
-            for (int i = 0; i < virtualSamples; i++)
-            {
-                // Correcting the childs rotation in relation to the parent (90 degrees /1,57)
-                float angle = (i - rayOrigin.y) / (180/Mathf.PI);
-                rayDirection.x = Mathf.Cos(angle);
-                rayDirection.y = 0;
-                rayDirection.z = Mathf.Sin(angle);
-                // if the angle is between the limits
-                if (i >= virtualAngleMinDeg && i <= virtualAngleMaxDeg)
-                {
-                    // if the ray collides, this distance information will be used to fill the ranges list
-                    // also, it can draw the lines from vWalker to the colision point. uncomment debug.drawline
-                    // it only collides with the Default mask (1)
-                    if (Physics.Raycast(rayOriginPos, rayDirection, out RaycastHit hit, virtualRangeMax * virtualScale, layerMask))
-                    {
-                        // if it is between the allowed ranges
-                        if (hit.distance / virtualScale > virtualRangeMin && hit.distance / virtualScale < virtualRangeMax)
-                        {
-                            // the angles when summed with angle RViz cant be more than 360 degrees
-                            if (i + virtualAngleRVIZ >= 360)
-                            {
-                                virtualRanges[i - 360 + virtualAngleRVIZ] = hit.distance / virtualScale;
-                                virtualPositions[i - 360 + virtualAngleRVIZ] = hit.point;
-                                Debug.DrawLine(rayOriginPos, hit.point, Color.white);
-                            }
-                            else
-                            {
-                                virtualRanges[i + virtualAngleRVIZ - (virtualAngleMinDeg)] = hit.distance / virtualScale;
-                                virtualPositions[i + virtualAngleRVIZ - (virtualAngleMinDeg)] = hit.point;
-                                Debug.DrawLine(rayOriginPos, hit.point, Color.white);
-                            }
-                        }
-                    }
-                    // if there is not a hit, the ranges receive zero 
-                    else
-                    {
-                        // the angles when summed with angle RViz cant be more than 360 degrees
-                        if (i + virtualAngleRVIZ >= 360)
-                        {
-                            virtualRanges[i - 360 + virtualAngleRVIZ] = 0;
-                            virtualPositions[i - 360 + virtualAngleRVIZ] = new Vector3(0, 0, 0);
-                        }
-                        else
-                        {
-                            virtualRanges[i + virtualAngleRVIZ - (virtualAngleMinDeg)] = 0;
-                            virtualPositions[i + virtualAngleRVIZ - (virtualAngleMinDeg)] = new Vector3(0, 0, 0);
-                        }
-                    }
-                }
-            }
-            sensor_msgs.msg.LaserScan msg = new sensor_msgs.msg.LaserScan
-            {
-                Header = new std_msgs.msg.Header
-                {
-                    Frame_id = "laser_link",
-                },
-                Angle_min = virtualAngleMin,
-                Angle_max = virtualAngleMax,
-                Angle_increment = virtualAngleIncrement,
-                Time_increment = Time.deltaTime / virtualSamples,
-                Scan_time = Time.deltaTime,
-                Range_min = virtualRangeMin,
-                Range_max = virtualRangeMax,
-                Ranges = virtualRanges
-            };
-            ros2Clock.UpdateROSClockTime(msg.Header.Stamp);
-            virtualScanPub.Publish(msg);
-        }
-
-        private void VirtualLaserHandler()
-        {
-            sensor_msgs.msg.LaserScan msg = new sensor_msgs.msg.LaserScan
-            {
-                Header = new std_msgs.msg.Header
-                {
-                    Frame_id = "laser_link",
-                },
-                Angle_min = virtualAngleMin,
-                Angle_max = virtualAngleMax,
-                Angle_increment = virtualAngleIncrement,
-                Time_increment = Time.deltaTime/virtualSamples,
-                Scan_time = Time.deltaTime,
-                Range_min = virtualRangeMin,
-                Range_max = virtualRangeMax,
-                Ranges = virtualRanges
-            };
-            ros2Clock.UpdateROSClockTime(msg.Header.Stamp);
-            virtualScanPub.Publish(msg);
         }
     }
 }

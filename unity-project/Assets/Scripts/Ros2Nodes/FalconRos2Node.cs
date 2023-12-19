@@ -3,30 +3,26 @@ using ROS2;
 
 public class FalconRos2Node : MonoBehaviour
 {
-    [SerializeField]
-    private FalconMiddleware falconMid;
-    [SerializeField]
-    private string nodeName;
-    [SerializeField]
-    private string positionTopicName;
-    [SerializeField]
-    private string rightButtonTopicName;
-    [SerializeField]
-    private string upButtonTopicName;
-    [SerializeField]
-    private string centerButtonTopicName;
-    [SerializeField]
-    private string leftButtonTopicName;
-    [SerializeField]
-    private string forceTopicName;
-    [SerializeField]
-    private string rgbTopicName;
+    [Header("ROS2 Constants")]
+    [SerializeField] private string nodeName = "FalconNode_Unity";
+    [SerializeField] private string positionTopicName = "position_vector";
+    [SerializeField] private string forceTopicName = "force_vector";
+    [SerializeField] private string rgbTopicName = "rgb_vector";
+    [SerializeField] private string rightButtonTopicName = "right_button";
+    [SerializeField] private string upButtonTopicName = "up_button";
+    [SerializeField] private string centerButtonTopicName = "center_button";
+    [SerializeField] private string leftButtonTopicName = "left_button";
 
+    [Header("Falcon Constants")]
+    [SerializeField] private FalconMiddleware falconMid;
+
+    // ros2 variables
     private ROS2UnityComponent ros2Unity;
     private ROS2Node ros2Node;
     private IPublisher<geometry_msgs.msg.Vector3> force_pub;
     private IPublisher<geometry_msgs.msg.Vector3> rgb_pub;
 
+    // falcon variables
     private const int RIGHT = 1;
     private const int UP = 2;
     private const int CENTER = 3;
@@ -58,13 +54,12 @@ public class FalconRos2Node : MonoBehaviour
     {
         if (ros2Unity.Ok())
         {
-            ForceHandler();
-            RgbHandler();
+            ForceUpdate();
+            RgbUpdate();
         }
-            
     }
 
-    void ForceHandler()
+    void ForceUpdate()
     {
         geometry_msgs.msg.Vector3 msg = new geometry_msgs.msg.Vector3
         {
@@ -72,11 +67,10 @@ public class FalconRos2Node : MonoBehaviour
             Y = falconMid.Force.y,
             Z = falconMid.Force.z
         };
-
         force_pub.Publish(msg);
     }
 
-    void RgbHandler()
+    void RgbUpdate()
     {
         geometry_msgs.msg.Vector3 msg = new geometry_msgs.msg.Vector3
         {
@@ -84,7 +78,6 @@ public class FalconRos2Node : MonoBehaviour
             Y = falconMid.Rgb.y,
             Z = falconMid.Rgb.z
         };
-
         rgb_pub.Publish(msg);
     }
 

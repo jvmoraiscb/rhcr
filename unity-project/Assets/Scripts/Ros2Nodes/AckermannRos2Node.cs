@@ -3,15 +3,15 @@ using ROS2;
 
 public class AckermannRos2Node : MonoBehaviour
 {
-    [SerializeField]
-    private AckermannMiddleware ackermannMid;
-    [SerializeField]
-    private string nodeName;
-    [SerializeField]
-    private string odomTopicName;
-    [SerializeField]
-    private string cmdVelTopicName;
+    [Header("ROS2 Constants")]
+    [SerializeField] private string nodeName = "AckermannNode_Unity";
+    [SerializeField] private string odomTopicName = "odom";
+    [SerializeField] private string cmdVelTopicName = "cmd_vel";
 
+    [Header("Ackermann Constants")]
+    [SerializeField] private AckermannMiddleware ackermannMid;
+
+    // ros2 variables
     private ROS2UnityComponent ros2Unity;
     private ROS2Node ros2Node;
     private IPublisher<geometry_msgs.msg.Twist> cmdVel_pub;

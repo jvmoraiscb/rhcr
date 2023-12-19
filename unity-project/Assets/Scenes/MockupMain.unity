@@ -569,6 +569,10 @@ PrefabInstance:
       value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 6430610428542925978, guid: 4eebe5cc3e488e3418461439239b128e, type: 3}
+      propertyPath: scale
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6430610428542925978, guid: 4eebe5cc3e488e3418461439239b128e, type: 3}
       propertyPath: angleRVIZ
       value: 270
       objectReference: {fileID: 0}

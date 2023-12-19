@@ -4,12 +4,12 @@ using ROS2;
 public class VirtualSensorsRos2Node : MonoBehaviour
 {
     [Header("ROS2 Constants")]
-    [SerializeField] private string nodeName = "VirtualSensorsNode";
+    [SerializeField] private string nodeName = "VirtualSensorsNode_Unity";
     [SerializeField] private string odomTopicName = "virtual_odom";
     [SerializeField] private string scanTopicName = "virtual_scan";
     
     [Header("Virtual Scan Constants")]
-    [SerializeField] private GameObject virtualLidarPosition;
+    [SerializeField] private GameObject lidarPosition;
     [SerializeField] private float rangeMinFilter = 0f;
     [SerializeField] private float rangeMaxFilter = 1000f;
     [SerializeField] private float angleMinFilter = 0f;
@@ -22,19 +22,19 @@ public class VirtualSensorsRos2Node : MonoBehaviour
     [Header("Virtual Odom Constants")]
     [SerializeField] private AckermannMiddleware ackermannMid;
 
-    // virtual scan variables
-    private int angleMaxDeg;
-    private int angleMinDeg;
-    private float angleIncrement;
-    private float[] ranges;
-    private Vector3[] positions;
-
     // ros2 variables
     private ROS2UnityComponent ros2Unity;
     private ROS2Node ros2Node;
     private ROS2Clock ros2Clock;
     private IPublisher<nav_msgs.msg.Odometry> odomPub;
     private IPublisher<sensor_msgs.msg.LaserScan> scanPub;
+
+    // virtual scan variables
+    private int angleMaxDeg;
+    private int angleMinDeg;
+    private float angleIncrement;
+    private float[] ranges;
+    private Vector3[] positions;
 
     void Start()
     {
@@ -58,8 +58,8 @@ public class VirtualSensorsRos2Node : MonoBehaviour
     {
         if (ros2Unity.Ok())
         {
-            ScanUpdate();
             OdomUpdate();
+            ScanUpdate();
         }
     }
     void OdomUpdate()
@@ -95,12 +95,13 @@ public class VirtualSensorsRos2Node : MonoBehaviour
         odomPub.Publish(msg);
     }
 
+    // Code created by Fabiana Machado
     private void ScanUpdate()
     {
         int layerMask = 1 << obstaclesLayer;
         // rays always statrting from hokuyo fake in vWalker
-        Vector3 rayOriginPos = virtualLidarPosition.transform.position;
-        Vector3 rayOrigin = virtualLidarPosition.transform.eulerAngles;
+        Vector3 rayOriginPos = lidarPosition.transform.position;
+        Vector3 rayOrigin = lidarPosition.transform.eulerAngles;
         Vector3 rayDirection;
         for (int i = 0; i < samples; i++)
         {
