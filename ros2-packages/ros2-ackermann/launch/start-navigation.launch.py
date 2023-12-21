@@ -34,13 +34,13 @@ def generate_launch_description():
         executable='static_transform_publisher',
         arguments = ['--x', '0', '--y', '0', '--z', '0', '--yaw', '0', '--pitch', '0', '--roll', '0', '--frame-id', 'map', '--child-frame-id', 'odom']
     )
-    #rviz_node = launch_ros.actions.Node(
-    #    package='rviz2',
-    #    executable='rviz2',
-    #    name='rviz2',
-    #    output='screen',
-    #    arguments=['-d', LaunchConfiguration('rvizconfig')],
-    #)
+    rviz_node = launch_ros.actions.Node(
+        package='rviz2',
+        executable='rviz2',
+        name='rviz2',
+        output='screen',
+        arguments=['-d', LaunchConfiguration('rvizconfig')],
+    )
     slam_node = launch_ros.actions.Node(
         parameters=[
           os.path.join(get_package_share_directory("slam_toolbox"), 'config', 'mapper_params_online_async.yaml'),
@@ -60,6 +60,6 @@ def generate_launch_description():
         robot_state_publisher_node,
         ackermann_node,
         tf2_node,
-        slam_node
-        # rviz_node
+        slam_node,
+        rviz_node
     ])
