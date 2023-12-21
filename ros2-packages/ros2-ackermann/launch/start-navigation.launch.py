@@ -23,10 +23,15 @@ def generate_launch_description():
         executable='ackermann_tf2_broadcaster',
         name='broadcaster_ackermann',
         parameters=[
-            {'odom_topic_name': 'virtual_odom'},
+            {'odom_topic_name': 'odom'},
             {'odom_frame_id': 'odom'},
             {'child_frame_id': 'base_link'}
         ]
+    )
+    tf2_node = launch_ros.actions.Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        arguments = ['--x', '0', '--y', '0', '--z', '0', '--yaw', '0', '--pitch', '0', '--roll', '0', '--frame-id', 'map', '--child-frame-id', 'odom']
     )
     rviz_node = launch_ros.actions.Node(
         package='rviz2',
@@ -44,5 +49,6 @@ def generate_launch_description():
         joint_state_publisher_node,
         robot_state_publisher_node,
         ackermann_node,
+        tf2_node,
         rviz_node
     ])
