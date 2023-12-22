@@ -6,13 +6,14 @@ from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
     pkg_share = launch_ros.substitutions.FindPackageShare(package='ros2-ackermann').find('ros2-ackermann')
-    default_model_path = os.path.join(pkg_share, 'src/description/ackermann_description.urdf')
-    default_rviz_config_path = os.path.join(pkg_share, 'rviz/nav_config.rviz')
+    model_path = os.path.join(pkg_share, 'src/description/ackermann_description.urdf')
+    rviz_config_path = os.path.join(pkg_share, 'config/rviz.config.rviz')
+    slam_config_path = os.path.join(pkg_share, 'config/slam_toolbox.config.yaml')
 
     robot_state_publisher_node = launch_ros.actions.Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
-        parameters=[{'robot_description': Command(['xacro ', LaunchConfiguration('model')])}]
+        parameters=[{'robot_description': model_path}]
     )
     joint_state_publisher_node = launch_ros.actions.Node(
         package='joint_state_publisher',
@@ -39,11 +40,11 @@ def generate_launch_description():
         executable='rviz2',
         name='rviz2',
         output='screen',
-        arguments=['-d', LaunchConfiguration('rvizconfig')],
+        arguments=['-d', rviz_config_path],
     )
     slam_node = launch_ros.actions.Node(
         parameters=[
-          os.path.join(get_package_share_directory("slam_toolbox"), 'config', 'mapper_params_online_async.yaml'),
+          slam_config_path,
           {'use_sim_time': False}
         ],
         package='slam_toolbox',
@@ -52,10 +53,6 @@ def generate_launch_description():
     )
 
     return launch.LaunchDescription([
-        launch.actions.DeclareLaunchArgument(name='model', default_value=default_model_path,
-                                            description='Absolute path to robot urdf file'),
-        launch.actions.DeclareLaunchArgument(name='rvizconfig', default_value=default_rviz_config_path,
-                                            description='Absolute path to rviz config file'),
         joint_state_publisher_node,
         robot_state_publisher_node,
         ackermann_node,
