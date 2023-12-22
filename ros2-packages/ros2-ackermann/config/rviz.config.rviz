@@ -105,6 +105,8 @@ Visualization Manager:
                   Value: true
               laser_link:
                   Value: true
+              map:
+                  Value: true
               odom:
                   Value: true
               rlwheel_link:
@@ -117,14 +119,15 @@ Visualization Manager:
           Show Axes: true
           Show Names: true
           Tree:
-              odom:
-                  base_link:
-                      base_footprint: {}
-                      flwheel_link: {}
-                      frwheel_link: {}
-                      laser_link: {}
-                      rlwheel_link: {}
-                      rrwheel_link: {}
+              map:
+                  odom:
+                      base_link:
+                          base_footprint: {}
+                          flwheel_link: {}
+                          frwheel_link: {}
+                          laser_link: {}
+                          rlwheel_link: {}
+                          rrwheel_link: {}
           Update Interval: 0
           Value: true
         - Alpha: 1
@@ -161,6 +164,27 @@ Visualization Manager:
           Use Fixed Frame: true
           Use rainbow: true
           Value: true
+        - Alpha: 0.699999988079071
+          Class: rviz_default_plugins/Map
+          Color Scheme: map
+          Draw Behind: false
+          Enabled: true
+          Name: Map
+          Topic:
+              Depth: 5
+              Durability Policy: Volatile
+              Filter size: 10
+              History Policy: Keep Last
+              Reliability Policy: Reliable
+              Value: /map
+          Update Topic:
+              Depth: 5
+              Durability Policy: Volatile
+              History Policy: Keep Last
+              Reliability Policy: Reliable
+              Value: /map_updates
+          Use Timestamp: false
+          Value: true
     Enabled: true
     Global Options:
         Background Color: 48; 48; 48
@@ -182,25 +206,25 @@ Visualization Manager:
     Views:
         Current:
             Class: rviz_default_plugins/Orbit
-            Distance: 10
+            Distance: 39.047725677490234
             Enable Stereo Rendering:
                 Stereo Eye Separation: 0.05999999865889549
                 Stereo Focal Distance: 1
                 Swap Stereo Eyes: false
                 Value: false
             Focal Point:
-                X: 0
-                Y: 0
-                Z: 0
+                X: 1.3860865831375122
+                Y: 3.2616095542907715
+                Z: -1.550175428390503
             Focal Shape Fixed Size: true
             Focal Shape Size: 0.05000000074505806
             Invert Z Axis: false
             Name: Current View
             Near Clip Distance: 0.009999999776482582
-            Pitch: 0.7853981852531433
+            Pitch: 1.5647963285446167
             Target Frame: <Fixed Frame>
             Value: Orbit (rviz)
-            Yaw: 0.7853981852531433
+            Yaw: 1.5503978729248047
         Saved: ~
 Window Geometry:
     Displays:

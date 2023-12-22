@@ -1,8 +1,7 @@
 import launch
-from launch.substitutions import Command, LaunchConfiguration
+from launch.substitutions import Command
 import launch_ros
 import os
-from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
     pkg_share = launch_ros.substitutions.FindPackageShare(package='ros2-ackermann').find('ros2-ackermann')
@@ -13,7 +12,7 @@ def generate_launch_description():
     robot_state_publisher_node = launch_ros.actions.Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
-        parameters=[{'robot_description': model_path}]
+        parameters=[{'robot_description': Command(['xacro ', model_path])}]
     )
     joint_state_publisher_node = launch_ros.actions.Node(
         package='joint_state_publisher',
