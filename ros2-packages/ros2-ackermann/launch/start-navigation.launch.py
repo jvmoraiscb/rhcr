@@ -9,6 +9,7 @@ def generate_launch_description():
     model_path = os.path.join(my_pkg_share, 'src/description/ackermann_description.urdf')
     rviz_config_path = os.path.join(my_pkg_share, 'config/rviz.config.rviz')
     slam_config_path = os.path.join(my_pkg_share, 'config/slam_toolbox.config.yaml')
+    nav2_config_path = os.path.join(my_pkg_share, 'config/nav2.config.yaml')
     nav2_launch_path = os.path.join(nav2_pkg_share, 'launch/navigation_launch.py')
 
     robot_state_publisher_node = launch_ros.actions.Node(
@@ -53,9 +54,8 @@ def generate_launch_description():
         arguments=['-d', rviz_config_path],
     )
     navigation_launch = launch.actions.IncludeLaunchDescription(
-        launch.launch_description_sources.PythonLaunchDescriptionSource(
-            nav2_launch_path
-        )
+        launch.launch_description_sources.PythonLaunchDescriptionSource(nav2_launch_path),
+        launch_arguments={'params_file': nav2_config_path}.items()
     )
 
     return launch.LaunchDescription([
