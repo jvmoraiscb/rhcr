@@ -52,15 +52,29 @@ public class VirtualSensorsRos2Node : MonoBehaviour
             odomPub = ros2Node.CreatePublisher<nav_msgs.msg.Odometry>(odomTopicName);
             scanPub = ros2Node.CreatePublisher<sensor_msgs.msg.LaserScan>(scanTopicName);
         }
+        StartCoroutine(MyUpdate(0.1f));
+    }
+
+    System.Collections.IEnumerator MyUpdate(float waitTime)
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(waitTime);
+            if (ros2Unity.Ok())
+            {
+                OdomUpdate();
+                ScanUpdate();
+            }
+        }
     }
 
     void Update()
     {
-        if (ros2Unity.Ok())
-        {
-            OdomUpdate();
-            ScanUpdate();
-        }
+        //if (ros2Unity.Ok())
+        //{
+        //    OdomUpdate();
+        //    ScanUpdate();
+        //}
     }
     void OdomUpdate()
     {

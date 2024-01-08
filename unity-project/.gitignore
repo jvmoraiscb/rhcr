@@ -76,3 +76,6 @@ crashlytics-build.properties
 
 # Built Visual Studio Code Extensions
 *.vsix
+
+# Included Worlds
+/[Aa]ssets/Abandoned_Asylum
