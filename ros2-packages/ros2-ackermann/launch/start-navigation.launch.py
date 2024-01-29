@@ -27,7 +27,7 @@ def generate_launch_description():
         executable='ackermann_tf2_broadcaster',
         name='broadcaster_ackermann',
         parameters=[
-            {'odom_topic_name': 'odom'},
+            {'odom_topic_name': 'virtual_odom'},
             {'odom_frame_id': 'odom'},
             {'child_frame_id': 'base_link'}
         ]
