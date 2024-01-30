@@ -17,26 +17,23 @@
 #include <sstream>
 #include <string>
 
-#include "rclcpp/rclcpp.hpp"
-#include "geometry_msgs/msg/transform_stamped.hpp"
-#include "tf2/LinearMath/Quaternion.h"
-#include "tf2_ros/transform_broadcaster.h"
-#include "nav_msgs/msg/odometry.hpp"
+#include <geometry_msgs/msg/transform_stamped.hpp>
+#include <nav_msgs/msg/odometry.hpp>
+#include <rclcpp/rclcpp.hpp>
+#include <tf2/LinearMath/Quaternion.h>
+#include <tf2_ros/transform_broadcaster.h>
 
-class FramePublisher : public rclcpp::Node
-{
+class FramePublisher : public rclcpp::Node {
 public:
   FramePublisher()
-  : Node("ackermann_tf2_frame_publisher")
-  {
+      : Node("ackermann_tf2_frame_publisher") {
     // Declare and acquire `turtlename` parameter
-    odom_topic_name_ = this->declare_parameter<std::string>("odom_topic_name", "nav_odom");
+    odom_topic_name_ = this->declare_parameter<std::string>("odom_topic_name", "odom");
     odom_frame_id_ = this->declare_parameter<std::string>("odom_frame_id", "odom");
     child_frame_id_ = this->declare_parameter<std::string>("child_frame_id", "base_link");
 
     // Initialize the transform broadcaster
-    tf_broadcaster_ =
-      std::make_unique<tf2_ros::TransformBroadcaster>(*this);
+    tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(*this);
 
     // Subscribe to a turtle{1}{2}/pose topic and call handle_turtle_pose
     // callback function on each message
@@ -45,13 +42,12 @@ public:
     std::string topic_name = stream.str();
 
     subscription_ = this->create_subscription<nav_msgs::msg::Odometry>(
-      topic_name, 10,
-      std::bind(&FramePublisher::handle_ackermann_odom, this, std::placeholders::_1));
+        topic_name, 10,
+        std::bind(&FramePublisher::handle_ackermann_odom, this, std::placeholders::_1));
   }
 
 private:
-  void handle_ackermann_odom(const std::shared_ptr<nav_msgs::msg::Odometry> msg)
-  {
+  void handle_ackermann_odom(const std::shared_ptr<nav_msgs::msg::Odometry> msg) {
     geometry_msgs::msg::TransformStamped t;
 
     // Read message content and assign it to
@@ -85,8 +81,7 @@ private:
   std::string child_frame_id_;
 };
 
-int main(int argc, char * argv[])
-{
+int main(int argc, char *argv[]) {
   rclcpp::init(argc, argv);
   rclcpp::spin(std::make_shared<FramePublisher>());
   rclcpp::shutdown();
