@@ -199,6 +199,25 @@
     </gazebo>
 
     <gazebo>
+        <plugin name="gazebo_ros_ackermann_drive" filename="libgazebo_ros_ackermann_drive.so">
+            <ros>
+                <namespace>simulated_ackermann</namespace>
+            </ros>
+            <update_rate>100.0</update_rate>
+            <!-- wheels -->
+            <front_left_joint>flwheel</front_left_joint>
+            <front_right_joint>frwheel</front_right_joint>
+            <front_left_joint>rlwheel</front_left_joint>
+            <front_left_joint>rrwheel</rear_right_joint>
+            <left_ste>
+
+            <odometry_frame>odom</odometry_frame>
+            <robot_base_frame>base_link</robot_base_frame>
+
+        </plugin>
+    </gazebo>
+
+    <gazebo>
         <plugin name='diff_drive' filename='libgazebo_ros_diff_drive.so'>
             <ros>
                 <namespace>/simulated_ackermann</namespace>
