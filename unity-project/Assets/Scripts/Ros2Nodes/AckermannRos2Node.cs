@@ -62,7 +62,7 @@ public class AckermannRos2Node : MonoBehaviour
         {
             x = (float)msg.Pose.Pose.Position.X,
             y = (float)msg.Pose.Pose.Position.Y,
-            z = (float)msg.Pose.Pose.Position.Z
+            z = 0f
         };
         ackermannMid.RosRotation = new Quaternion
         {

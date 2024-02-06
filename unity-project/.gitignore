@@ -68,7 +68,6 @@ crashlytics-build.properties
 
 # Visual Studio cache directory
 .vs/
-.vscode/
 .vsconfig
 
 # Local History for Visual Studio Code
