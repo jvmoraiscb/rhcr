@@ -5,11 +5,16 @@ public class VirtualSensorsRos2Node : MonoBehaviour
 {
     [Header("ROS2 Constants")]
     [SerializeField] private string nodeName = "VirtualSensorsNode_Unity";
-    [SerializeField] private string odomTopicName = "unity_odom";
     [SerializeField] private string cmdVelTopicName = "unity_cmd_vel";
+    [SerializeField] private string odomTopicName = "unity_odom";
     [SerializeField] private string scanTopicName = "unity_scan";
     
-    [Header("Virtual Scan Constants")]
+    [Header("CmdVel and Odom Constants")]
+    [SerializeField] private bool isCmdVelEnabled = true;
+    [SerializeField] private bool isOdomEnabled = true;
+    [SerializeField] private AckermannMiddleware ackermannMid;
+
+    [Header("Scan Constants")]
     [SerializeField] private bool isScanEnabled = true;
     [SerializeField] private GameObject lidarPosition;
     [SerializeField] private float rangeMinFilter = 0f;
@@ -21,10 +26,6 @@ public class VirtualSensorsRos2Node : MonoBehaviour
     [SerializeField] private int samples = 360;
     [SerializeField] private int angleRVIZ = 0;  // angle to fix in the laser detections orientation in the real env
 
-    [Header("Virtual CmdVel and Odom Constants")]
-    [SerializeField] private bool isCmdVelEnabled = true;
-    [SerializeField] private bool isOdomEnabled = true;
-    [SerializeField] private AckermannMiddleware ackermannMid;
 
     // ros2 variables
     private ROS2UnityComponent ros2Unity;
@@ -33,31 +34,31 @@ public class VirtualSensorsRos2Node : MonoBehaviour
     private IPublisher<nav_msgs.msg.Odometry> odomPub;
     private IPublisher<sensor_msgs.msg.LaserScan> scanPub;
 
-    // virtual scan variables
+    // scan variables
     private int angleMaxDeg;
     private int angleMinDeg;
     private float angleIncrement;
     private float[] ranges;
     private Vector3[] positions;
 
-    void Start(){
+    private void Start(){
         angleMaxDeg = (int)(angleMaxFilter * 180 / Mathf.PI);
         angleMinDeg = (int)(angleMinFilter * 180 / Mathf.PI);
         angleIncrement = 2 * Mathf.PI / samples;
         ranges = new float[samples];
         positions = new Vector3[samples];
         ros2Unity = GetComponent<ROS2UnityComponent>();
-        if (ros2Node == null) ros2Node = ros2Unity.CreateNode(nodeName);
+        ros2Node ??= ros2Unity.CreateNode(nodeName);
         if (ros2Unity.Ok()){
             ros2Clock = new ROS2Clock();
             ros2Node.CreateSubscription<geometry_msgs.msg.Twist>(cmdVelTopicName, msg => CmdVelHandler(msg));
             odomPub = ros2Node.CreatePublisher<nav_msgs.msg.Odometry>(odomTopicName);
             scanPub = ros2Node.CreatePublisher<sensor_msgs.msg.LaserScan>(scanTopicName);
         }
-        StartCoroutine(MyUpdate(0.01f));
+        // StartCoroutine(MyUpdate(0.01f));
     }
 
-    System.Collections.IEnumerator MyUpdate(float waitTime){
+/*    System.Collections.IEnumerator MyUpdate(float waitTime){
         while (true){
             yield return new WaitForSeconds(waitTime);
             if (ros2Unity.Ok()){
@@ -65,9 +66,21 @@ public class VirtualSensorsRos2Node : MonoBehaviour
                 ScanUpdate();
             }
         }
+    } */
+    private void Update(){
+        if(ros2Unity.Ok()){
+            OdomUpdate();
+            ScanUpdate();
+        }
     }
 
-    void OdomUpdate(){
+    private void CmdVelHandler(geometry_msgs.msg.Twist msg){
+        if (!isCmdVelEnabled) return;
+        ackermannMid.Throttle = (float)msg.Linear.X;
+        ackermannMid.Steer = (float)msg.Angular.Z;
+    }
+
+    private void OdomUpdate(){
         if (!isOdomEnabled) return;
         nav_msgs.msg.Odometry msg = new nav_msgs.msg.Odometry{
             Header = new std_msgs.msg.Header{
@@ -82,10 +95,10 @@ public class VirtualSensorsRos2Node : MonoBehaviour
                         Z = 0f,
                     },
                     Orientation = new geometry_msgs.msg.Quaternion{
-                        X = ackermannMid.RosRotation.x,
-                        Y = ackermannMid.RosRotation.y,
+                        X = 0f,
+                        Y = 0f,
                         Z = ackermannMid.RosRotation.z,
-                        W = ackermannMid.RosRotation.w,
+                        W = ackermannMid.RosRotation.w
                     }
                 }
             }
@@ -94,7 +107,7 @@ public class VirtualSensorsRos2Node : MonoBehaviour
         odomPub.Publish(msg);
     }
 
-    // Code created by Fabiana Machado
+    // Code created by Fabiana Machado (Fabiana.machado@edu.ufes.br)
     private void ScanUpdate(){
         if (!isScanEnabled) return;
         int layerMask = 1 << obstaclesLayer;
@@ -158,11 +171,5 @@ public class VirtualSensorsRos2Node : MonoBehaviour
         };
         ros2Clock.UpdateROSClockTime(msg.Header.Stamp);
         scanPub.Publish(msg);
-    }
-
-    private void CmdVelHandler(geometry_msgs.msg.Twist msg){
-        if (!isCmdVelEnabled) return;
-        ackermannMid.Throttle = (float)msg.Linear.X;
-        ackermannMid.Steer = (float)msg.Angular.Z;
     }
 }

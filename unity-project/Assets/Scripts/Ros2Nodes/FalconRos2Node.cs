@@ -35,8 +35,7 @@ public class FalconRos2Node : MonoBehaviour
     void Start()
     {
         ros2Unity = GetComponent<ROS2UnityComponent>();
-        if (ros2Node == null)
-            ros2Node = ros2Unity.CreateNode(nodeName);
+        ros2Node ??= ros2Unity.CreateNode(nodeName);
         if (ros2Unity.Ok())
         {
             ros2Node.CreateSubscription<geometry_msgs.msg.Vector3>(positionTopicName, msg => PositionHandler(msg.X, msg.Y, msg.Z));
