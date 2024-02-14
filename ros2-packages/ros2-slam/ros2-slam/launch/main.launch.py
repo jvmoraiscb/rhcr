@@ -4,13 +4,13 @@ import launch_ros
 import os
 
 def generate_launch_description():
-    my_pkg_share = launch_ros.substitutions.FindPackageShare(package='ros2-ackermann').find('ros2-ackermann')
-    nav2_pkg_share = launch_ros.substitutions.FindPackageShare(package='nav2_bringup').find('nav2_bringup')
+    my_pkg_share = launch_ros.substitutions.FindPackageShare(package='ros2-slam').find('ros2-slam')
     model_path = os.path.join(my_pkg_share, 'src/description/ackermann_description.urdf')
-    rviz_config_path = os.path.join(my_pkg_share, 'config/rviz.config.rviz')
     slam_config_path = os.path.join(my_pkg_share, 'config/slam_toolbox.config.yaml')
-    nav2_config_path = os.path.join(my_pkg_share, 'config/nav2.config.yaml')
-    nav2_launch_path = os.path.join(nav2_pkg_share, 'launch/navigation_launch.py')
+#    rviz_config_path = os.path.join(my_pkg_share, 'config/rviz.config.rviz')
+#    nav2_config_path = os.path.join(my_pkg_share, 'config/nav2.config.yaml')
+#    nav2_pkg_share = launch_ros.substitutions.FindPackageShare(package='nav2_bringup').find('nav2_bringup')
+#    nav2_launch_path = os.path.join(nav2_pkg_share, 'launch/navigation_launch.py')
 
     robot_state_publisher_node = launch_ros.actions.Node(
         package='robot_state_publisher',
@@ -23,7 +23,7 @@ def generate_launch_description():
         name='joint_state_publisher',
     )
     ackermann_node = launch_ros.actions.Node(
-        package='ros2-ackermann',
+        package='ros2-slam',
         executable='ackermann_tf2_broadcaster',
         name='broadcaster_ackermann',
         parameters=[
@@ -46,24 +46,22 @@ def generate_launch_description():
         executable='async_slam_toolbox_node',
         name='slam_toolbox'
     )
-    rviz_node = launch_ros.actions.Node(
-        package='rviz2',
-        executable='rviz2',
-        name='rviz2',
-        output='screen',
-        arguments=['-d', rviz_config_path],
-    )
-    navigation_launch = launch.actions.IncludeLaunchDescription(
-        launch.launch_description_sources.PythonLaunchDescriptionSource(nav2_launch_path),
-        launch_arguments={'params_file': nav2_config_path}.items()
-    )
+#    rviz_node = launch_ros.actions.Node(
+#        package='rviz2',
+#        executable='rviz2',
+#        name='rviz2',
+#        output='screen',
+#        arguments=['-d', rviz_config_path],
+#    )
+#    navigation_launch = launch.actions.IncludeLaunchDescription(
+#        launch.launch_description_sources.PythonLaunchDescriptionSource(nav2_launch_path),
+#        launch_arguments={'params_file': nav2_config_path}.items()
+#    )
 
     return launch.LaunchDescription([
         joint_state_publisher_node,
         robot_state_publisher_node,
         ackermann_node,
         tf2_node,
-        slam_node,
-        navigation_launch,
-        rviz_node
+        slam_node
     ])
