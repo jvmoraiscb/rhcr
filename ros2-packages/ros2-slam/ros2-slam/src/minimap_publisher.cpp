@@ -13,35 +13,35 @@ private:
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub;
   double robot_x;
   double robot_y;
-  const int minimap_width = 101;
-  const int minimap_height = 101;
+  const int minimap_side = 101;
   void map_callback(const nav_msgs::msg::OccupancyGrid msg) {
-    // if there is not enough information to build the minimap
-    if (msg.info.width < minimap_width || msg.info.height < minimap_height) {
-      std::cout << "there is no map ;~;\n";
-      return;
-    }
-
     // the origin of the map is indicative of the cell (0,0). By subtracting the robot's position from the origin, the distance from the robot to the origin is obtained. Dividing this value by the map resolution allows for the identification of the cell representing that distance.
     int robot_x_on_map = (int)(robot_x - msg.info.origin.position.x) / msg.info.resolution;
     int robot_y_on_map = (int)(robot_y - msg.info.origin.position.y) / msg.info.resolution;
 
     // with the minimap being 101 by 101, after identifying the x and y coordinates of the robot on the map, the designated position is set as the center of the map (map[50][50]).
-    int initial_i = robot_y_on_map - (minimap_width - 1) / 2;
-    int initial_j = robot_x_on_map - (minimap_height - 1) / 2;
+    int initial_i = robot_y_on_map - (minimap_side - 1) / 2;
+    int initial_j = robot_x_on_map - (minimap_side - 1) / 2;
 
     auto minimap = nav_msgs::msg::OccupancyGrid();
     minimap.header = msg.header;
     minimap.info = msg.info;
     minimap.info.resolution = msg.info.resolution;
-    minimap.info.width = minimap_width;
-    minimap.info.height = minimap_height;
+    minimap.info.width = minimap_side;
+    minimap.info.height = minimap_side;
     minimap.info.origin.position.x = msg.info.origin.position.x + initial_j * msg.info.resolution;
     minimap.info.origin.position.y = msg.info.origin.position.y + initial_i * msg.info.resolution;
     minimap.data.clear();
-    for (int i = 0; i < minimap_height; i++) {
-      for (int j = 0; j < minimap_width; j++) {
-        minimap.data.push_back(msg.data[(i + initial_i) * msg.info.width + j + initial_j]);
+    for (int i = 0; i < minimap_side; i++) {
+      for (int j = 0; j < minimap_side; j++) {
+        // if there is not enough information to build the minimap
+        bool i_exists = (i + initial_i) * msg.info.resolution - msg.info.origin.position.y < msg.info.height * msg.info.resolution - msg.info.origin.position.y;
+        bool j_exists = (j + initial_j) * msg.info.resolution - msg.info.origin.position.x < msg.info.height * msg.info.resolution - msg.info.origin.position.x;
+
+        if (i_exists && j_exists)
+          minimap.data.push_back(msg.data[(i + initial_i) * msg.info.width + j + initial_j]);
+        else
+          minimap.data.push_back(-1);
       }
     }
     // the minimap is only published when received, obviously
