@@ -16,6 +16,10 @@ add_executable(
     ackermann_tf2_broadcaster
     src/ackermann_tf2_broadcaster.cpp
 )
+add_executable(
+    minimap_publisher
+    src/minimap_publisher.cpp
+)
 
 ament_target_dependencies(
     ackermann_tf2_broadcaster
@@ -25,10 +29,17 @@ ament_target_dependencies(
     tf2
     tf2_ros
 )
+ament_target_dependencies(
+    minimap_publisher
+    nav_msgs
+    geometry_msgs
+    rclcpp
+)
 
 install(
   TARGETS
   ackermann_tf2_broadcaster
+  minimap_publisher
   DESTINATION lib/${PROJECT_NAME}
 )
 

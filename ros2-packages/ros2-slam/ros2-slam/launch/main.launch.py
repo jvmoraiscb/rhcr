@@ -4,7 +4,8 @@ import launch_ros
 import os
 
 def generate_launch_description():
-    my_pkg_share = launch_ros.substitutions.FindPackageShare(package='ros2-slam').find('ros2-slam')
+    package_name = 'ros2-slam'
+    my_pkg_share = launch_ros.substitutions.FindPackageShare(package=package_name).find(package_name)
     model_path = os.path.join(my_pkg_share, 'src/description/ackermann_description.urdf')
     slam_config_path = os.path.join(my_pkg_share, 'config/slam_toolbox.config.yaml')
 #    rviz_config_path = os.path.join(my_pkg_share, 'config/rviz.config.rviz')
@@ -23,13 +24,23 @@ def generate_launch_description():
         name='joint_state_publisher',
     )
     ackermann_node = launch_ros.actions.Node(
-        package='ros2-slam',
+        package=package_name,
         executable='ackermann_tf2_broadcaster',
         name='broadcaster_ackermann',
         parameters=[
             {'odom_topic_name': 'unity_odom'},
             {'odom_frame_id': 'odom'},
             {'child_frame_id': 'base_link'}
+        ]
+    )
+    minimap_node = launch_ros.actions.Node(
+        package=package_name,
+        executable='minimap_publisher',
+        name='minimap_publisher_launch',
+        parameters=[
+            {'odom_topic_name': 'unity_odom'},
+            {'map_topic_name': 'map'},
+            {'minimap_topic_name': 'minimap'}
         ]
     )
     tf2_node = launch_ros.actions.Node(
@@ -63,5 +74,6 @@ def generate_launch_description():
         robot_state_publisher_node,
         ackermann_node,
         tf2_node,
-        slam_node
+        slam_node,
+        minimap_node
     ])
