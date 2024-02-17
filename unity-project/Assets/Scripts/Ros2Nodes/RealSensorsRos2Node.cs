@@ -17,7 +17,6 @@ public class RealSensorsRos2Node : MonoBehaviour
     [Header("Scan Constants")]
     [SerializeField] private bool isScanEnabled = true;
     [SerializeField] private GameObject lidarGameObject;
-    [SerializeField] private GameObject robotGameObject;
     [SerializeField] private GameObject wallPrefab;
     [SerializeField] private float rangeMinFilter = 0f;
     [SerializeField] private float rangeMaxFilter = 1000f;
@@ -97,7 +96,7 @@ public class RealSensorsRos2Node : MonoBehaviour
     // Code created by Fabiana Machado (Fabiana.machado@edu.ufes.br)
     void ScanUpdate(){
         if (!isScanEnabled) return;
-        Vector3 robotPosition = robotGameObject.transform.position;
+        Vector3 lidarPosition = lidarGameObject.transform.position;
         Vector3 lidarAngle = lidarGameObject.transform.eulerAngles;
         foreach (GameObject wall in walls){
             Destroy(wall);
@@ -109,7 +108,7 @@ public class RealSensorsRos2Node : MonoBehaviour
                 if (ranges[i] > rangeMinFilter && ranges[i] < rangeMaxFilter){
                     // transform the scan topic so it can have the walker reference and corrected angles
                     Vector3 position = new Vector3(-Mathf.Cos(angleMin + angleIncrement * i - (lidarAngle.y * Mathf.PI / 180)), -Mathf.Sin(angleMin + angleIncrement * i - (lidarAngle.y * Mathf.PI / 180)), 0).Ros2Unity();
-                    Vector3 directionsNew = new Vector3(position.x * scale * ranges[i] + robotPosition.x, robotPosition.y, position.z * scale * ranges[i] + robotPosition.z);
+                    Vector3 directionsNew = new Vector3(position.x * scale * ranges[i] + lidarPosition.x, lidarPosition.y, position.z * scale * ranges[i] + lidarPosition.z);
                     // Instatiate a prefab to warn the user that that is a possible colision in the real env
                     walls.Add(Instantiate(wallPrefab, new Vector3(directionsNew.x, directionsNew.y, directionsNew.z), new Quaternion(0, 0, 0, 1)));
                     // destructor = Instantiate(wallPrefab, new Vector3(realDirectionsNew.x, realDirectionsNew.y, realDirectionsNew.z), new Quaternion(0, 0, 0, 1));
