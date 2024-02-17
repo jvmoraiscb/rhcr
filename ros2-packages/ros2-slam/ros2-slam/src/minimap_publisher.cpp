@@ -16,8 +16,8 @@ private:
   const int minimap_side = 101;
   void map_callback(const nav_msgs::msg::OccupancyGrid msg) {
     // the origin of the map is indicative of the cell (0,0). By subtracting the robot's position from the origin, the distance from the robot to the origin is obtained. Dividing this value by the map resolution allows for the identification of the cell representing that distance.
-    int robot_x_on_map = (int)(robot_x - msg.info.origin.position.x) / msg.info.resolution;
-    int robot_y_on_map = (int)(robot_y - msg.info.origin.position.y) / msg.info.resolution;
+    int robot_x_on_map = std::round((robot_x - msg.info.origin.position.x) / msg.info.resolution);
+    int robot_y_on_map = std::round((robot_y - msg.info.origin.position.y) / msg.info.resolution);
 
     // with the minimap being 101 by 101, after identifying the x and y coordinates of the robot on the map, the designated position is set as the center of the map (map[50][50]).
     int initial_i = robot_y_on_map - (minimap_side - 1) / 2;
@@ -35,10 +35,10 @@ private:
     for (int i = 0; i < minimap_side; i++) {
       for (int j = 0; j < minimap_side; j++) {
         // if there is not enough information to build the minimap
-        bool i_exists = (i + initial_i) * msg.info.resolution - msg.info.origin.position.y < msg.info.height * msg.info.resolution - msg.info.origin.position.y;
-        bool j_exists = (j + initial_j) * msg.info.resolution - msg.info.origin.position.x < msg.info.height * msg.info.resolution - msg.info.origin.position.x;
-
-        if (i_exists && j_exists)
+        bool i_exists = (i + initial_i) < msg.info.height;
+        bool j_exists = (j + initial_j) < msg.info.width;
+        bool ij_exists = (size_t)(i + initial_i) * msg.info.width + j + initial_j < msg.data.size();
+        if (i_exists && j_exists && ij_exists)
           minimap.data.push_back(msg.data[(i + initial_i) * msg.info.width + j + initial_j]);
         else
           minimap.data.push_back(-1);
