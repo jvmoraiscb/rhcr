@@ -47,7 +47,8 @@ public class MinimapRos2Node : MonoBehaviour
         for (uint i = 0; i < lastMinimap.Info.Height; i++){
             for (uint j = 0; j < lastMinimap.Info.Width; j++){
                 if(lastMinimap.Data[i * lastMinimap.Info.Width + j] == 100){
-                    walls.Add(Instantiate(wallPrefab, new Vector3(j*lastMinimap.Info.Resolution + (float)lastMinimap.Info.Origin.Position.X, yAxis, i*lastMinimap.Info.Resolution + (float)lastMinimap.Info.Origin.Position.Y), new Quaternion(0, 0, 0, 1)));
+                    Vector3 ros_position = new Vector3(j*lastMinimap.Info.Resolution + (float)lastMinimap.Info.Origin.Position.X, i*lastMinimap.Info.Resolution + (float)lastMinimap.Info.Origin.Position.Y, yAxis);
+                    walls.Add(Instantiate(wallPrefab, ros_position.Ros2Unity(), new Quaternion(0, 0, 0, 1)));
                 }
             }
         }

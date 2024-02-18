@@ -277,7 +277,6 @@ MonoBehaviour:
   ackermannMid: {fileID: 1682938501582424372}
   isScanEnabled: 1
   lidarGameObject: {fileID: 1682938502891481998}
-  robotGameObject: {fileID: 1682938501582424360}
   wallPrefab: {fileID: 698896578097658503, guid: c4685f4e621f2394d8b82ba894ed5da6, type: 3}
   rangeMinFilter: 0
   rangeMaxFilter: 1000
