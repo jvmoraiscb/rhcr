@@ -133,13 +133,12 @@ public class VirtualSensorsRos2Node : MonoBehaviour
                         if (i + angleRVIZ >= 360){
                             ranges[i - 360 + angleRVIZ] = hit.distance / scale;
                             positions[i - 360 + angleRVIZ] = hit.point;
-                            Debug.DrawLine(rayOriginPos, hit.point, Color.white);
                         }
                         else {
                             ranges[i + angleRVIZ - angleMinDeg] = hit.distance / scale;
                             positions[i + angleRVIZ - angleMinDeg] = hit.point;
-                            Debug.DrawLine(rayOriginPos, hit.point, Color.white);
                         }
+                            //Debug.DrawLine(rayOriginPos, hit.point, Color.white);
                     }
                 }
                 // if there is not a hit, the ranges receive zero 
