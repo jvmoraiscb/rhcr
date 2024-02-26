@@ -23,10 +23,22 @@
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2_ros/transform_broadcaster.h>
 
+/*
+    Using Ackermann TF2 Broadcaster on launch.py:
+    ackermann_node = launch_ros.actions.Node(
+        package=package_name,
+        executable='ackermann_tf2_broadcaster',
+        name='broadcaster_ackermann',
+        parameters=[
+            {'odom_topic_name': 'unity_odom'},
+            {'odom_frame_id': 'odom'},
+            {'child_frame_id': 'base_link'}
+        ]
+    )
+*/
 class FramePublisher : public rclcpp::Node {
 public:
-  FramePublisher()
-      : Node("ackermann_tf2_frame_publisher") {
+  FramePublisher() : Node("ackermann_tf2_frame_publisher") {
     // Declare and acquire `turtlename` parameter
     odom_topic_name_ = this->declare_parameter<std::string>("odom_topic_name", "odom");
     odom_frame_id_ = this->declare_parameter<std::string>("odom_frame_id", "odom");

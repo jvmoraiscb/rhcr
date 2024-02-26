@@ -1,22 +1,21 @@
 import launch
-from launch.substitutions import Command
 import launch_ros
 import os
 
 def generate_launch_description():
-    package_name = 'ros2-slam'
+    package_name = 'ros2-slam-nav2'
     my_pkg_share = launch_ros.substitutions.FindPackageShare(package=package_name).find(package_name)
     model_path = os.path.join(my_pkg_share, 'src/description/ackermann_description.urdf')
-    slam_config_path = os.path.join(my_pkg_share, 'config/slam_toolbox.config.yaml')
+    slam_config_path = os.path.join(my_pkg_share, 'config/slam.config.yaml')
+    nav2_config_path = os.path.join(my_pkg_share, 'config/nav2.config.yaml')
+    nav2_pkg_share = launch_ros.substitutions.FindPackageShare(package='nav2_bringup').find('nav2_bringup')
+    nav2_launch_path = os.path.join(nav2_pkg_share, 'launch/navigation_launch.py')
 #    rviz_config_path = os.path.join(my_pkg_share, 'config/rviz.config.rviz')
-#    nav2_config_path = os.path.join(my_pkg_share, 'config/nav2.config.yaml')
-#    nav2_pkg_share = launch_ros.substitutions.FindPackageShare(package='nav2_bringup').find('nav2_bringup')
-#    nav2_launch_path = os.path.join(nav2_pkg_share, 'launch/navigation_launch.py')
 
     robot_state_publisher_node = launch_ros.actions.Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
-        parameters=[{'robot_description': Command(['xacro ', model_path])}]
+        parameters=[{'robot_description': launch.substitutions.Command(['xacro ', model_path])}]
     )
     joint_state_publisher_node = launch_ros.actions.Node(
         package='joint_state_publisher',
@@ -33,16 +32,6 @@ def generate_launch_description():
             {'child_frame_id': 'base_link'}
         ]
     )
-    minimap_node = launch_ros.actions.Node(
-        package=package_name,
-        executable='minimap_publisher',
-        name='minimap_publisher_launch',
-        parameters=[
-            {'odom_topic_name': 'unity_odom'},
-            {'map_topic_name': 'map'},
-            {'minimap_topic_name': 'minimap'}
-        ]
-    )
     tf2_node = launch_ros.actions.Node(
         package='tf2_ros',
         executable='static_transform_publisher',
@@ -57,16 +46,16 @@ def generate_launch_description():
         executable='async_slam_toolbox_node',
         name='slam_toolbox'
     )
+    navigation_launch = launch.actions.IncludeLaunchDescription(
+        launch.launch_description_sources.PythonLaunchDescriptionSource(nav2_launch_path),
+        launch_arguments={'params_file': nav2_config_path}.items()
+    )
 #    rviz_node = launch_ros.actions.Node(
 #        package='rviz2',
 #        executable='rviz2',
 #        name='rviz2',
 #        output='screen',
 #        arguments=['-d', rviz_config_path],
-#    )
-#    navigation_launch = launch.actions.IncludeLaunchDescription(
-#        launch.launch_description_sources.PythonLaunchDescriptionSource(nav2_launch_path),
-#        launch_arguments={'params_file': nav2_config_path}.items()
 #    )
 
     return launch.LaunchDescription([
@@ -75,5 +64,5 @@ def generate_launch_description():
         ackermann_node,
         tf2_node,
         slam_node,
-        minimap_node
+        navigation_launch
     ])
