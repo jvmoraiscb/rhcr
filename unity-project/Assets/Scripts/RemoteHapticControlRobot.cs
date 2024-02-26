@@ -1,17 +1,18 @@
 using UnityEngine;
 
 // Remote Haptic Control Robot (RHCR) is the main class, all others classes just send or receive data from it
-public class RemoteHapticControlRobot : MonoBehaviour
-{
+public class RemoteHapticControlRobot : MonoBehaviour {
     [SerializeField] private FalconMiddleware falconMid;
     [SerializeField] private AckermannMiddleware ackermannMid;
     [SerializeField] private VirtualCamera cam;
-    [SerializeField] private Transform frontSensor;
-    [SerializeField] private Transform rearSensor;
+    [SerializeField] private Transform[] frontSensors;
+    [SerializeField] private Transform[] rearSensors;
 
     [SerializeField] private float defaultSpeed = .6f;
     [SerializeField] private float maxSpeed = 1f;
     [SerializeField] private float minSpeed = .2f;
+    [SerializeField] private float maxDistance = 1f;
+    [SerializeField] private float forceFactor = 10f;
 
     private float speed;
     private bool isBreaking;
@@ -32,8 +33,8 @@ public class RemoteHapticControlRobot : MonoBehaviour
 
     private void Update()
     {
-        frontDanger = CollisionHandler(frontSensor, 30, 1f, 2f);
-        rearDanger = CollisionHandler(rearSensor, 30, 1f, 2f);
+        frontDanger = LinearCollisionHandler(frontSensors, maxDistance, maxDistance*2);
+        rearDanger = LinearCollisionHandler(rearSensors, maxDistance, maxDistance*2);
         if (isBreaking){
             ackermannMid.Throttle = 0f;
             ackermannMid.Steer = 0f;
@@ -43,7 +44,6 @@ public class RemoteHapticControlRobot : MonoBehaviour
             falconMid.Rgb = new Vector3(0f, 0f, 1f);
         }
         else{
-            float forceFactor = 4f;
             float tempThrottle = falconMid.Position.z * speed;
             float tempSteer = tempThrottle > 0f ? (Mathf.Abs(falconMid.Position.x) > 0.3f ? falconMid.Position.x : 0f) * -1 : (Mathf.Abs(falconMid.Position.x) > 0.3f ? falconMid.Position.x : 0f);
             float tempZForce = 0f;
@@ -52,20 +52,32 @@ public class RemoteHapticControlRobot : MonoBehaviour
                 if(frontDanger == 2){
                     tempThrottle = 0f;
                     tempZForce = forceFactor;
+                    falconMid.Rgb = new Vector3(1f, 0f, 0f);
                 }
                 else if (frontDanger == 1){
                     tempThrottle /= 2;
                     tempZForce = forceFactor/2;
+                    falconMid.Rgb = new Vector3(1f, 1f, 0f);
+
+                }
+                else{
+                    falconMid.Rgb = new Vector3(0f, 1f, 0f);
                 }
             }
             else{
                 if(rearDanger == 2){
                     tempThrottle = 0f;
                     tempZForce = forceFactor;
+                    falconMid.Rgb = new Vector3(1f, 0f, 0f);
                 }
                 else if (rearDanger == 1){
                     tempThrottle /= 2;
                     tempZForce = forceFactor/2;
+                    falconMid.Rgb = new Vector3(1f, 1f, 0f);
+
+                }
+                else{
+                    falconMid.Rgb = new Vector3(0f, 1f, 0f);
                 }
             }
             falconMid.Force = new Vector3(0f, 0f, tempZForce * falconMid.Position.z);
@@ -94,36 +106,32 @@ public class RemoteHapticControlRobot : MonoBehaviour
         cam.isCloseUpCam = !cam.isCloseUpCam;
     }
 
-    private int CollisionHandler(Transform tf, int openingAngle, float redDistance, float yellowDistance){
-                int layerMask = 1 << 6;
-        // rays always statrting from hokuyo fake in vWalker
-        Vector3 rayOriginPos = tf.position;
-        Vector3 rayOrigin = tf.eulerAngles;
-        Vector3 rayDirection;
+    private int LinearCollisionHandler(Transform[] tfs, float redDistance, float yellowDistance){
         int countRed = 0;
         int countYellow = 0;
-        for (int i = 0; i < 360; i++){
+        foreach (Transform tf in tfs){
+            int layerMask = 1 << 6;
+            // rays always statrting from hokuyo fake in vWalker
+            Vector3 rayOriginPos = tf.position;
+            Vector3 rayOrigin = tf.eulerAngles;
             // Correcting the childs rotation in relation to the parent (90 degrees /1,57)
-            float angle = (i - rayOrigin.y) / (180 / Mathf.PI);
-            rayDirection.x = Mathf.Cos(angle);
-            rayDirection.y = 0;
-            rayDirection.z = Mathf.Sin(angle);
+            float angle = (90 - rayOrigin.y) / (180 / Mathf.PI);
+            Vector3 rayDirection = new Vector3 {
+                x =  Mathf.Cos(angle),
+                y = 0,
+                z = Mathf.Sin(angle)
+            };
             // if the ray collides, this distance information will be used to fill the ranges list
             // also, it can draw the lines from vWalker to the colision point. uncomment debug.drawline
             // it only collides with the Default mask (1)
-            if (i >= 90 - openingAngle/2 && i <= 90 + openingAngle/2){
-                if (Physics.Raycast(rayOriginPos, rayDirection, out RaycastHit hit, 1000f, layerMask)){
-                    if(hit.distance < redDistance){
-                        Debug.DrawLine(rayOriginPos, hit.point, Color.red);
-                        countRed++;
-                    }
-                    else if(hit.distance < yellowDistance){
-                        Debug.DrawLine(rayOriginPos, hit.point, Color.yellow);
-                        countYellow++;
-                    }
-                    else{
-                        Debug.DrawLine(rayOriginPos, hit.point, Color.green);
-                    }
+            if (Physics.Raycast(rayOriginPos, rayDirection, out RaycastHit hit, maxDistance*2, layerMask)){
+                if(hit.distance < redDistance){
+                    Debug.DrawLine(rayOriginPos, hit.point, Color.red);
+                    countRed++;
+                }
+                else if(hit.distance < yellowDistance){
+                    Debug.DrawLine(rayOriginPos, hit.point, Color.yellow);
+                    countYellow++;
                 }
             }
         }
