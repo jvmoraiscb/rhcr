@@ -17,18 +17,21 @@
 #include <memory>
 #include <string>
 
-#include "rviz_common/display_context.hpp"
-#include "rviz_common/load_resource.hpp"
-#include "rviz_common/properties/string_property.hpp"
-#include "rviz_common/properties/vector_property.hpp"
+#include <rviz_common/display_context.hpp>
+#include <rviz_common/load_resource.hpp>
 
 namespace rhcr_rviz_plugins {
 
-CreateObjectTool::CreateObjectTool() : rviz_default_plugins::tools::PoseTool() {
+CreateObjectTool::CreateObjectTool() : rviz_default_plugins::tools::PoseTool(), qos_profile_(5) {
+  scale_ = Ogre::Vector3(1, 1, 1);
+
   shortcut_key_ = 'g';
 
-  // topic_property_ = new rviz_common::properties::StringProperty("Topic", "create_object", "DESCRIPTION TODO", getPropertyContainer(), SLOT(updateTopic()), this);
-  scale_property_ = new rviz_common::properties::VectorProperty("Scale", Ogre::Vector3::ZERO, "DESCRIPTION TODO", getPropertyContainer(), SLOT(updateScale()), this);
+  topic_property_ = new rviz_common::properties::StringProperty("Topic", "/console", "DESCRIPTION TODO", getPropertyContainer(), SLOT(updateTopic()), this);
+
+  scale_property_ = new rviz_common::properties::VectorProperty("Scale", scale_, "DESCRIPTION TODO", getPropertyContainer(), SLOT(updateScale()), this);
+
+  qos_profile_property_ = new rviz_common::properties::QosProfileProperty(topic_property_, qos_profile_);
 }
 
 CreateObjectTool::~CreateObjectTool() {
@@ -36,17 +39,38 @@ CreateObjectTool::~CreateObjectTool() {
 
 void CreateObjectTool::onInitialize() {
   PoseTool::onInitialize();
+  qos_profile_property_->initialize([this](rclcpp::QoS profile) { this->qos_profile_ = profile; });
   setName("Create Object");
   setIcon(rviz_common::loadPixmap("package://rviz_default_plugins/icons/classes/SetGoal.png"));
+  updateTopic();
 }
 
 void CreateObjectTool::onPoseSet(double x, double y, double theta) {
-  // Set goal pose on global object GoalUpdater to update nav2 Panel
-  std::cout << x + y + theta;
+  std::string command = std::string("virtual-map");
+  std::string sub_command = std::string("create");
+  std::string pos_x = std::to_string(x);
+  std::string pos_y = std::to_string(y);
+  std::string pos_z = std::to_string(0.0);
+  std::string quat_x = std::to_string(orientationAroundZAxis(theta).x);
+  std::string quat_y = std::to_string(orientationAroundZAxis(theta).y);
+  std::string quat_z = std::to_string(orientationAroundZAxis(theta).z);
+  std::string quat_w = std::to_string(orientationAroundZAxis(theta).w);
+  std::string scale_x = std::to_string(scale_.x);
+  std::string scale_y = std::to_string(scale_.y);
+  std::string scale_z = std::to_string(scale_.z);
+
+  std_msgs::msg::String msg;
+  msg.data = command + " " + sub_command + " " + pos_x + " " + pos_y + " " + pos_z + " " + quat_x + " " + quat_y + " " + quat_z + " " + quat_w + " " + scale_x + " " + scale_y + " " + scale_z;
+  publisher_->publish(msg);
+}
+
+void CreateObjectTool::updateTopic() {
+  rclcpp::Node::SharedPtr raw_node = context_->getRosNodeAbstraction().lock()->get_raw_node();
+  publisher_ = raw_node->template create_publisher<std_msgs::msg::String>(topic_property_->getStdString(), qos_profile_);
 }
 
 void CreateObjectTool::updateScale() {
-  std::cout << scale_property_->getVector();
+  scale_ = scale_property_->getVector();
 }
 
 } // namespace rhcr_rviz_plugins

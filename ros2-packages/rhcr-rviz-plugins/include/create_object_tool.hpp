@@ -17,18 +17,21 @@
 
 #include <QObject>
 
-#include <memory>
-
-#include "rviz_common/properties/vector_property.hpp"
-#include "rviz_default_plugins/tools/pose/pose_tool.hpp"
-#include "rviz_default_plugins/visibility_control.hpp"
+#include <rclcpp/node.hpp>
+#include <rclcpp/qos.hpp>
+#include <rviz_common/properties/qos_profile_property.hpp>
+#include <rviz_common/properties/string_property.hpp>
+#include <rviz_common/properties/vector_property.hpp>
+#include <rviz_default_plugins/tools/pose/pose_tool.hpp>
+#include <rviz_default_plugins/visibility_control.hpp>
+#include <std_msgs/msg/string.hpp>
 
 namespace rviz_common {
-
 class DisplayContext;
-
 namespace properties {
 class StringProperty;
+class VectorProperty;
+class QosProfileProperty;
 } // namespace properties
 } // namespace rviz_common
 
@@ -47,9 +50,16 @@ protected:
 
 private Q_SLOTS:
   void updateScale();
+  void updateTopic();
 
 private:
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;
   rviz_common::properties::VectorProperty *scale_property_;
+  rviz_common::properties::StringProperty *topic_property_;
+  rviz_common::properties::QosProfileProperty *qos_profile_property_;
+  Ogre::Vector3 scale_;
+
+  rclcpp::QoS qos_profile_;
 };
 
 } // namespace rhcr_rviz_plugins
