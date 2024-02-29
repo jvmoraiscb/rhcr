@@ -20,8 +20,8 @@ make && \
 make install && \
 /sbin/ldconfig -v
 
-RUN mkdir -p /ros-workspace/src
-COPY ros2-falcon/ /ros-workspace/src/ros2-falcon
+RUN mkdir -p /ros-workspace/src/ros2-falcon
+COPY . /ros-workspace/src/ros2-falcon
 
 RUN . /opt/ros/humble/setup.sh && \
 cd /ros-workspace && \

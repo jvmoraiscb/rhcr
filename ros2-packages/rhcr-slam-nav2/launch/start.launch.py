@@ -3,14 +3,13 @@ import launch_ros
 import os
 
 def generate_launch_description():
-    package_name = 'ros2-slam-nav2'
+    package_name = 'rhcr-slam-nav2'
     my_pkg_share = launch_ros.substitutions.FindPackageShare(package=package_name).find(package_name)
     model_path = os.path.join(my_pkg_share, 'src/description/ackermann_description.urdf')
     slam_config_path = os.path.join(my_pkg_share, 'config/slam.config.yaml')
     nav2_config_path = os.path.join(my_pkg_share, 'config/nav2.config.yaml')
     nav2_pkg_share = launch_ros.substitutions.FindPackageShare(package='nav2_bringup').find('nav2_bringup')
     nav2_launch_path = os.path.join(nav2_pkg_share, 'launch/navigation_launch.py')
-#    rviz_config_path = os.path.join(my_pkg_share, 'config/rviz.config.rviz')
 
     robot_state_publisher_node = launch_ros.actions.Node(
         package='robot_state_publisher',
@@ -50,13 +49,6 @@ def generate_launch_description():
         launch.launch_description_sources.PythonLaunchDescriptionSource(nav2_launch_path),
         launch_arguments={'params_file': nav2_config_path}.items()
     )
-#    rviz_node = launch_ros.actions.Node(
-#        package='rviz2',
-#        executable='rviz2',
-#        name='rviz2',
-#        output='screen',
-#        arguments=['-d', rviz_config_path],
-#    )
 
     return launch.LaunchDescription([
         joint_state_publisher_node,

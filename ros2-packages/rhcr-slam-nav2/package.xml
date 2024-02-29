@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-    <name>ros2-slam-nav2</name>
+    <name>rhcr-slam-nav2</name>
     <version>1.0.0</version>
-    <description>ROS2 SLAM and Nav2 Package</description>
+    <description>RHCR SLAM and Nav2 Package</description>
     <maintainer email="jv.moraiscb@gmail.com">jvmoraiscb</maintainer>
     <license>MIT</license>
 
@@ -13,7 +13,6 @@
     <exec_depend>launch_ros</exec_depend>
     <exec_depend>joint_state_publisher</exec_depend>
     <exec_depend>robot_state_publisher</exec_depend>
-    <exec_depend>rviz</exec_depend>
     <exec_depend>xacro</exec_depend>
 
     <depend>rclcpp</depend>
