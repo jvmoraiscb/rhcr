@@ -1,6 +1,6 @@
+using System;
 using UnityEngine;
 using ROS2;
-using System;
 
 public class ConsoleRos2Node : MonoBehaviour{
     [Header("ROS2 Constants")]
@@ -58,8 +58,8 @@ public class ConsoleRos2Node : MonoBehaviour{
     // virtual-map remove pos-x pos-y pos-z
     void VirtualMapOption(string[] args){
         if(args.Length >= 2){
-            // virtual-map add pos-x pos-y pos-z quat-x quat-y quat-z quat-w x-scale y-scale z-scale
-            if(args[1] == "add" && args.Length == 12){
+            // virtual-map create pos-x pos-y pos-z quat-x quat-y quat-z quat-w x-scale y-scale z-scale
+            if(args[1] == "create" && args.Length == 12){
                 float posX, posY, posZ, quatX, quatY, quatZ, quatW, scaleX, scaleY, scaleZ;
                 try{
                     IFormatProvider format = System.Globalization.CultureInfo.InvariantCulture.NumberFormat;
@@ -77,9 +77,12 @@ public class ConsoleRos2Node : MonoBehaviour{
                 catch{
                     return;
                 }
-                position = new Vector3(posX, posY, posZ);
-                rotation = new Quaternion(quatX, quatY, quatZ, quatW);
-                scale = new Vector3(scaleX, scaleY, scaleZ);
+                position = Transformations.Ros2Unity(new Vector3(posX, posY, posZ));
+                rotation = Transformations.Ros2Unity(new Quaternion(quatX, quatY, quatZ, quatW));
+                scale = Transformations.Ros2Unity(new Vector3(scaleX, scaleY, scaleZ));
+                scale.x = Math.Abs(scale.x);
+                scale.y = Math.Abs(scale.y);
+                scale.z = Math.Abs(scale.z);
                 shouldAddWall = true;
             }
             // virtual-map clear
