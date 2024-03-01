@@ -6,4 +6,16 @@
     <description>TODO</description>
   </class>
 
+  <class name="rhcr_rviz_plugins/DeleteObjectTool"
+         type="rhcr_rviz_plugins::DeleteObjectTool"
+         base_class_type="rviz_common::Tool">
+    <description>TODO</description>
+  </class>
+
+  <class name="rhcr_rviz_plugins/DeleteAllObjectsTool"
+         type="rhcr_rviz_plugins::DeleteAllObjectsTool"
+         base_class_type="rviz_common::Tool">
+    <description>TODO</description>
+  </class>
+
 </library>

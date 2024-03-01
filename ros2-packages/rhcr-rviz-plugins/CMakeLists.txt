@@ -35,6 +35,8 @@ find_package(yaml_cpp_vendor REQUIRED)
 
 set(rhcr_rviz_plugins_headers_to_moc
   include/create_object_tool.hpp
+  include/delete_object_tool.hpp
+  include/delete_all_objects_tool.hpp
 )
 
 include_directories(
@@ -45,6 +47,8 @@ set(library_name ${PROJECT_NAME})
 
 add_library(${library_name} SHARED
   src/create_object_tool.cpp
+  src/delete_object_tool.cpp
+  src/delete_all_objects_tool.cpp
   ${rhcr_rviz_plugins_headers_to_moc}
 )
 

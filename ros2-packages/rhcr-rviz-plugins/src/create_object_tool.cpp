@@ -41,7 +41,7 @@ void CreateObjectTool::onInitialize() {
   PoseTool::onInitialize();
   qos_profile_property_->initialize([this](rclcpp::QoS profile) { this->qos_profile_ = profile; });
   setName("Create Object");
-  setIcon(rviz_common::loadPixmap("package://rviz_default_plugins/icons/classes/SetGoal.png"));
+  setIcon(rviz_common::loadPixmap("package://rviz_default_plugins/icons/classes/Marker.png"));
   updateTopic();
 }
 
