@@ -43,9 +43,9 @@ class RVIZ_DEFAULT_PLUGINS_PUBLIC CreateObjectTool : public rviz_default_plugins
 public:
   CreateObjectTool();
   ~CreateObjectTool() override;
+  void onInitialize() override;
 
 protected:
-  void onInitialize() override;
   void onPoseSet(double x, double y, double theta) override;
 
 private Q_SLOTS:
