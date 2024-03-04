@@ -20,7 +20,8 @@ public class ConsoleRos2Node : MonoBehaviour{
     private Quaternion rotation;
     private Vector3 scale;
     private bool shouldAddWall = false;
-    private bool shouldClear = false;
+    private bool shouldDeleteWall = false;
+    private bool shouldDeleteAllWalls = false;
 
     void Start(){
         walls = new System.Collections.Generic.List<GameObject>();
@@ -38,12 +39,12 @@ public class ConsoleRos2Node : MonoBehaviour{
             walls.Add(newWall);
             shouldAddWall = false;
         }
-        if(shouldClear){
+        if(shouldDeleteAllWalls){
             foreach (GameObject wall in walls){
                 Destroy(wall);
             }
             walls.Clear();
-            shouldClear = false;
+            shouldDeleteAllWalls = false;
         }
     }
 
@@ -85,9 +86,24 @@ public class ConsoleRos2Node : MonoBehaviour{
                 scale.z = Math.Abs(scale.z);
                 shouldAddWall = true;
             }
-            // virtual-map clear
-            if(args[1] == "clear" && args.Length == 2){
-                shouldClear = true;
+            // virtual-map delete pos-x pos-y pos-z
+            if(args[1] == "delete" && args.Length == 5){
+                float posX, posY, posZ;
+                try{
+                    IFormatProvider format = System.Globalization.CultureInfo.InvariantCulture.NumberFormat;
+                    posX = float.Parse(args[2], format);
+                    posY = float.Parse(args[3], format);
+                    posZ = float.Parse(args[4], format);
+                }
+                catch{
+                    return;
+                }
+                position = Transformations.Ros2Unity(new Vector3(posX, posY, posZ));
+                shouldAddWall = true;
+            }
+            // virtual-map delete-all
+            if(args[1] == "delete-all" && args.Length == 2){
+                shouldDeleteAllWalls = true;
             }
         }
     }
