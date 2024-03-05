@@ -1,6 +1,5 @@
 using UnityEngine;
 using ROS2;
-using System.Collections;
 
 public class RealSensorsRos2Node : MonoBehaviour
 {
@@ -9,6 +8,7 @@ public class RealSensorsRos2Node : MonoBehaviour
     [SerializeField] private string cmdVelTopicName = "cmd_vel";
     [SerializeField] private string odomTopicName = "odom";
     [SerializeField] private string scanTopicName = "scan";
+    [SerializeField] private float publisherFrequency = 10f;
 
     [Header("CmdVel and Odom Constants")]
     [SerializeField] private bool isCmdVelEnabled = true;
@@ -29,7 +29,7 @@ public class RealSensorsRos2Node : MonoBehaviour
     private ROS2UnityComponent ros2Unity;
     private ROS2Node ros2Node;
     private IPublisher<geometry_msgs.msg.Twist> cmdVelPub;
-    private IEnumerator coroutine;
+    private System.Collections.IEnumerator coroutine;
 
     // scan variables
     float[] ranges;
@@ -46,7 +46,7 @@ public class RealSensorsRos2Node : MonoBehaviour
             ros2Node.CreateSubscription<nav_msgs.msg.Odometry>(odomTopicName, msg => OdomHandler(msg));
             cmdVelPub = ros2Node.CreatePublisher<geometry_msgs.msg.Twist>(cmdVelTopicName);
         }
-        coroutine = LimitedUpdate(0.1f);
+        coroutine = LimitedUpdate(1/publisherFrequency);
         StartCoroutine(coroutine);
     }
 
@@ -56,7 +56,7 @@ public class RealSensorsRos2Node : MonoBehaviour
         }
     }
 
-    private IEnumerator LimitedUpdate(float waitTime){
+    private System.Collections.IEnumerator LimitedUpdate(float waitTime){
         while(true){
             yield return new WaitForSeconds(waitTime);
             if(ros2Unity.Ok()){

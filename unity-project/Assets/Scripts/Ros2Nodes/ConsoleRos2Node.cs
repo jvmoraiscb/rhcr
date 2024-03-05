@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using ROS2;
+using System.Linq;
 
 public class ConsoleRos2Node : MonoBehaviour{
     [Header("ROS2 Constants")]
@@ -39,8 +40,19 @@ public class ConsoleRos2Node : MonoBehaviour{
             walls.Add(newWall);
             shouldAddWall = false;
         }
+        if(shouldDeleteWall){
+            foreach (GameObject wall in walls.ToList()){
+                bool isInXAxis = wall.transform.localPosition.x - wall.transform.localScale.x < position.x && wall.transform.localPosition.x + wall.transform.localScale.x > position.x;
+                bool isInZAxis = wall.transform.localPosition.z - wall.transform.localScale.z < position.z && wall.transform.localPosition.z + wall.transform.localScale.z > position.z;
+                if(isInXAxis && isInZAxis){
+                    walls.Remove(wall);
+                    Destroy(wall);
+                }
+            }
+            shouldDeleteWall = false;
+        }
         if(shouldDeleteAllWalls){
-            foreach (GameObject wall in walls){
+            foreach (GameObject wall in walls.ToList()){
                 Destroy(wall);
             }
             walls.Clear();
@@ -99,7 +111,7 @@ public class ConsoleRos2Node : MonoBehaviour{
                     return;
                 }
                 position = Transformations.Ros2Unity(new Vector3(posX, posY, posZ));
-                shouldAddWall = true;
+                shouldDeleteWall = true;
             }
             // virtual-map delete-all
             if(args[1] == "delete-all" && args.Length == 2){

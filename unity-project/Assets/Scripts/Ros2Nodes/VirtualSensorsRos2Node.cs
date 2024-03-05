@@ -8,6 +8,7 @@ public class VirtualSensorsRos2Node : MonoBehaviour
     [SerializeField] private string cmdVelTopicName = "unity_cmd_vel";
     [SerializeField] private string odomTopicName = "unity_odom";
     [SerializeField] private string scanTopicName = "unity_scan";
+    [SerializeField] private float publisherFrequency = 100f;
     
     [Header("CmdVel and Odom Constants")]
     [SerializeField] private bool isCmdVelEnabled = true;
@@ -55,7 +56,7 @@ public class VirtualSensorsRos2Node : MonoBehaviour
             odomPub = ros2Node.CreatePublisher<nav_msgs.msg.Odometry>(odomTopicName);
             scanPub = ros2Node.CreatePublisher<sensor_msgs.msg.LaserScan>(scanTopicName);
         }
-        StartCoroutine(LimitedUpdate(0.01f));
+        StartCoroutine(LimitedUpdate(1/publisherFrequency));
     }
 
     System.Collections.IEnumerator LimitedUpdate(float waitTime){
@@ -78,9 +79,9 @@ public class VirtualSensorsRos2Node : MonoBehaviour
         if (!isOdomEnabled) return;
         nav_msgs.msg.Odometry msg = new nav_msgs.msg.Odometry{
             Header = new std_msgs.msg.Header{
-                Frame_id = "odom",
+                Frame_id = "unity_odom",
             },
-            Child_frame_id = "base_link",
+            Child_frame_id = "unity_base_link",
             Pose = new geometry_msgs.msg.PoseWithCovariance{
                 Pose = new geometry_msgs.msg.Pose{
                     Position = new geometry_msgs.msg.Point{
@@ -151,7 +152,7 @@ public class VirtualSensorsRos2Node : MonoBehaviour
         }
         sensor_msgs.msg.LaserScan msg = new sensor_msgs.msg.LaserScan{
             Header = new std_msgs.msg.Header{
-                Frame_id = "laser_link",
+                Frame_id = "unity_laser_link",
             },
             Angle_min = angleMinFilter,
             Angle_max = angleMaxFilter,

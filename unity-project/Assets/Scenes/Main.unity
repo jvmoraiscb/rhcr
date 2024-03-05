@@ -190,6 +190,18 @@ PrefabInstance:
       propertyPath: cmdVelTopicName
       value: cmd_vel
       objectReference: {fileID: 0}
+    - target: {fileID: 4298372039750295083, guid: 71388632c02768b458d56de044d818da, type: 3}
+      propertyPath: odomTopicName
+      value: odom_combined
+      objectReference: {fileID: 0}
+    - target: {fileID: 4298372039750295083, guid: 71388632c02768b458d56de044d818da, type: 3}
+      propertyPath: scanTopicName
+      value: scan
+      objectReference: {fileID: 0}
+    - target: {fileID: 4298372039750295083, guid: 71388632c02768b458d56de044d818da, type: 3}
+      propertyPath: cmdVelTopicName
+      value: cmd_vel
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 71388632c02768b458d56de044d818da, type: 3}
 --- !u!1001 &2000340630
