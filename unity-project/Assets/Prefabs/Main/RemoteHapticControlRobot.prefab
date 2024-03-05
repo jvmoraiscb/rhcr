@@ -1248,7 +1248,7 @@ MonoBehaviour:
   cmdVelTopicName: unity_cmd_vel
   odomTopicName: unity_odom
   scanTopicName: unity_scan
-  publisherFrequency: 100
+  publisherFrequency: 10
   isCmdVelEnabled: 0
   isOdomEnabled: 1
   ackermannMid: {fileID: 4298372040980309337}
@@ -1418,7 +1418,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3eb46941496c6ae4888af1a5df5d5edf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offsetCloseUp: {x: 0, y: 0.5, z: -1}
+  offsetCloseUp: {x: 0, y: 1, z: -1.25}
   offsetTopDown: {x: 0, y: 5, z: -1}
   target: {fileID: 4298372039270221513}
   translateSpeed: 10
@@ -1537,7 +1537,6 @@ MonoBehaviour:
   maxFrontDistance: 0.5
   maxSideDistance: 0.25
   throttleForceFactor: 5
-  steerForceFactor: 2
 --- !u!114 &4298372040980309337
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -18,7 +18,7 @@ public class RemoteHapticControlRobot : MonoBehaviour {
     [SerializeField] private float maxFrontDistance = 0.5f;
     [SerializeField] private float maxSideDistance = 0.25f;
     [SerializeField] private float throttleForceFactor = 5f;
-    [SerializeField] private float steerForceFactor = 2f;
+    // [SerializeField] private float steerForceFactor = 2f;
 
     private float speed;
     private bool isBreaking;
