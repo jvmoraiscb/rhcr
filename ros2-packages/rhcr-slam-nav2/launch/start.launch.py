@@ -5,7 +5,7 @@ import os
 def generate_launch_description():
     package_name = 'rhcr-slam-nav2'
     my_pkg_share = launch_ros.substitutions.FindPackageShare(package=package_name).find(package_name)
-    model_path = os.path.join(my_pkg_share, 'src/description/ackermann_description.urdf')
+    model_path = os.path.join(my_pkg_share, 'src/description/unity_ackermann_description.urdf')
     slam_config_path = os.path.join(my_pkg_share, 'config/slam.config.yaml')
     nav2_config_path = os.path.join(my_pkg_share, 'config/nav2.config.yaml')
     nav2_pkg_share = launch_ros.substitutions.FindPackageShare(package='nav2_bringup').find('nav2_bringup')
@@ -27,14 +27,14 @@ def generate_launch_description():
         name='broadcaster_ackermann',
         parameters=[
             {'odom_topic_name': 'unity_odom'},
-            {'odom_frame_id': 'odom'},
-            {'child_frame_id': 'base_link'}
+            {'odom_frame_id': 'unity_odom'},
+            {'child_frame_id': 'unity_base_link'}
         ]
     )
     tf2_node = launch_ros.actions.Node(
         package='tf2_ros',
         executable='static_transform_publisher',
-        arguments = ['--x', '0', '--y', '0', '--z', '0', '--yaw', '0', '--pitch', '0', '--roll', '0', '--frame-id', 'map', '--child-frame-id', 'odom']
+        arguments = ['--x', '0', '--y', '0', '--z', '0', '--yaw', '0', '--pitch', '0', '--roll', '0', '--frame-id', 'unity_map', '--child-frame-id', 'unity_odom']
     )
     slam_node = launch_ros.actions.Node(
         parameters=[
