@@ -7,7 +7,7 @@ def generate_launch_description():
     my_pkg_share = launch_ros.substitutions.FindPackageShare(package=package_name).find(package_name)
     model_path = os.path.join(my_pkg_share, 'src/description/unity_ackermann_description.urdf')
     slam_config_path = os.path.join(my_pkg_share, 'config/slam.config.yaml')
-#    rviz_config_path = os.path.join(my_pkg_share, 'config/rviz.config.rviz')
+    rviz_config_path = os.path.join(my_pkg_share, 'config/slam.config.rviz')
 
     robot_state_publisher_node = launch_ros.actions.Node(
         package='robot_state_publisher',
@@ -43,18 +43,19 @@ def generate_launch_description():
         executable='async_slam_toolbox_node',
         name='slam_toolbox'
     )
-#    rviz_node = launch_ros.actions.Node(
-#        package='rviz2',
-#        executable='rviz2',
-#        name='rviz2',
-#        output='screen',
-#        arguments=['-d', rviz_config_path],
-#    )
+    rviz_node = launch_ros.actions.Node(
+        package='rviz2',
+        executable='rviz2',
+        name='rviz2',
+        output='screen',
+        arguments=['-d', rviz_config_path],
+    )
 
     return launch.LaunchDescription([
         joint_state_publisher_node,
         robot_state_publisher_node,
         ackermann_node,
         tf2_node,
-        slam_node
+        slam_node,
+        rviz_node
     ])
