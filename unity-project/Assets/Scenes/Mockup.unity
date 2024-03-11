@@ -345,6 +345,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4298372039750295083, guid: 71388632c02768b458d56de044d818da, type: 3}
+      propertyPath: publisherFrequency
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 4298372040157729184, guid: 71388632c02768b458d56de044d818da, type: 3}
       propertyPath: m_RootOrder
       value: 1
@@ -392,6 +396,18 @@ PrefabInstance:
     - target: {fileID: 4298372040157729185, guid: 71388632c02768b458d56de044d818da, type: 3}
       propertyPath: m_Name
       value: RemoteHapticControlRobot
+      objectReference: {fileID: 0}
+    - target: {fileID: 5931934962491250598, guid: 71388632c02768b458d56de044d818da, type: 3}
+      propertyPath: cmdVelTopicName
+      value: unity_cmd_vel
+      objectReference: {fileID: 0}
+    - target: {fileID: 5931934962491250598, guid: 71388632c02768b458d56de044d818da, type: 3}
+      propertyPath: isCmdVelEnabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5931934962491250598, guid: 71388632c02768b458d56de044d818da, type: 3}
+      propertyPath: publisherFrequency
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 71388632c02768b458d56de044d818da, type: 3}

@@ -31,6 +31,7 @@ public class RemoteHapticControlRobot : MonoBehaviour {
         speed = defaultSpeed;
         isBreaking = true;
         frontDanger = 0;
+        rearDanger = 0;
         falconMid.OnCenterButtonPress += CenterButtonHandler;
         falconMid.OnLeftButtonPress += LeftButtonHandler;
         falconMid.OnRightButtonPress += RightButtonHandler;
