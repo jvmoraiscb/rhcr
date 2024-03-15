@@ -10,10 +10,15 @@ public class RealSensorsRos2Node : MonoBehaviour
     [SerializeField] private string scanTopicName = "scan";
     [SerializeField] private float publisherFrequency = 10f;
 
-    [Header("CmdVel and Odom Constants")]
+    [Header("CmdVel Constants")]
     [SerializeField] private bool isCmdVelEnabled = true;
-    [SerializeField] private bool isOdomEnabled = true;
     [SerializeField] private AckermannMiddleware ackermannMid;
+
+    [Header("Odom Constants")]
+    [SerializeField] private bool isOdomEnabled = true;
+    [SerializeField] private RobotMovement robotMove;
+    private bool odomReceivedFirstMsg;
+    private System.Diagnostics.Stopwatch odomSw;
 
     [Header("Scan Constants")]
     [SerializeField] private bool isScanEnabled = true;
@@ -46,6 +51,8 @@ public class RealSensorsRos2Node : MonoBehaviour
             ros2Node.CreateSubscription<nav_msgs.msg.Odometry>(odomTopicName, msg => OdomHandler(msg));
             cmdVelPub = ros2Node.CreatePublisher<geometry_msgs.msg.Twist>(cmdVelTopicName);
         }
+        odomSw = new System.Diagnostics.Stopwatch();
+        odomReceivedFirstMsg = false;
         coroutine = LimitedUpdate(1/publisherFrequency);
         StartCoroutine(coroutine);
     }
@@ -84,17 +91,39 @@ public class RealSensorsRos2Node : MonoBehaviour
 
     private void OdomHandler(nav_msgs.msg.Odometry msg){
         if (!isOdomEnabled) return;
-        ackermannMid.RosPosition = new Vector3{
+        if(!odomReceivedFirstMsg){
+            odomReceivedFirstMsg = true;
+            var time = 0.1f;
+            var position = Transformations.Ros2Unity(new Vector3{
+                x = (float)msg.Pose.Pose.Position.X,
+                y = (float)msg.Pose.Pose.Position.Y,
+                z = 0f
+            });
+            var rotation = Transformations.Ros2Unity(new Quaternion{
+                x = 0f,
+                y = 0f,
+                z = (float)msg.Pose.Pose.Orientation.Z,
+                w = (float)msg.Pose.Pose.Orientation.W
+            });
+            robotMove.Enqueue(position, rotation, (float)time);
+            odomSw.Start();
+        }
+        else{
+        var time = odomSw.Elapsed.TotalSeconds;
+        var position = Transformations.Ros2Unity(new Vector3{
             x = (float)msg.Pose.Pose.Position.X,
             y = (float)msg.Pose.Pose.Position.Y,
             z = 0f
-        };
-        ackermannMid.RosRotation = new Quaternion{
+        });
+        var rotation = Transformations.Ros2Unity(new Quaternion{
             x = 0f,
             y = 0f,
             z = (float)msg.Pose.Pose.Orientation.Z,
             w = (float)msg.Pose.Pose.Orientation.W
-        };
+        });
+        robotMove.Enqueue(position, rotation, (float)time);
+        odomSw.Restart();
+        }
     }
 
     // Code created by Fabiana Machado (Fabiana.machado@edu.ufes.br)

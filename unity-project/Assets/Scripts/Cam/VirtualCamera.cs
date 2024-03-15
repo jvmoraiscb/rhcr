@@ -12,7 +12,7 @@ public class VirtualCamera : MonoBehaviour
 
     public bool isCloseUpCam = true;
 
-    private void Update()
+    private void FixedUpdate()
     {
         offset = isCloseUpCam ? offsetCloseUp : offsetTopDown;
         HandleTranslation();
@@ -21,12 +21,12 @@ public class VirtualCamera : MonoBehaviour
 
     private void HandleTranslation(){
         var targetPosition = target.TransformPoint(offset);
-        transform.position = Vector3.Lerp(transform.position, targetPosition, translateSpeed * Time.deltaTime);
+        transform.position = Vector3.Lerp(transform.position, targetPosition, translateSpeed * Time.fixedDeltaTime);
     }
     private void HandleRotation(){
         var direction = target.position - transform.position;
         direction.y = isCloseUpCam ? 0f : direction.y;
         var rotation = Quaternion.LookRotation(direction, Vector3.up);
-        transform.rotation = Quaternion.Lerp(transform.rotation, rotation, rotationSpeed * Time.deltaTime);
+        transform.rotation = Quaternion.Lerp(transform.rotation, rotation, rotationSpeed * Time.fixedDeltaTime);
     }
 }

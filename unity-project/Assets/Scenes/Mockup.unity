@@ -3146,7 +3146,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1787624430
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4904,7 +4904,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8846597366842401852}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 611399fe020f3de479c71731da92a15f, type: 3}
   m_Name: 
@@ -4977,8 +4977,9 @@ MonoBehaviour:
   scanTopicName: mockup_scan
   publisherFrequency: 10
   isCmdVelEnabled: 1
-  isOdomEnabled: 1
   ackermannMid: {fileID: 8846597367812562736}
+  isOdomEnabled: 1
+  robotMove: {fileID: 8846597367812562733}
   isScanEnabled: 0
   lidarGameObject: {fileID: 8846597367040130442}
   wallPrefab: {fileID: 698896578097658503, guid: c4685f4e621f2394d8b82ba894ed5da6, type: 3}
@@ -5044,6 +5045,7 @@ GameObject:
   - component: {fileID: 8846597367812562734}
   - component: {fileID: 8846597367812562736}
   - component: {fileID: 8846597367812562735}
+  - component: {fileID: 8846597367812562733}
   m_Layer: 0
   m_Name: Robot
   m_TagString: Untagged
@@ -5051,6 +5053,19 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &8846597367812562733
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8846597367812562732}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8481552989f8bd04fa9f58b3529d2eee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  robot: {fileID: 8846597367309925536}
 --- !u!114 &8846597367812562734
 MonoBehaviour:
   m_ObjectHideFlags: 0

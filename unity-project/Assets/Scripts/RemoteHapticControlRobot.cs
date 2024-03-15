@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 // Remote Haptic Control Robot (RHCR) is the main class, all others classes just send or receive data from it
@@ -116,7 +115,7 @@ public class RemoteHapticControlRobot : MonoBehaviour {
             ackermannMid.Throttle = tempThrottle;
             ackermannMid.Steer = tempSteer;
         }
-        transform.SetPositionAndRotation(ackermannMid.UnityPosition, ackermannMid.UnityRotation);
+        //transform.SetPositionAndRotation(ackermannMid.UnityPosition, ackermannMid.UnityRotation);
     }
 
     private void CenterButtonHandler()
