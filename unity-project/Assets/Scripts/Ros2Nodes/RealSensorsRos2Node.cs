@@ -10,24 +10,15 @@ public class RealSensorsRos2Node : MonoBehaviour
     [SerializeField] private string scanTopicName = "scan";
     [SerializeField] private float publisherFrequency = 10f;
 
-    [Header("CmdVel Constants")]
+    [Header("CmdVel and Odom Constants")]
     [SerializeField] private bool isCmdVelEnabled = true;
-    [SerializeField] private AckermannMiddleware ackermannMid;
-
-    [Header("Odom Constants")]
     [SerializeField] private bool isOdomEnabled = true;
-    [SerializeField] private RobotMovement robotMove;
-    private bool odomReceivedFirstMsg;
-    private System.Diagnostics.Stopwatch odomSw;
+    [SerializeField] private AckermannMiddleware ackermannMid;
 
     [Header("Scan Constants")]
     [SerializeField] private bool isScanEnabled = true;
     [SerializeField] private GameObject lidarGameObject;
     [SerializeField] private GameObject wallPrefab;
-    [SerializeField] private float rangeMinFilter = 0f;
-    [SerializeField] private float rangeMaxFilter = 1000f;
-    // [SerializeField] private float angleMinFilter = 0f;
-    // [SerializeField] private float angleMaxFilter = 2*Mathf.PI;
     [SerializeField] private float scale = 1f;
 
     // ros2 variables
@@ -51,8 +42,6 @@ public class RealSensorsRos2Node : MonoBehaviour
             ros2Node.CreateSubscription<nav_msgs.msg.Odometry>(odomTopicName, msg => OdomHandler(msg));
             cmdVelPub = ros2Node.CreatePublisher<geometry_msgs.msg.Twist>(cmdVelTopicName);
         }
-        odomSw = new System.Diagnostics.Stopwatch();
-        odomReceivedFirstMsg = false;
         coroutine = LimitedUpdate(1/publisherFrequency);
         StartCoroutine(coroutine);
     }
@@ -91,39 +80,17 @@ public class RealSensorsRos2Node : MonoBehaviour
 
     private void OdomHandler(nav_msgs.msg.Odometry msg){
         if (!isOdomEnabled) return;
-        if(!odomReceivedFirstMsg){
-            odomReceivedFirstMsg = true;
-            var time = 0.1f;
-            var position = Transformations.Ros2Unity(new Vector3{
-                x = (float)msg.Pose.Pose.Position.X,
-                y = (float)msg.Pose.Pose.Position.Y,
-                z = 0f
-            });
-            var rotation = Transformations.Ros2Unity(new Quaternion{
-                x = 0f,
-                y = 0f,
-                z = (float)msg.Pose.Pose.Orientation.Z,
-                w = (float)msg.Pose.Pose.Orientation.W
-            });
-            robotMove.Enqueue(position, rotation, (float)time);
-            odomSw.Start();
-        }
-        else{
-        var time = odomSw.Elapsed.TotalSeconds;
-        var position = Transformations.Ros2Unity(new Vector3{
+        ackermannMid.RosPosition = new Vector3{
             x = (float)msg.Pose.Pose.Position.X,
             y = (float)msg.Pose.Pose.Position.Y,
             z = 0f
-        });
-        var rotation = Transformations.Ros2Unity(new Quaternion{
+        };
+        ackermannMid.RosRotation = new Quaternion{
             x = 0f,
             y = 0f,
             z = (float)msg.Pose.Pose.Orientation.Z,
             w = (float)msg.Pose.Pose.Orientation.W
-        });
-        robotMove.Enqueue(position, rotation, (float)time);
-        odomSw.Restart();
-        }
+        };
     }
 
     // Code created by Fabiana Machado (Fabiana.machado@edu.ufes.br)
@@ -145,19 +112,16 @@ public class RealSensorsRos2Node : MonoBehaviour
         walls.Clear();
         if (ranges != null){
             for (int i = 0; i < ranges.Length; i++){
-                // if the ranges are between the lower and upper limits
-                if (ranges[i] > rangeMinFilter && ranges[i] < rangeMaxFilter){
-                    // transform the scan topic so it can have the walker reference and corrected angles
-                    Vector3 position = new Vector3(-Mathf.Cos(angleMin + angleIncrement * i - (lidarAngle.y * Mathf.PI / 180)), -Mathf.Sin(angleMin + angleIncrement * i - (lidarAngle.y * Mathf.PI / 180)), 0).Ros2Unity();
-                    Vector3 directionsNew = new Vector3(position.x * scale * ranges[i] + lidarPosition.x, lidarPosition.y, position.z * scale * ranges[i] + lidarPosition.z);
-                    // Instatiate a prefab to warn the user that that is a possible colision in the real env
-                    walls.Add(Instantiate(wallPrefab, new Vector3(directionsNew.x, directionsNew.y, directionsNew.z), new Quaternion(0, 0, 0, 1)));
-                    // destructor = Instantiate(wallPrefab, new Vector3(realDirectionsNew.x, realDirectionsNew.y, realDirectionsNew.z), new Quaternion(0, 0, 0, 1));
-                    // destroy this game object after 0.3 seconds so it doesnt flood the scene
-                    // Destroy(destructor, timeToDestroyWall);
-                    //Debug.DrawLine(transform.position, real_directionsNew);
-                    //Debug.Log(real_directionsNew);
-                }
+                // transform the scan topic so it can have the walker reference and corrected angles
+                Vector3 position = new Vector3(-Mathf.Cos(angleMin + angleIncrement * i - (lidarAngle.y * Mathf.PI / 180)), -Mathf.Sin(angleMin + angleIncrement * i - (lidarAngle.y * Mathf.PI / 180)), 0).Ros2Unity();
+                Vector3 directionsNew = new Vector3(position.x * scale * ranges[i] + lidarPosition.x, lidarPosition.y, position.z * scale * ranges[i] + lidarPosition.z);
+                // Instatiate a prefab to warn the user that that is a possible colision in the real env
+                walls.Add(Instantiate(wallPrefab, new Vector3(directionsNew.x, directionsNew.y, directionsNew.z), new Quaternion(0, 0, 0, 1)));
+                // destructor = Instantiate(wallPrefab, new Vector3(realDirectionsNew.x, realDirectionsNew.y, realDirectionsNew.z), new Quaternion(0, 0, 0, 1));
+                // destroy this game object after 0.3 seconds so it doesnt flood the scene
+                // Destroy(destructor, timeToDestroyWall);
+                //Debug.DrawLine(transform.position, real_directionsNew);
+                //Debug.Log(real_directionsNew);
             }
         }
     }

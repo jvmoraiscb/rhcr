@@ -157,8 +157,8 @@ public class VirtualSensorsRos2Node : MonoBehaviour
             Angle_min = angleMinFilter,
             Angle_max = angleMaxFilter,
             Angle_increment = angleIncrement,
-            Time_increment = Time.deltaTime / samples,
-            Scan_time = Time.deltaTime,
+            Time_increment = 1 / (publisherFrequency * samples),
+            Scan_time = 1/publisherFrequency,
             Range_min = rangeMinFilter,
             Range_max = rangeMaxFilter,
             Ranges = ranges

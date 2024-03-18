@@ -581,6 +581,59 @@ Transform:
   m_Father: {fileID: 1280832012}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &297269392
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 297269393}
+  - component: {fileID: 297269394}
+  m_Layer: 0
+  m_Name: VisualRobot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &297269393
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 297269392}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 6735957479012856846}
+  m_Father: {fileID: 0}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &297269394
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 297269392}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8481552989f8bd04fa9f58b3529d2eee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  robot: {fileID: 8846597367309925536}
+  lerpSpeed: 10
+  throttleAngleSpeed: 360
+  steerMaxAngle: 20
+  ackermannMid: {fileID: 8846597367812562736}
+  frontRight: {fileID: 6735957477152678540}
+  frontLeft: {fileID: 6735957478518833914}
+  rearRight: {fileID: 6735957478388363456}
+  rearLeft: {fileID: 6735957477928385858}
 --- !u!1 &303537685
 GameObject:
   m_ObjectHideFlags: 0
@@ -611,7 +664,7 @@ Transform:
   - {fileID: 884890558}
   - {fileID: 198395757}
   m_Father: {fileID: 8846597368600538057}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &361469043
 GameObject:
@@ -1652,7 +1705,7 @@ Transform:
   - {fileID: 1415956308}
   - {fileID: 1280832012}
   m_Father: {fileID: 8846597367309925536}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1415956307
 GameObject:
@@ -3172,7 +3225,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1812810246
 GameObject:
@@ -3263,7 +3316,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3eb46941496c6ae4888af1a5df5d5edf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offsetCloseUp: {x: 0, y: 1, z: -1}
+  offsetCloseUp: {x: 0, y: 1.5, z: -2}
   offsetTopDown: {x: 0, y: 10, z: -1}
   target: {fileID: 8846597367309925536}
   translateSpeed: 10
@@ -3549,7 +3602,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5532566313734673687, guid: 5edaf2acb9bfa0c4784aef9cb6ba31f5, type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 5532566313734673687, guid: 5edaf2acb9bfa0c4784aef9cb6ba31f5, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3610,7 +3663,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4672609570357451423, guid: e1ad3b2a8cc6d4c43a36dd92d1f69e85, type: 3}
       propertyPath: m_RootOrder
-      value: 4
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 4672609570357451423, guid: e1ad3b2a8cc6d4c43a36dd92d1f69e85, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4780,7 +4833,7 @@ Transform:
   - {fileID: 6735957477625690869}
   - {fileID: 6735957477837174372}
   - {fileID: 6735957478016860885}
-  m_Father: {fileID: 8846597367309925536}
+  m_Father: {fileID: 297269393}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8185162708498752166
@@ -4812,8 +4865,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 8846597368600538057}
-  m_RootOrder: 2
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!20 &8185162708498752216
 Camera:
@@ -4870,7 +4923,7 @@ GameObject:
   - component: {fileID: 8185162708498752216}
   - component: {fileID: 8185162708498752166}
   m_Layer: 0
-  m_Name: Cam
+  m_Name: MockupCam
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4977,14 +5030,11 @@ MonoBehaviour:
   scanTopicName: mockup_scan
   publisherFrequency: 10
   isCmdVelEnabled: 1
-  ackermannMid: {fileID: 8846597367812562736}
   isOdomEnabled: 1
-  robotMove: {fileID: 8846597367812562733}
-  isScanEnabled: 0
+  ackermannMid: {fileID: 8846597367812562736}
+  isScanEnabled: 1
   lidarGameObject: {fileID: 8846597367040130442}
   wallPrefab: {fileID: 698896578097658503, guid: c4685f4e621f2394d8b82ba894ed5da6, type: 3}
-  rangeMinFilter: 0
-  rangeMaxFilter: 1000
   scale: 1
 --- !u!1 &8846597367040130442
 GameObject:
@@ -5014,7 +5064,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8846597367309925536}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &8846597367309925536
 Transform:
@@ -5027,7 +5077,6 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 6735957479012856846}
   - {fileID: 8846597367040130443}
   - {fileID: 1412674377}
   m_Father: {fileID: 8846597368600538057}
@@ -5045,7 +5094,6 @@ GameObject:
   - component: {fileID: 8846597367812562734}
   - component: {fileID: 8846597367812562736}
   - component: {fileID: 8846597367812562735}
-  - component: {fileID: 8846597367812562733}
   m_Layer: 0
   m_Name: Robot
   m_TagString: Untagged
@@ -5053,19 +5101,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &8846597367812562733
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8846597367812562732}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8481552989f8bd04fa9f58b3529d2eee, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  robot: {fileID: 8846597367309925536}
 --- !u!114 &8846597367812562734
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5203,7 +5238,6 @@ Transform:
   m_Children:
   - {fileID: 8846597366842401855}
   - {fileID: 8846597367309925536}
-  - {fileID: 8185162708498752167}
   - {fileID: 303537686}
   m_Father: {fileID: 0}
   m_RootOrder: 1
