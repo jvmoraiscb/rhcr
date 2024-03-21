@@ -1,3 +1,4 @@
+/*
 using UnityEngine;
 using ROS2;
 
@@ -126,3 +127,4 @@ public class RealSensorsRos2Node : MonoBehaviour
         }
     }
 }
+*/

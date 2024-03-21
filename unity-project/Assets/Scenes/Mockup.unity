@@ -649,7 +649,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &303537686
 Transform:
   m_ObjectHideFlags: 0
@@ -3616,36 +3616,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 66d43421d5c3989428d85e1394de9cff, type: 3}
---- !u!114 &1383159913005936079
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8846597366842401852}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: da249245d7886aa458acb394fc1fbe07, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  nodeName: VirtualSensorsNode_Unity
-  cmdVelTopicName: unity_cmd_vel
-  odomTopicName: unity_odom
-  scanTopicName: unity_scan
-  publisherFrequency: 10
-  isCmdVelEnabled: 0
-  isOdomEnabled: 1
-  ackermannMid: {fileID: 8846597367812562736}
-  isScanEnabled: 1
-  lidarPosition: {fileID: 8846597367040130442}
-  rangeMinFilter: 0
-  rangeMaxFilter: 1000
-  angleMinFilter: 0
-  angleMaxFilter: 6.2831855
-  scale: 1
-  obstaclesLayer: 6
-  samples: 360
-  angleRVIZ: 270
 --- !u!1001 &4496193034072244570
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4928,7 +4898,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &8846597366842401852
 GameObject:
   m_ObjectHideFlags: 0
@@ -4938,12 +4908,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8846597366842401855}
-  - component: {fileID: 8846597366842401854}
-  - component: {fileID: 8846597366842401858}
-  - component: {fileID: 1383159913005936079}
   - component: {fileID: 8846597366842401853}
-  - component: {fileID: 8846597366842401856}
-  - component: {fileID: 8846597366842401857}
   m_Layer: 0
   m_Name: Ros2Holder
   m_TagString: Untagged
@@ -4963,27 +4928,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 611399fe020f3de479c71731da92a15f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeName: FalconNode_Unity
-  positionTopicName: position_vector
-  forceTopicName: force_vector
-  rgbTopicName: rgb_vector
-  rightButtonTopicName: right_button
-  upButtonTopicName: up_button
-  centerButtonTopicName: center_button
-  leftButtonTopicName: left_button
+  publisherFrequency: 10
+  positionTopicName: falcon/position
+  forceTopicName: falcon/force
+  rgbTopicName: falcon/rgb
+  rightButtonTopicName: falcon/buttons/right
+  upButtonTopicName: falcon/buttons/up
+  centerButtonTopicName: falcon/buttons/center
+  leftButtonTopicName: falcon/buttons/left
   falconMid: {fileID: 8846597367812562735}
---- !u!114 &8846597366842401854
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8846597366842401852}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: feab04ad06492965492b3edc6423aa53, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &8846597366842401855
 Transform:
   m_ObjectHideFlags: 0
@@ -4998,60 +4951,6 @@ Transform:
   m_Father: {fileID: 8846597368600538057}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8846597366842401856
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8846597366842401852}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 096ef4313b3996d47920e2136988413b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  nodeName: ConsoleNode_Unity
-  consoleTopicName: console
-  wallPrefab: {fileID: 698896578097658503, guid: c4685f4e621f2394d8b82ba894ed5da6, type: 3}
---- !u!114 &8846597366842401857
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8846597366842401852}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6375c87be96fa084c983c4c82a1fb972, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  nodeName: ImageNode_Unity
-  imageTopicName: image_raw/compressed
-  meshRenderer: {fileID: 0}
---- !u!114 &8846597366842401858
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8846597366842401852}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 853793aa8477a9143a95cbaabafd3531, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  nodeName: RealSensorsNode_Unity
-  cmdVelTopicName: mockup_cmd_vel
-  odomTopicName: mockup_odom
-  scanTopicName: mockup_scan
-  publisherFrequency: 10
-  isCmdVelEnabled: 1
-  isOdomEnabled: 1
-  ackermannMid: {fileID: 8846597367812562736}
-  isScanEnabled: 1
-  lidarGameObject: {fileID: 8846597367040130442}
-  wallPrefab: {fileID: 698896578097658503, guid: c4685f4e621f2394d8b82ba894ed5da6, type: 3}
-  scale: 1
 --- !u!1 &8846597367040130442
 GameObject:
   m_ObjectHideFlags: 0

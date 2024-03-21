@@ -115,7 +115,7 @@ public class RemoteHapticControlRobot : MonoBehaviour {
             ackermannMid.Throttle = tempThrottle;
             ackermannMid.Steer = tempSteer;
         }
-        transform.SetPositionAndRotation(ackermannMid.UnityPosition, ackermannMid.UnityRotation);
+        transform.SetPositionAndRotation(ackermannMid.Position, ackermannMid.Rotation);
     }
 
     private void CenterButtonHandler()

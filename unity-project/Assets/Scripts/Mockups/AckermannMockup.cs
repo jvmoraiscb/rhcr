@@ -22,8 +22,8 @@ public class AckermannMockup : MonoBehaviour
     {
         HandleMotor();
         HandleSteering();
-        ackermannMid.UnityPosition = transform.position;
-        ackermannMid.UnityRotation = transform.rotation;
+        ackermannMid.Position = transform.position;
+        ackermannMid.Rotation = transform.rotation;
     }
 
     private void HandleMotor()

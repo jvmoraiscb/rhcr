@@ -1,3 +1,4 @@
+/*
 using System;
 using UnityEngine;
 using ROS2;
@@ -120,3 +121,4 @@ public class ConsoleRos2Node : MonoBehaviour{
         }
     }
 }
+*/

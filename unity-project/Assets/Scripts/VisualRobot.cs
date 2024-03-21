@@ -9,11 +9,6 @@ public class VisualRobot : MonoBehaviour {
     [SerializeField] private GameObject frontLeft;
     [SerializeField] private GameObject rearRight;
     [SerializeField] private GameObject rearLeft;
-
-    private void Update(){
-
-    }
-
     private void FixedUpdate(){
         var lerpPosition = Vector3.Lerp(transform.position, robot.position, lerpSpeed * Time.deltaTime);
         var lerpRotation = Quaternion.Lerp(transform.rotation, robot.rotation, lerpSpeed * Time.deltaTime);

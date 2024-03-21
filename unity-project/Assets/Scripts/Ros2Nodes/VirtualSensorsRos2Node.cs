@@ -1,3 +1,4 @@
+/*
 using UnityEngine;
 using ROS2;
 
@@ -167,3 +168,4 @@ public class VirtualSensorsRos2Node : MonoBehaviour
         scanPub.Publish(msg);
     }
 }
+*/

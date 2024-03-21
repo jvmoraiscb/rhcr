@@ -1,28 +1,24 @@
 using UnityEngine;
-using ROS2;
+using Unity.Robotics.ROSTCPConnector;
+using RosMessageTypes.Std;
+using RosMessageTypes.Geometry;
 
 public class FalconRos2Node : MonoBehaviour
 {
-    [Header("ROS2 Constants")]
-    [SerializeField] private string nodeName = "FalconNode_Unity";
-    [SerializeField] private string positionTopicName = "position_vector";
-    [SerializeField] private string forceTopicName = "force_vector";
-    [SerializeField] private string rgbTopicName = "rgb_vector";
-    [SerializeField] private string rightButtonTopicName = "right_button";
-    [SerializeField] private string upButtonTopicName = "up_button";
-    [SerializeField] private string centerButtonTopicName = "center_button";
-    [SerializeField] private string leftButtonTopicName = "left_button";
+    [Header("ROS2")]
+    [SerializeField] private float publisherFrequency = 10f;
+    [SerializeField] private string positionTopicName = "falcon/position";
+    [SerializeField] private string forceTopicName = "falcon/force";
+    [SerializeField] private string rgbTopicName = "falcon/rgb";
+    [SerializeField] private string rightButtonTopicName = "falcon/buttons/right";
+    [SerializeField] private string upButtonTopicName = "falcon/buttons/up";
+    [SerializeField] private string centerButtonTopicName = "falcon/buttons/center";
+    [SerializeField] private string leftButtonTopicName = "falcon/buttons/left";
+    private ROSConnection ros;
+    private float timeElapsed;
 
-    [Header("Falcon Constants")]
+    [Header("Falcon")]
     [SerializeField] private FalconMiddleware falconMid;
-
-    // ros2 variables
-    private ROS2UnityComponent ros2Unity;
-    private ROS2Node ros2Node;
-    private IPublisher<geometry_msgs.msg.Vector3> force_pub;
-    private IPublisher<geometry_msgs.msg.Vector3> rgb_pub;
-
-    // falcon variables
     private const int RIGHT = 1;
     private const int UP = 2;
     private const int CENTER = 3;
@@ -32,61 +28,66 @@ public class FalconRos2Node : MonoBehaviour
     private int lastStatus_center = -1;
     private int lastStatus_left = -1;
 
-    void Start()
-    {
-        ros2Unity = GetComponent<ROS2UnityComponent>();
-        ros2Node ??= ros2Unity.CreateNode(nodeName);
-        if (ros2Unity.Ok())
-        {
-            ros2Node.CreateSubscription<geometry_msgs.msg.Vector3>(positionTopicName, msg => PositionHandler(msg.X, msg.Y, msg.Z));
-            ros2Node.CreateSubscription<std_msgs.msg.Int16>(rightButtonTopicName, msg => ButtonHandler(RIGHT, msg.Data));
-            ros2Node.CreateSubscription<std_msgs.msg.Int16>(upButtonTopicName, msg => ButtonHandler(UP, msg.Data));
-            ros2Node.CreateSubscription<std_msgs.msg.Int16>(centerButtonTopicName, msg => ButtonHandler(CENTER, msg.Data));
-            ros2Node.CreateSubscription<std_msgs.msg.Int16>(leftButtonTopicName, msg => ButtonHandler(LEFT, msg.Data));
+    void Start(){
+        timeElapsed = 0;
+        ros = ROSConnection.GetOrCreateInstance();
+        ros.RegisterPublisher<Vector3Msg>(forceTopicName);
+        ros.RegisterPublisher<Vector3Msg>(rgbTopicName);
+        ros.Subscribe<Vector3Msg>(positionTopicName, PositionSubscriber);
+        ros.Subscribe<BoolMsg>(centerButtonTopicName, CenterButtonSubscriber);
+        ros.Subscribe<BoolMsg>(leftButtonTopicName, LeftButtonSubscriber);
+        ros.Subscribe<BoolMsg>(rightButtonTopicName, RightButtonSubscriber);
+        ros.Subscribe<BoolMsg>(upButtonTopicName, UpButtonSubscriber);
+    }
 
-            force_pub = ros2Node.CreatePublisher<geometry_msgs.msg.Vector3>(forceTopicName);
-            rgb_pub = ros2Node.CreatePublisher<geometry_msgs.msg.Vector3>(rgbTopicName);
+    void Update(){
+        timeElapsed += Time.deltaTime;
+
+        if(timeElapsed > 1/publisherFrequency){
+            ForcePublisher();
+            RgbPublisher();
+            timeElapsed = 0;
         }
     }
 
-    void Update()
-    {
-        if (ros2Unity.Ok())
-        {
-            ForceUpdate();
-            RgbUpdate();
-        }
-    }
-
-    void ForceUpdate()
-    {
-        geometry_msgs.msg.Vector3 msg = new geometry_msgs.msg.Vector3
-        {
-            X = falconMid.Force.x,
-            Y = falconMid.Force.y,
-            Z = falconMid.Force.z
+    void ForcePublisher(){
+        var msg = new Vector3Msg{
+            x = falconMid.Force.x,
+            y = falconMid.Force.y,
+            z = falconMid.Force.z
         };
-        force_pub.Publish(msg);
+        ros.Publish(forceTopicName, msg);
     }
 
-    void RgbUpdate()
-    {
-        geometry_msgs.msg.Vector3 msg = new geometry_msgs.msg.Vector3
-        {
-            X = falconMid.Rgb.x,
-            Y = falconMid.Rgb.y,
-            Z = falconMid.Rgb.z
+    void RgbPublisher(){
+        var msg = new Vector3Msg{
+            x = falconMid.Rgb.x,
+            y = falconMid.Rgb.y,
+            z = falconMid.Rgb.z
         };
-        rgb_pub.Publish(msg);
+        ros.Publish(rgbTopicName, msg);
     }
 
-    void PositionHandler(double x, double y, double z)
-    {
-        falconMid.Position = new Vector3((float)x, (float)y, (float)z);
+    void PositionSubscriber(Vector3Msg msg){
+        falconMid.Position = new Vector3((float)msg.x, (float)msg.y, (float)msg.z);
     }
 
-    void ButtonHandler(int button, int value)
+    void CenterButtonSubscriber(BoolMsg msg){
+        ButtonHandler(CENTER, msg.data);
+    }
+    void LeftButtonSubscriber(BoolMsg msg){
+        ButtonHandler(LEFT, msg.data);
+    }
+    void RightButtonSubscriber(BoolMsg msg){
+        ButtonHandler(RIGHT, msg.data);
+    }
+    void UpButtonSubscriber(BoolMsg msg){
+        ButtonHandler(UP, msg.data);
+    }
+
+    void ButtonHandler(int button, bool b)
     {
+        var value = b ? 1 : 0;
         if (button == RIGHT && value != lastStatus_right) {
             if (lastStatus_right != -1)
                 falconMid.RightButtonHandler();

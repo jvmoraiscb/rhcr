@@ -1,5 +1,4 @@
 using UnityEngine;
-using ROS2;
 
 public class AckermannMiddleware : MonoBehaviour
 {
@@ -30,18 +29,7 @@ public class AckermannMiddleware : MonoBehaviour
             steer = value;
         }
     }
-    public Vector3 RosPosition
-    {
-        get
-        {
-            return Transformations.Unity2Ros(position);
-        }
-        set
-        {
-            position = Transformations.Ros2Unity(value);
-        }
-    }
-    public Vector3 UnityPosition
+    public Vector3 Position
     {
         get
         {
@@ -52,18 +40,7 @@ public class AckermannMiddleware : MonoBehaviour
             position = value;
         }
     }
-    public Quaternion RosRotation
-    {
-        get
-        {
-            return Transformations.Unity2Ros(rotation);
-        }
-        set
-        {
-            rotation = Transformations.Ros2Unity(value);
-        }
-    }
-    public Quaternion UnityRotation
+    public Quaternion Rotation
     {
         get
         {
