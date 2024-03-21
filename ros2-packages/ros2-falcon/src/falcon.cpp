@@ -327,14 +327,14 @@ void Falcon::print_info() {
     system("clear");
     printf("The following topics started:\n");
     printf("Publishers:\n");
-    printf("- /position_vector\n");
-    printf("- /right_button\n");
-    printf("- /up_button\n");
-    printf("- /center_button\n");
-    printf("- /left_button\n");
+    printf("- /falcon/buttons/center\n");
+    printf("- /falcon/buttons/left\n");
+    printf("- /falcon/buttons/right\n");
+    printf("- /falcon/buttons/up\n");
+    printf("- /falcon/position\n");
     printf("Subscribers:\n");
-    printf("- /force_vector\n");
-    printf("- /rgb_vector\n");
+    printf("- /falcon/force\n");
+    printf("- /falcon/rgb\n");
     printf("\nPress Ctrl-Z to turn ON/OFF debug mode.\n");
 }
 

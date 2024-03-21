@@ -8,13 +8,13 @@ Falcon_Node::Falcon_Node(Falcon* falcon, bool* debug_mode) : Node("falcon_node")
     debug_mode_ = debug_mode;
     timer_ = this->create_wall_timer(10ms, std::bind(&Falcon_Node::timer_callback, this));
 
-    position_vector_pub = this->create_publisher<geometry_msgs::msg::Vector3>("position_vector", 10);
-    right_button_pub = this->create_publisher<std_msgs::msg::Int16>("right_button", 10);
-    up_button_pub = this->create_publisher<std_msgs::msg::Int16>("up_button", 10);
-    center_button_pub = this->create_publisher<std_msgs::msg::Int16>("center_button", 10);
-    left_button_pub = this->create_publisher<std_msgs::msg::Int16>("left_button", 10);
-    force_vector_sub = this->create_subscription<geometry_msgs::msg::Vector3>("force_vector", 10, std::bind(&Falcon_Node::force_callback, this, std::placeholders::_1));
-    rgb_vector_sub = this->create_subscription<geometry_msgs::msg::Vector3>("rgb_vector", 10, std::bind(&Falcon_Node::rgb_callback, this, std::placeholders::_1));
+    position_vector_pub = this->create_publisher<geometry_msgs::msg::Vector3>("falcon/position", 10);
+    center_button_pub = this->create_publisher<std_msgs::msg::Bool>("falcon/buttons/center", 10);
+    left_button_pub = this->create_publisher<std_msgs::msg::Bool>("falcon/buttons/left", 10);
+    right_button_pub = this->create_publisher<std_msgs::msg::Bool>("falcon/buttons/right", 10);
+    up_button_pub = this->create_publisher<std_msgs::msg::Bool>("falcon/buttons/up", 10);
+    force_vector_sub = this->create_subscription<geometry_msgs::msg::Vector3>("falcon/force", 10, std::bind(&Falcon_Node::force_callback, this, std::placeholders::_1));
+    rgb_vector_sub = this->create_subscription<geometry_msgs::msg::Vector3>("falcon/rgb", 10, std::bind(&Falcon_Node::rgb_callback, this, std::placeholders::_1));
 
     printf("Please calibrate the controller: move it around and then press the center button.\n");
 
@@ -41,17 +41,17 @@ void Falcon_Node::timer_callback() {
     pos.y = (float)y;
     pos.z = (float)z;
 
-    auto right = std_msgs::msg::Int16();
-    right.data = button1;
+    auto right = std_msgs::msg::Bool();
+    right.data = button1 == 1;
 
-    auto up = std_msgs::msg::Int16();
-    up.data = button2;
+    auto up = std_msgs::msg::Bool();
+    up.data = button2 == 1;
 
-    auto center = std_msgs::msg::Int16();
-    center.data = button3;
+    auto center = std_msgs::msg::Bool();
+    center.data = button3 == 1;
 
-    auto left = std_msgs::msg::Int16();
-    left.data = button4;
+    auto left = std_msgs::msg::Bool();
+    left.data = button4 == 1;
 
     position_vector_pub->publish(pos);
     right_button_pub->publish(right);
@@ -65,9 +65,9 @@ void Falcon_Node::force_callback(const geometry_msgs::msg::Vector3::SharedPtr ms
 }
 
 void Falcon_Node::rgb_callback(const geometry_msgs::msg::Vector3::SharedPtr msg) {
-    bool red = ((int)msg->x == 1) ? true : false;
-    bool green = ((int)msg->y == 1) ? true : false;
-    bool blue = ((int)msg->z == 1) ? true : false;
+    bool red = (int)msg->x == 1;
+    bool green = (int)msg->y == 1;
+    bool blue = (int)msg->z == 1;
 
     falcon_->rgb(red, green, blue);
 }

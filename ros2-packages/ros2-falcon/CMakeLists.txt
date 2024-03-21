@@ -22,9 +22,9 @@ add_executable(
 )
 
 target_link_libraries(
-  main
-  nifalcon
-  usb-1.0
+	main
+	nifalcon
+	usb-1.0
 )
 
 ament_target_dependencies(

@@ -1,7 +1,7 @@
 FROM ros:humble
 
 LABEL maintainer="jv.moraiscb@gmail.com"
-LABEL version="1.0.2"
+LABEL version="1.1.0"
 LABEL description="ROS2 Novint Falcon Package Docker image"
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -30,4 +30,4 @@ colcon build
 
 CMD . /opt/ros/humble/setup.sh && \
 . /ros-workspace/install/local_setup.sh && \
-ROS_DOMAIN_ID=42 ros2 run ros2-falcon main
+ros2 run ros2-falcon main
