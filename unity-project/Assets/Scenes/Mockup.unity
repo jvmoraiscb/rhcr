@@ -3672,10 +3672,23 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7447741722494971200, guid: 5edaf2acb9bfa0c4784aef9cb6ba31f5, type: 3}
+      propertyPath: odomTopicName
+      value: mockup/odom
+      objectReference: {fileID: 0}
+    - target: {fileID: 7447741722494971200, guid: 5edaf2acb9bfa0c4784aef9cb6ba31f5, type: 3}
+      propertyPath: scanTopicName
+      value: mockup/scan
+      objectReference: {fileID: 0}
+    - target: {fileID: 7447741722494971200, guid: 5edaf2acb9bfa0c4784aef9cb6ba31f5, type: 3}
+      propertyPath: cmdVelTopicName
+      value: mockup/cmd_vel
+      objectReference: {fileID: 0}
+    - target: {fileID: 7447741722494971200, guid: 5edaf2acb9bfa0c4784aef9cb6ba31f5, type: 3}
       propertyPath: publisherFrequency
       value: 10
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1058104366824711345, guid: 5edaf2acb9bfa0c4784aef9cb6ba31f5, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 5edaf2acb9bfa0c4784aef9cb6ba31f5, type: 3}
 --- !u!23 &6735957477023914042
 MeshRenderer:
@@ -4908,6 +4921,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8846597366842401855}
+  - component: {fileID: 8846597366842401856}
+  - component: {fileID: 8846597366842401854}
   - component: {fileID: 8846597366842401853}
   m_Layer: 0
   m_Name: Ros2Holder
@@ -4937,6 +4952,35 @@ MonoBehaviour:
   centerButtonTopicName: falcon/buttons/center
   leftButtonTopicName: falcon/buttons/left
   falconMid: {fileID: 8846597367812562735}
+--- !u!114 &8846597366842401854
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8846597366842401852}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da249245d7886aa458acb394fc1fbe07, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cmdVelTopicName: unity_cmd_vel
+  odomTopicName: unity_odom
+  scanTopicName: unity_scan
+  publisherFrequency: 10
+  isCmdVelEnabled: 0
+  isOdomEnabled: 1
+  ackermannMid: {fileID: 8846597367812562736}
+  isScanEnabled: 1
+  lidarPosition: {fileID: 8846597367040130442}
+  rangeMinFilter: 0
+  rangeMaxFilter: 1000
+  angleMinFilter: 0
+  angleMaxFilter: 6.2831855
+  scale: 1
+  obstaclesLayer: 6
+  samples: 360
+  angleRVIZ: 0
 --- !u!4 &8846597366842401855
 Transform:
   m_ObjectHideFlags: 0
@@ -4951,6 +4995,29 @@ Transform:
   m_Father: {fileID: 8846597368600538057}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8846597366842401856
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8846597366842401852}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 853793aa8477a9143a95cbaabafd3531, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cmdVelTopicName: mockup/cmd_vel
+  odomTopicName: mockup/odom
+  scanTopicName: mockup/scan
+  publisherFrequency: 10
+  isCmdVelEnabled: 1
+  isOdomEnabled: 1
+  ackermannMid: {fileID: 8846597367812562736}
+  isScanEnabled: 1
+  lidarGameObject: {fileID: 8846597367040130442}
+  wallPrefab: {fileID: 698896578097658503, guid: c4685f4e621f2394d8b82ba894ed5da6, type: 3}
+  scale: 1
 --- !u!1 &8846597367040130442
 GameObject:
   m_ObjectHideFlags: 0

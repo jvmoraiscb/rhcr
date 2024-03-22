@@ -1,109 +1,84 @@
-/*
 using UnityEngine;
-using ROS2;
+using Unity.Robotics.ROSTCPConnector;
+using Unity.Robotics.ROSTCPConnector.ROSGeometry;
+using RosMessageTypes.Nav;
+using RosMessageTypes.Sensor;
+using RosMessageTypes.Geometry;
 
 public class RealSensorsRos2Node : MonoBehaviour
 {
-    [Header("ROS2 Constants")]
-    [SerializeField] private string nodeName = "RealSensorsNode_Unity";
+    [Header("ROS2")]
     [SerializeField] private string cmdVelTopicName = "cmd_vel";
     [SerializeField] private string odomTopicName = "odom";
     [SerializeField] private string scanTopicName = "scan";
     [SerializeField] private float publisherFrequency = 10f;
+    private ROSConnection ros;
+    private float timeElapsed;
 
-    [Header("CmdVel and Odom Constants")]
+    [Header("CmdVel and Odom")]
     [SerializeField] private bool isCmdVelEnabled = true;
     [SerializeField] private bool isOdomEnabled = true;
     [SerializeField] private AckermannMiddleware ackermannMid;
 
-    [Header("Scan Constants")]
+    [Header("Scan")]
     [SerializeField] private bool isScanEnabled = true;
     [SerializeField] private GameObject lidarGameObject;
     [SerializeField] private GameObject wallPrefab;
     [SerializeField] private float scale = 1f;
-
-    // ros2 variables
-    private ROS2UnityComponent ros2Unity;
-    private ROS2Node ros2Node;
-    private IPublisher<geometry_msgs.msg.Twist> cmdVelPub;
-    private System.Collections.IEnumerator coroutine;
-
-    // scan variables
-    float[] ranges;
-    float angleMin;
-    float angleIncrement;
     private System.Collections.Generic.List<GameObject> walls;
 
     private void Start(){
         walls = new System.Collections.Generic.List<GameObject>();
-        ros2Unity = GetComponent<ROS2UnityComponent>();
-        ros2Node ??= ros2Unity.CreateNode(nodeName);
-        if (ros2Unity.Ok()){
-            ros2Node.CreateSubscription<sensor_msgs.msg.LaserScan>(scanTopicName, msg => ScanHandler(msg));
-            ros2Node.CreateSubscription<nav_msgs.msg.Odometry>(odomTopicName, msg => OdomHandler(msg));
-            cmdVelPub = ros2Node.CreatePublisher<geometry_msgs.msg.Twist>(cmdVelTopicName);
-        }
-        coroutine = LimitedUpdate(1/publisherFrequency);
-        StartCoroutine(coroutine);
+        timeElapsed = 0;
+        ros = ROSConnection.GetOrCreateInstance();
+        ros.RegisterPublisher<TwistMsg>(cmdVelTopicName);
+        ros.Subscribe<OdometryMsg>(odomTopicName, OdomSubscriber);
+        ros.Subscribe<LaserScanMsg>(scanTopicName, ScanSubscriber);
     }
 
     private void Update(){
-        if(ros2Unity.Ok()){
-            ScanUpdate();
+        timeElapsed += Time.deltaTime;
+
+        if(timeElapsed > 1/publisherFrequency){
+            CmdVelPublisher();
+            timeElapsed = 0;
         }
     }
 
-    private System.Collections.IEnumerator LimitedUpdate(float waitTime){
-        while(true){
-            yield return new WaitForSeconds(waitTime);
-            if(ros2Unity.Ok()){
-                CmdVelUpdate();
-            }
-        }
-    }
-
-    private void CmdVelUpdate(){
+    private void CmdVelPublisher(){
         if (!isCmdVelEnabled) return;
-        geometry_msgs.msg.Twist msg = new geometry_msgs.msg.Twist{
-            Linear = new geometry_msgs.msg.Vector3{
-                X = ackermannMid.Throttle,
-                Y = 0f,
-                Z = 0f
+        var msg = new TwistMsg{
+            linear = new Vector3Msg{
+                x = ackermannMid.Throttle,
+                y = 0f,
+                z = 0f
             },
-            Angular = new geometry_msgs.msg.Vector3{
-                X = 0f,
-                Y = 0f,
-                Z = ackermannMid.Steer
+            angular = new Vector3Msg{
+                x = 0f,
+                y = 0f,
+                z = ackermannMid.Steer
             }
         };
-        cmdVelPub.Publish(msg);
+        ros.Publish(cmdVelTopicName, msg);
     }
 
-    private void OdomHandler(nav_msgs.msg.Odometry msg){
+    private void OdomSubscriber(OdometryMsg msg){
         if (!isOdomEnabled) return;
-        ackermannMid.RosPosition = new Vector3{
-            x = (float)msg.Pose.Pose.Position.X,
-            y = (float)msg.Pose.Pose.Position.Y,
+        ackermannMid.Position = new Vector3Msg{
+            x = (float)msg.pose.pose.position.x,
+            y = (float)msg.pose.pose.position.y,
             z = 0f
-        };
-        ackermannMid.RosRotation = new Quaternion{
+        }.From<FLU>();
+        ackermannMid.Rotation = new QuaternionMsg{
             x = 0f,
             y = 0f,
-            z = (float)msg.Pose.Pose.Orientation.Z,
-            w = (float)msg.Pose.Pose.Orientation.W
-        };
+            z = (float)msg.pose.pose.orientation.z,
+            w = (float)msg.pose.pose.orientation.w
+        }.From<FLU>();
     }
 
     // Code created by Fabiana Machado (Fabiana.machado@edu.ufes.br)
-    void ScanHandler(sensor_msgs.msg.LaserScan msg){
-        if (!isScanEnabled) return;
-        ranges = msg.Ranges;
-        angleMin = msg.Angle_min;
-        angleIncrement = msg.Angle_increment;
-    }
-
-    // Code created by Fabiana Machado (Fabiana.machado@edu.ufes.br)
-    void ScanUpdate(){
+    void ScanSubscriber(LaserScanMsg msg){
         if (!isScanEnabled) return;
         Vector3 lidarPosition = lidarGameObject.transform.position;
         Vector3 lidarAngle = lidarGameObject.transform.eulerAngles;
@@ -111,20 +86,14 @@ public class RealSensorsRos2Node : MonoBehaviour
             Destroy(wall);
         }
         walls.Clear();
-        if (ranges != null){
-            for (int i = 0; i < ranges.Length; i++){
+        if (msg.ranges != null){
+            for (int i = 0; i < msg.ranges.Length; i++){
                 // transform the scan topic so it can have the walker reference and corrected angles
-                Vector3 position = new Vector3(-Mathf.Cos(angleMin + angleIncrement * i - (lidarAngle.y * Mathf.PI / 180)), -Mathf.Sin(angleMin + angleIncrement * i - (lidarAngle.y * Mathf.PI / 180)), 0).Ros2Unity();
-                Vector3 directionsNew = new Vector3(position.x * scale * ranges[i] + lidarPosition.x, lidarPosition.y, position.z * scale * ranges[i] + lidarPosition.z);
+                Vector3 position = new Vector3Msg(-Mathf.Cos(msg.angle_min + msg.angle_increment * i - (lidarAngle.y * Mathf.PI / 180)), -Mathf.Sin(msg.angle_min + msg.angle_increment * i - (lidarAngle.y * Mathf.PI / 180)), 0).From<FLU>();
+                Vector3 directionsNew = new Vector3(position.x * scale * msg.ranges[i] + lidarPosition.x, lidarPosition.y, position.z * scale * msg.ranges[i] + lidarPosition.z);
                 // Instatiate a prefab to warn the user that that is a possible colision in the real env
                 walls.Add(Instantiate(wallPrefab, new Vector3(directionsNew.x, directionsNew.y, directionsNew.z), new Quaternion(0, 0, 0, 1)));
-                // destructor = Instantiate(wallPrefab, new Vector3(realDirectionsNew.x, realDirectionsNew.y, realDirectionsNew.z), new Quaternion(0, 0, 0, 1));
-                // destroy this game object after 0.3 seconds so it doesnt flood the scene
-                // Destroy(destructor, timeToDestroyWall);
-                //Debug.DrawLine(transform.position, real_directionsNew);
-                //Debug.Log(real_directionsNew);
             }
         }
     }
 }
-*/
