@@ -7,36 +7,27 @@ public class FalconMiddleware : MonoBehaviour
     [SerializeField] private Vector3 force;
     [SerializeField] private Vector3 rgb;
 
-    public Vector3 Position
-    {
-        get
-        {
+    public Vector3 Position{
+        get{
             return position;
         }
-        set
-        {
+        set{
             position = value;
         }
     }
-    public Vector3 Force
-    {
-        get
-        {
+    public Vector3 Force{
+        get{
             return force;
         }
-        set
-        {
+        set{
             force = value;
         }
     }
-    public Vector3 Rgb
-    {
-        get
-        {
+    public Vector3 Rgb{
+        get{
             return rgb;
         }
-        set
-        {
+        set{
             rgb = value;
         }
     }

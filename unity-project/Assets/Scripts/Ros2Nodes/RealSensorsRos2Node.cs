@@ -1,6 +1,6 @@
 using UnityEngine;
+using Unity.Robotics.Core;
 using Unity.Robotics.ROSTCPConnector;
-using Unity.Robotics.ROSTCPConnector.ROSGeometry;
 using RosMessageTypes.Nav;
 using RosMessageTypes.Sensor;
 using RosMessageTypes.Geometry;
@@ -64,17 +64,15 @@ public class RealSensorsRos2Node : MonoBehaviour
 
     private void OdomSubscriber(OdometryMsg msg){
         if (!isOdomEnabled) return;
-        ackermannMid.Position = new Vector3Msg{
-            x = (float)msg.pose.pose.position.x,
-            y = (float)msg.pose.pose.position.y,
-            z = 0f
-        }.From<FLU>();
-        ackermannMid.Rotation = new QuaternionMsg{
-            x = 0f,
-            y = 0f,
-            z = (float)msg.pose.pose.orientation.z,
-            w = (float)msg.pose.pose.orientation.w
-        }.From<FLU>();
+        // convert to unity system
+        var position = Transformations.Ros2Unity(msg.pose.pose.position);
+        var rotation = Transformations.Ros2Unity(msg.pose.pose.orientation);
+        // ignore y position and x and z rotation
+        position.y = 0f;
+        rotation.x = 0f;
+        rotation.z = 0f;
+        ackermannMid.Position = position;
+        ackermannMid.Rotation = rotation;
     }
 
     // Code created by Fabiana Machado (Fabiana.machado@edu.ufes.br)
@@ -89,7 +87,7 @@ public class RealSensorsRos2Node : MonoBehaviour
         if (msg.ranges != null){
             for (int i = 0; i < msg.ranges.Length; i++){
                 // transform the scan topic so it can have the walker reference and corrected angles
-                Vector3 position = new Vector3Msg(-Mathf.Cos(msg.angle_min + msg.angle_increment * i - (lidarAngle.y * Mathf.PI / 180)), -Mathf.Sin(msg.angle_min + msg.angle_increment * i - (lidarAngle.y * Mathf.PI / 180)), 0).From<FLU>();
+                Vector3 position = Transformations.Ros2Unity(new PointMsg(-Mathf.Cos(msg.angle_min + msg.angle_increment * i - (lidarAngle.y * Mathf.PI / 180)), -Mathf.Sin(msg.angle_min + msg.angle_increment * i - (lidarAngle.y * Mathf.PI / 180)), 0));
                 Vector3 directionsNew = new Vector3(position.x * scale * msg.ranges[i] + lidarPosition.x, lidarPosition.y, position.z * scale * msg.ranges[i] + lidarPosition.z);
                 // Instatiate a prefab to warn the user that that is a possible colision in the real env
                 walls.Add(Instantiate(wallPrefab, new Vector3(directionsNew.x, directionsNew.y, directionsNew.z), new Quaternion(0, 0, 0, 1)));

@@ -7,47 +7,35 @@ public class AckermannMiddleware : MonoBehaviour
     [SerializeField] private float throttle;
     [SerializeField] private float steer;
 
-    public float Throttle
-    {
-        get
-        {
+    public float Throttle{
+        get{
             return throttle;
         }
-        set
-        {
+        set{
             throttle = value;
         }
     }
-    public float Steer
-    {
-        get
-        {
+    public float Steer{
+        get{
             return steer;
         }
-        set
-        {
+        set{
             steer = value;
         }
     }
-    public Vector3 Position
-    {
-        get
-        {
+    public Vector3 Position{
+        get{
             return position;
         }
-        set
-        {
+        set{
             position = value;
         }
     }
-    public Quaternion Rotation
-    {
-        get
-        {
+    public Quaternion Rotation{
+        get{
             return rotation;
         }
-        set
-        {
+        set{
             rotation = value;
         }
     }

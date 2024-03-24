@@ -72,6 +72,12 @@ public class VirtualSensorsRos2Node : MonoBehaviour
     private void OdomPublisher(){
         if (!isOdomEnabled) return;
         var timestamp = new TimeStamp(Clock.Now);
+        var position = ackermannMid.Position;
+        var rotation = ackermannMid.Rotation;
+        // ignore y position and x and z rotation
+        position.y = 0f;
+        rotation.x = 0f;
+        rotation.z = 0f;
         var msg = new OdometryMsg{
             header = new HeaderMsg{
                 frame_id = "unity_odom",
@@ -83,17 +89,8 @@ public class VirtualSensorsRos2Node : MonoBehaviour
             child_frame_id = "unity_base_link",
             pose = new PoseWithCovarianceMsg{
                 pose = new PoseMsg{
-                    position = new Vector3{
-                        x = ackermannMid.Position.x,
-                        y = ackermannMid.Position.y,
-                        z = 0f,
-                    }.To<FLU>(),
-                    orientation = new Quaternion{
-                        x = 0f,
-                        y = 0f,
-                        z = ackermannMid.Rotation.z,
-                        w = ackermannMid.Rotation.w
-                    }.To<FLU>()
+                    position = Transformations.Unity2Ros(position),
+                    orientation = Transformations.Unity2Ros(rotation)
                 }
             }
         };

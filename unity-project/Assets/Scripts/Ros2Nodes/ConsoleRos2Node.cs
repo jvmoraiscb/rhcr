@@ -1,68 +1,28 @@
-/*
 using System;
-using UnityEngine;
-using ROS2;
 using System.Linq;
+using UnityEngine;
+using Unity.Robotics.Core;
+using Unity.Robotics.ROSTCPConnector;
+using RosMessageTypes.Std;
+using RosMessageTypes.Geometry;
 
 public class ConsoleRos2Node : MonoBehaviour{
-    [Header("ROS2 Constants")]
-    [SerializeField] private string nodeName = "ConsoleNode_Unity";
+    [Header("ROS2")]
     [SerializeField] private string consoleTopicName = "console";
+    private ROSConnection ros;
 
-    [Header("Virtual Map Constants")]
+    [Header("Virtual Map")]
     [SerializeField] private GameObject wallPrefab = null;
-
-    // ros2 variables
-    private ROS2UnityComponent ros2Unity;
-    private ROS2Node ros2Node;
-
-    // virtual map variables
     private System.Collections.Generic.List<GameObject> walls;
-    private Vector3 position;
-    private Quaternion rotation;
-    private Vector3 scale;
-    private bool shouldAddWall = false;
-    private bool shouldDeleteWall = false;
-    private bool shouldDeleteAllWalls = false;
 
     void Start(){
         walls = new System.Collections.Generic.List<GameObject>();
-        ros2Unity = GetComponent<ROS2UnityComponent>();
-        ros2Node ??= ros2Unity.CreateNode(nodeName);
-        if (ros2Unity.Ok()){
-            ros2Node.CreateSubscription<std_msgs.msg.String>(consoleTopicName, msg => ConsoleHandler(msg));
-        }
+        ros = ROSConnection.GetOrCreateInstance();
+        ros.Subscribe<StringMsg>(consoleTopicName, ConsoleSubscriber);
     }
 
-    void Update(){
-        if(shouldAddWall){
-            GameObject newWall = Instantiate(wallPrefab, position, rotation);
-            newWall.transform.localScale = scale;
-            walls.Add(newWall);
-            shouldAddWall = false;
-        }
-        if(shouldDeleteWall){
-            foreach (GameObject wall in walls.ToList()){
-                bool isInXAxis = wall.transform.localPosition.x - wall.transform.localScale.x < position.x && wall.transform.localPosition.x + wall.transform.localScale.x > position.x;
-                bool isInZAxis = wall.transform.localPosition.z - wall.transform.localScale.z < position.z && wall.transform.localPosition.z + wall.transform.localScale.z > position.z;
-                if(isInXAxis && isInZAxis){
-                    walls.Remove(wall);
-                    Destroy(wall);
-                }
-            }
-            shouldDeleteWall = false;
-        }
-        if(shouldDeleteAllWalls){
-            foreach (GameObject wall in walls.ToList()){
-                Destroy(wall);
-            }
-            walls.Clear();
-            shouldDeleteAllWalls = false;
-        }
-    }
-
-    void ConsoleHandler(std_msgs.msg.String msg){
-        string[] args = msg.Data.Split(' ');
+    void ConsoleSubscriber(StringMsg msg){
+        string[] args = msg.data.Split(' ');
         if (args.Length > 1){
             if(args[0] == "virtual-map")
                 VirtualMapOption(args);
@@ -91,13 +51,13 @@ public class ConsoleRos2Node : MonoBehaviour{
                 catch{
                     return;
                 }
-                position = Transformations.Ros2Unity(new Vector3(posX, posY, posZ));
-                rotation = Transformations.Ros2Unity(new Quaternion(quatX, quatY, quatZ, quatW));
-                scale = Transformations.Ros2Unity(new Vector3(scaleX, scaleY, scaleZ));
+                var position = Transformations.Ros2Unity(new PointMsg(posX, posY, posZ));
+                var rotation = Transformations.Ros2Unity(new QuaternionMsg(quatX, quatY, quatZ, quatW));
+                var scale = Transformations.Ros2Unity(new PointMsg(scaleX, scaleY, scaleZ));
                 scale.x = Math.Abs(scale.x);
                 scale.y = Math.Abs(scale.y);
                 scale.z = Math.Abs(scale.z);
-                shouldAddWall = true;
+                VirtualMapAddWall(position, rotation, scale);
             }
             // virtual-map delete pos-x pos-y pos-z
             if(args[1] == "delete" && args.Length == 5){
@@ -111,14 +71,35 @@ public class ConsoleRos2Node : MonoBehaviour{
                 catch{
                     return;
                 }
-                position = Transformations.Ros2Unity(new Vector3(posX, posY, posZ));
-                shouldDeleteWall = true;
+                var position = Transformations.Ros2Unity(new PointMsg(posX, posY, posZ));
+                VirtualMapDeleteWall(position);
             }
             // virtual-map delete-all
             if(args[1] == "delete-all" && args.Length == 2){
-                shouldDeleteAllWalls = true;
+                VirtualMapDeleteAllWalls();
             }
         }
     }
+
+    private void VirtualMapAddWall(Vector3 position, Quaternion rotation, Vector3 scale){
+        GameObject newWall = Instantiate(wallPrefab, position, rotation);
+        newWall.transform.localScale = scale;
+        walls.Add(newWall);
+    }
+    private void VirtualMapDeleteWall(Vector3 position){
+        foreach (GameObject wall in walls.ToList()){
+            bool isInXAxis = wall.transform.localPosition.x - wall.transform.localScale.x < position.x && wall.transform.localPosition.x + wall.transform.localScale.x > position.x;
+            bool isInZAxis = wall.transform.localPosition.z - wall.transform.localScale.z < position.z && wall.transform.localPosition.z + wall.transform.localScale.z > position.z;
+            if(isInXAxis && isInZAxis){
+                walls.Remove(wall);
+                Destroy(wall);
+            }
+        }
+    }
+    private void VirtualMapDeleteAllWalls(){
+        foreach (GameObject wall in walls.ToList()){
+            Destroy(wall);
+        }
+        walls.Clear();
+    }
 }
-*/
