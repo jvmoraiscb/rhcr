@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 
 namespace Unity.Robotics.Core{
+    // Code based on https://github.com/Unity-Technologies/Robotics-Nav2-SLAM-Example/blob/main/Nav2SLAMExampleProject/Assets/Scripts/Clock.cs
     public static class Clock{
         // Since UnityScaled is the default Unity Time mode, we'll use that for this project
         // None of the other time modes are fully validated and guaranteed to be without issues

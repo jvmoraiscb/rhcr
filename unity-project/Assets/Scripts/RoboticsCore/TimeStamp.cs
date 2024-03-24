@@ -3,6 +3,7 @@ using UnityEngine;
 using RosMessageTypes.BuiltinInterfaces;
 
 namespace Unity.Robotics.Core{
+    // Code based on https://github.com/Unity-Technologies/Robotics-Nav2-SLAM-Example/blob/main/Nav2SLAMExampleProject/Assets/Scripts/TimeStamp.cs
     public readonly struct TimeStamp{
         public const double k_NanosecondsInSecond = 1e9f;
 

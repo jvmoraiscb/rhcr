@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 698896578097658496}
   - component: {fileID: 698896578097658497}
   - component: {fileID: 698896578097658502}
-  m_Layer: 6
-  m_Name: Wall
+  m_Layer: 2
+  m_Name: IgnoreRaycastWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

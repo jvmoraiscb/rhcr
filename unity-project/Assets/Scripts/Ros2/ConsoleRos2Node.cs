@@ -7,7 +7,7 @@ using RosMessageTypes.Std;
 using RosMessageTypes.Geometry;
 
 public class ConsoleRos2Node : MonoBehaviour{
-    [Header("ROS2")]
+    [Header("Console Settings")]
     [SerializeField] private string consoleTopicName = "console";
     private ROSConnection ros;
 
