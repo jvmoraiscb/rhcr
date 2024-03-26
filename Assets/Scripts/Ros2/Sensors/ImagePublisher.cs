@@ -5,9 +5,12 @@ using Unity.Robotics.ROSTCPConnector.MessageGeneration;
 using RosMessageTypes.Std;
 using RosMessageTypes.Sensor;
 using RosMessageTypes.BuiltinInterfaces;
-public class CompressedImagePublisher : MonoBehaviour{
+
+// Code based on https://github.com/Unity-Technologies/ROS-TCP-Connector/issues/223
+public class ImagePublisher : MonoBehaviour{
     [Header("Image Settings")]
-    [SerializeField] private string topicName = "compressed_image";
+    [SerializeField] private string topicName = "image_raw";
+    [SerializeField] private string frameIdName = "camera_link";
 
     [Header("Image Dependencies")]
     [SerializeField] private Camera cam;
@@ -17,10 +20,10 @@ public class CompressedImagePublisher : MonoBehaviour{
 
     private ROSConnection ros;
     private double timeNextImageSeconds = -1;
-    private Texture2D texture;
+    private Texture2D texture = null;
     void Start(){
         ros = ROSConnection.GetOrCreateInstance();
-        ros.RegisterPublisher<CompressedImageMsg>(topicName);
+        ros.RegisterPublisher<ImageMsg>(topicName);
         
         timeNextImageSeconds = Clock.Now + 1/publisherFrequency;
         texture = new Texture2D(cam.targetTexture.width, cam.targetTexture.height);
@@ -28,7 +31,6 @@ public class CompressedImagePublisher : MonoBehaviour{
 
     void Update(){
         if (Clock.NowTimeInSeconds < timeNextImageSeconds) return;
-        var oldRT = RenderTexture.active;
         RenderTexture.active = cam.targetTexture;
         cam.Render();
         
@@ -37,20 +39,18 @@ public class CompressedImagePublisher : MonoBehaviour{
         // Texture2D camText = new Texture2D(cam.targetTexture.width, cam.targetTexture.height);
         texture.ReadPixels(new Rect(0, 0, cam.targetTexture.width, cam.targetTexture.height), 0, 0);
         texture.Apply();
-        RenderTexture.active = oldRT;
         
         // Encode the texture as an ImageMsg, and send to ROS
         var timestamp = new TimeStamp(Clock.Now);
         var header = new HeaderMsg{
-            frame_id = "cam_link",
+            frame_id = frameIdName,
             stamp = new TimeMsg{
                 sec = timestamp.Seconds,
                 nanosec = timestamp.NanoSeconds,
             }
         };
-        var msg = texture.ToCompressedImageMsg_JPG(header);
+        var msg = texture.ToImageMsg(header);
 
         ros.Publish(topicName, msg);
-        //camText.Dispose();
     }
 }
