@@ -74,44 +74,50 @@ sudo rosdep init
 rosdep update
 ```
 
-Create a rhcr_ws and clone the packages:
+Create a workspace and clone the **ros-packages** there:
 ```bash
-mkdir -p rhcr_ws/src
+mkdir -p ~/rhcr_ws/src
+cd ~/rhcr_ws/src
+git clone -b ros-packages --recurse-submodules https://github.com/jvmoraiscb/rhcr.git .
 ```
 
-And pull the ros2-falcon image:
+Install ros2-falcon (libnifalcon) drivers:
 
 ```bash
-sudo docker pull jvmoraiscb/ros2-falcon
+cd ~/rhcr_ws/src/ros2-falcon/libnifalcon
+./install.sh
+```
+
+And, finally, install ROS2 depencies and build the colcon workspace:
+```bash
+cd ~/rhcr_ws
+rosdep install --from-paths src -y --ignore-src
+colcon build
 ```
 
 ### Windows environment
 
 _Recommended version:_ **_Windows 11_**
 
-First, we need to install ROS2 on Windows.
+First, we need to install git:
+- Visit [git-scm.com/downloads](https://git-scm.com/downloads), download **64-bit Git for Windows Setup** and install it.
+- Restart the computer.
 
-Before starting the installation, we need to enable script execution in PowerShell with administrator privileges:
+Second, we need to install Oculus PC:
+- Visit [meta.com/quest/setup](https://www.meta.com/quest/setup/), scroll down to the Quest 2 section, click on **Download Software** and install it.
+- Set up your Quest 2, go to Settings -> General and enable **Unknown Sources** and **OpenXR Runtime**.
+![quest2-settings](/Documentation/images/quest2-config.jpg)
 
-```ps1
-Set-ExecutionPolicy Unrestricted
+Third, we need to install Unity:
+- Visit [unity.com/download](https://unity.com/download), download and install **Unity Hub**.
+- Visit [unity.com/releases/editor/archive](https://unity.com/releases/editor/archive) and find **Unity 2020.3.29** version, then click the Unity Hub button and proceed to install the editor.
+
+Next, choose a folder and clone the **unity-project** there:
+```bash
+git clone -b unity-project https://github.com/jvmoraiscb/rhcr.git
 ```
 
-Now, follow the instructions provided in the official documentation [ROS2 Humble Installation Windows](https://docs.ros.org/en/humble/Installation/Windows-Install-Binary.html) (if the link is no longer available, this repository has a copy of the installation guide [here](https://github.com/jvmoraiscb/rhcr/blob/main/doc/ros2-humble-windows.md)).
-
-After the installation, we need to unblock the startup script in PowerShell with administrator privileges:
-
-```ps1
-Unblock-File C:\dev\ros2_humble\local_setup.ps1
-```
-
-Second, we need to install Unity on Windows.
-
-First, visit https://unity.com/download to download and install Unity Hub.
-
-So, visit https://unity.com/releases/editor/archive and find **Unity 2020.3.29** version, then click the Unity Hub button and proceed to install the editor.
-
-Now, download this repository, unzip and save **unity-project** folder somewhere.
+Finally, add the project to Unity Hub.
 
 ## Running
 
@@ -123,10 +129,20 @@ First, connect **Novint Falcon** to vmware:
 
 ![falcon-vmware](/Documentation/images/falcon-vmware.png)
 
-Second, run this command and follow the terminal instructions:
+Second, open a terminal, source your workspace, set a domain id, run ros2-falcon and follow the terminal instructions:
 
 ```bash
-sudo docker run -it --rm --network host --privileged -v /dev/bus/usb:/dev/bus/usb jvmoraiscb/ros2-falcon
+source ~/rhcr_ws/install/setup.bash
+export ROS_DOMAIN_ID=42
+ros2 run ros2-falcon main
+```
+
+Finally, open another terminal, source your workspace, set a domain id and launch rhcr:
+
+```bash
+source ~/rhcr_ws/install/setup.bash
+export ROS_DOMAIN_ID=42
+ros2 launch rhcr start.launch.py
 ```
 
 ### Windows environment
@@ -147,18 +163,12 @@ Then, open a PowerShell terminal and connect to robot through ssh protocol:
 
 ![wheeltec-ssh](/Documentation/images/wheeltec-ssh.jpg)
 
-Now, launch the robot's default package and set ROS_DOMAIN_ID to 42:
+Now, set a domain id and launch the robot's default package:
 
 ```bash
-ROS_DOMAIN_ID=42 roslaunch ros2 launch <robot_package> <robot_package_launch>
+ROS_DOMAIN_ID=42 ros2 launch <robot_package> <robot_package_file>
 ```
 
-_Replace **<robot_package>** for the robot ros2 package name, and **<robot_package_launch>** for the launch file name._
+_Replace **<robot_package>** for the robot ros2 package name, and **<robot_package_file>** for the launch file name._
 
 Finally, open another PowerShell terminal and run:
-
-```ps1
-C:\dev\ros2_humble\local_setup.ps1 ; setx ROS_DOMAIN_ID 42 ; Start-Process -FilePath '<path\to\unity>' -ArgumentList '-projectPath "<path\to\unity-project>"'
-```
-
-_Replace **<path\to\unity>** for the path to the Unity executable, and **<path\to\unity-project>** for the path to the project folder._

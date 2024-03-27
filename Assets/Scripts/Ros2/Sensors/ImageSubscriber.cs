@@ -4,12 +4,19 @@ using UnityEngine.UI;
 using Unity.Robotics.ROSTCPConnector;
 using Unity.Robotics.ROSTCPConnector.MessageGeneration;
 using RosMessageTypes.Sensor;
+
+// Code based on https://github.com/Unity-Technologies/ROS-TCP-Connector/blob/7f055108f43ab11ff297175a52af5d30fbac9d57/com.unity.robotics.ros-tcp-connector/Runtime/MessageGeneration/MessageExtensions.cs
 public class ImageSubscriber : MonoBehaviour{
     [Header("Image Settings")]
     [SerializeField] private string topicName = "image_raw";
 
     [Header("Image Dependencies")]
     [SerializeField] private RawImage display;
+
+    [Header("Image Parameters")]
+    [SerializeField] private bool debayer = false;
+    [SerializeField] private bool convertBGR = true;
+    [SerializeField] private bool flipY = true;
 
     private ROSConnection ros;
     private Texture2D texture = null;
@@ -20,10 +27,8 @@ public class ImageSubscriber : MonoBehaviour{
     }
 
     private void ImageCallback(ImageMsg msg) {
-        var convertBGR = true;
-        var flipY = true;
         if(texture == null){
-            if (msg.IsBayerEncoded()){
+            if (debayer && msg.IsBayerEncoded()){
                 texture = new Texture2D((int)msg.width / 2, (int)msg.height / 2, TextureFormat.RGBA32, false);
             }
             else{
@@ -31,7 +36,7 @@ public class ImageSubscriber : MonoBehaviour{
             }
         }
         byte[] data;
-        if (msg.IsBayerEncoded()){
+        if (debayer && msg.IsBayerEncoded()){
             msg.DebayerConvert(flipY);
             data = msg.data;
         }

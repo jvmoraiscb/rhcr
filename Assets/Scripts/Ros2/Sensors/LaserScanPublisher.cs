@@ -55,8 +55,7 @@ public class LaserScanPublisher : MonoBehaviour{
             measurementsSoFar = numMeasurementsPerScan;
 
         var yawBaseDegrees = lidarPose.rotation.eulerAngles.y;
-        while (numMeasurementsTaken < measurementsSoFar)
-        {
+        while (numMeasurementsTaken < measurementsSoFar){
             var t = numMeasurementsTaken / (float)numMeasurementsPerScan;
             var yawSensorDegrees = Mathf.Lerp(currentScanAngleStart, currentScanAngleEnd, t);
             var yawDegrees = yawBaseDegrees + yawSensorDegrees;
@@ -77,10 +76,8 @@ public class LaserScanPublisher : MonoBehaviour{
             ++numMeasurementsTaken;
         }
         
-        if (numMeasurementsTaken >= numMeasurementsPerScan)
-        {
-            if (numMeasurementsTaken > numMeasurementsPerScan)
-            {
+        if (numMeasurementsTaken >= numMeasurementsPerScan){
+            if (numMeasurementsTaken > numMeasurementsPerScan){
                 Debug.LogError($"LaserScan has {numMeasurementsTaken} measurements but we expected {numMeasurementsPerScan}");
             }
             EndScan();
